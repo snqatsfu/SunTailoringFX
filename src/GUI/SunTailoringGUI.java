@@ -14,8 +14,9 @@ public class SunTailoringGUI extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("SunTailoringGUI.fxml"));
         primaryStage.setTitle(APP_TITLE);
-        primaryStage.setScene(new Scene(root, 800, 500));
+        primaryStage.setScene(new Scene(root, 1900, 1000));
         primaryStage.show();
+        primaryStage.setMaximized(true);
     }
 
 

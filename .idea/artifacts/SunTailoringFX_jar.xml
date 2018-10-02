@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SunTailoringFX:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/SunTailoringFX_jar</output-path>
+    <root id="archive" name="SunTailoringFX.jar">
+      <element id="module-output" name="SunTailoringFX" />
+    </root>
+  </artifact>
+</component>
