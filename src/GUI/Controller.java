@@ -9,7 +9,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
@@ -28,7 +28,12 @@ public class Controller implements Initializable {
     private final Invoice activeInvoice;
 
     public Controller() {
-        activeInvoice = new Invoice("invoice", Calendar.getInstance().getTimeInMillis(), Calendar.getInstance().getTimeInMillis(),
+        activeInvoice = new Invoice("invoice",
+                Calendar.getInstance().getTimeInMillis(),
+                Calendar.getInstance().getTimeInMillis(),
+                "my address",
+                new ArrayList<>(),
+                0,
                 true, true, false);
     }
 

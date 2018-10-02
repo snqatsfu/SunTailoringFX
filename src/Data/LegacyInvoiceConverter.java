@@ -19,13 +19,10 @@ public class LegacyInvoiceConverter {
             String customerAddress = fis.readUTF();
 
             int itemListSize = fis.readInt();
-            List<String> itemNames = new ArrayList<>();
-            List<Integer> itemQuantities = new ArrayList<>();
-            List<Double> itemUnitPrices = new ArrayList<>();
+            List<Item> items = new ArrayList<>();
             for (int i = 0; i < itemListSize; i++) {
-                itemNames.add(fis.readUTF());
-                itemQuantities.add(fis.readInt());
-                itemUnitPrices.add(fis.readDouble());
+                Item item = new Item(fis.readUTF(), fis.readInt(), fis.readDouble());
+                items.add(item);
             }
 
             double credit = fis.readDouble();
@@ -36,6 +33,9 @@ public class LegacyInvoiceConverter {
             return new Invoice(invoiceNumber,
                     invoiceDate,
                     dueDate,
+                    customerAddress,
+                    items,
+                    credit,
                     paid, done, pickedUp);
         }
 
