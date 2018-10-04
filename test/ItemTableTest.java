@@ -11,9 +11,9 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.converter.CurrencyStringConverter;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
-import javafx.util.converter.NumberStringConverter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -87,25 +87,25 @@ public class ItemTableTest extends Application {
         HBox creditRow = new HBox();
         Label creditLabel = new Label("Credit ");
         TextField creditTextField = new TextField();
-        creditTextField.textProperty().bindBidirectional(invoice.creditProperty(), new NumberStringConverter());
+        creditTextField.textProperty().bindBidirectional(invoice.creditProperty(), new CurrencyStringConverter());
         creditRow.getChildren().addAll(creditLabel, creditTextField);
 
         HBox subtotalRow = new HBox();
         Label subtotalLabel = new Label("Subtotal ");
         Label subtotalAmountLabel = new Label();
-        subtotalAmountLabel.textProperty().bindBidirectional(invoice.subtotalProperty(), new NumberStringConverter());
+        subtotalAmountLabel.textProperty().bindBidirectional(invoice.subtotalProperty(), new CurrencyStringConverter());
         subtotalRow.getChildren().addAll(subtotalLabel, subtotalAmountLabel);
 
         HBox taxRow = new HBox();
         Label taxLabel = new Label("Tax: ");
         Label taxAmountLabel = new Label();
-        taxAmountLabel.textProperty().bindBidirectional(invoice.taxProperty(), new NumberStringConverter());
+        taxAmountLabel.textProperty().bindBidirectional(invoice.taxProperty(), new CurrencyStringConverter());
         taxRow.getChildren().addAll(taxLabel, taxAmountLabel);
 
         HBox totalRow = new HBox();
         Label totalLabel = new Label("Total: ");
         Label totalAmountLabel = new Label();
-        totalAmountLabel.textProperty().bindBidirectional(invoice.totalProperty(), new NumberStringConverter());
+        totalAmountLabel.textProperty().bindBidirectional(invoice.totalProperty(), new CurrencyStringConverter());
         totalRow.getChildren().addAll(totalLabel, totalAmountLabel);
 
         VBox layout = new VBox();
