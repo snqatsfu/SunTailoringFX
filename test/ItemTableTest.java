@@ -1,13 +1,22 @@
+import Data.Invoice;
 import Data.Item;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.IntegerStringConverter;
+import javafx.util.converter.NumberStringConverter;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 
 
 /**
@@ -41,19 +50,79 @@ public class ItemTableTest extends Application {
         TableColumn<Item, Double> priceCol = new TableColumn<>("Price");
         priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        ObservableList<Item> itemObservableList = FXCollections.observableArrayList(Item.priceExtractor());
-        itemObservableList.add(new Item("pant", 1, 10.0));
-        itemObservableList.add(new Item("shirt", 2, 15.0));
+        Invoice invoice = createBlankInvoice();
+        invoice.getItems().add(new Item("pant", 1, 10.0));
+        invoice.getItems().add(new Item("shirt", 2, 15.0));
 
         itemTableView = new TableView<>();
-        itemTableView.setItems(itemObservableList);
+        itemTableView.setItems(invoice.getItems());
         itemTableView.getColumns().addAll(nameCol, quantityCol, unitPriceCol, priceCol);
+        itemTableView.setEditable(true);
+
+        // table edit
+        nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        nameCol.setOnEditCommit(event -> {
+            Item selectedItem = itemTableView.getSelectionModel().getSelectedItem();
+            selectedItem.setName(event.getNewValue());
+        });
+
+        quantityCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        quantityCol.setOnEditCommit(event -> {
+            Item selectedItem = itemTableView.getSelectionModel().getSelectedItem();
+            selectedItem.setQuantity(event.getNewValue());
+        });
+        unitPriceCol.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        unitPriceCol.setOnEditCommit(event -> {
+            Item selectedItem = itemTableView.getSelectionModel().getSelectedItem();
+            selectedItem.setUnitPrice(event.getNewValue());
+        });
+
+        // invoice information
+        HBox invoiceNumberRow = new HBox();
+        Label label1 = new Label("Invoice Number: ");
+        Label label2 = new Label();
+        label2.textProperty().bind(invoice.invoiceNumberProperty());
+        invoiceNumberRow.getChildren().addAll(label1, label2);
+
+        HBox creditRow = new HBox();
+        Label creditLabel = new Label("Credit ");
+        TextField creditTextField = new TextField();
+        creditTextField.textProperty().bindBidirectional(invoice.creditProperty(), new NumberStringConverter());
+        creditRow.getChildren().addAll(creditLabel, creditTextField);
+
+        HBox subtotalRow = new HBox();
+        Label subtotalLabel = new Label("Subtotal ");
+        Label subtotalAmountLabel = new Label();
+        subtotalAmountLabel.textProperty().bindBidirectional(invoice.subtotalProperty(), new NumberStringConverter());
+        subtotalRow.getChildren().addAll(subtotalLabel, subtotalAmountLabel);
+
+        HBox taxRow = new HBox();
+        Label taxLabel = new Label("Tax: ");
+        Label taxAmountLabel = new Label();
+        taxAmountLabel.textProperty().bindBidirectional(invoice.taxProperty(), new NumberStringConverter());
+        taxRow.getChildren().addAll(taxLabel, taxAmountLabel);
+
+        HBox totalRow = new HBox();
+        Label totalLabel = new Label("Total: ");
+        Label totalAmountLabel = new Label();
+        totalAmountLabel.textProperty().bindBidirectional(invoice.totalProperty(), new NumberStringConverter());
+        totalRow.getChildren().addAll(totalLabel, totalAmountLabel);
 
         VBox layout = new VBox();
-        layout.getChildren().addAll(itemTableView);
+        layout.getChildren().addAll(invoiceNumberRow, itemTableView, subtotalRow, taxRow, creditRow, totalRow);
 
-        scene = new Scene(layout, 800, 600);
+        scene = new Scene(layout);
         window.setScene(scene);
+        window.sizeToScene();
         window.show();
+    }
+
+    private Invoice createBlankInvoice() {
+        return new Invoice("myInvoice",
+                Calendar.getInstance().getTimeInMillis(),
+                Calendar.getInstance().getTimeInMillis(),
+                "Nathan",
+                new ArrayList<>(),
+                0, false,false,false);
     }
 }
