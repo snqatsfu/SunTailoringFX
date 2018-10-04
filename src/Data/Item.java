@@ -1,7 +1,9 @@
 package Data;
 
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.util.Callback;
 
 public class Item {
 
@@ -60,5 +62,9 @@ public class Item {
 
     public DoubleProperty priceProperty() {
         return price;
+    }
+
+    public static Callback<Item, Observable[]> priceExtractor() {
+        return param -> new Observable[]{param.price};
     }
 }

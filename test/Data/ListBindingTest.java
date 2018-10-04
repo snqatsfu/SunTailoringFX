@@ -14,10 +14,10 @@ import java.util.List;
 
 public class ListBindingTest {
 
-    static class Item {
+    static class MyItem {
         IntegerProperty number;
 
-        public Item(int number) {
+        public MyItem(int number) {
             this.number = new SimpleIntegerProperty(number);
         }
 
@@ -33,7 +33,7 @@ public class ListBindingTest {
             this.number.set(number);
         }
 
-        public static Callback<Item, Observable[]> extractor() {
+        public static Callback<MyItem, Observable[]> extractor() {
             return param -> new Observable[]{param.numberProperty()};
         }
     }
@@ -41,17 +41,17 @@ public class ListBindingTest {
     @Test
     public void test() {
 
-        Item item1 = new Item(1);
-        Item item2 = new Item(2);
-        List<Item> items = new ArrayList<>();
+        MyItem item1 = new MyItem(1);
+        MyItem item2 = new MyItem(2);
+        List<MyItem> items = new ArrayList<>();
         items.add(item1);
         items.add(item2);
 
-        ObservableList<Item> itemObservableList = FXCollections.observableArrayList(Item.extractor());
-        itemObservableList.addListener((ListChangeListener<Item>) c -> {
+        ObservableList<MyItem> itemObservableList = FXCollections.observableArrayList(MyItem.extractor());
+        itemObservableList.addListener((ListChangeListener<MyItem>) c -> {
             int sum = 0;
             while (c.next()) {
-                for (Item item : c.getList()) {
+                for (MyItem item : c.getList()) {
                     sum += item.getNumber();
                 }
 //                if (c.wasPermutated()) {
@@ -63,10 +63,10 @@ public class ListBindingTest {
 //                        System.out.println("Updated: " + i + " " + itemObservableList.get(i));
 //                    }
 //                } else {
-//                    for (Item removedItem : c.getRemoved()) {
+//                    for (MyItem removedItem : c.getRemoved()) {
 //                        System.out.println("Removed: " + removedItem);
 //                    }
-//                    for (Item addedItem : c.getAddedSubList()) {
+//                    for (MyItem addedItem : c.getAddedSubList()) {
 //                        System.out.println("Added: " + addedItem);
 //                    }
 //                }

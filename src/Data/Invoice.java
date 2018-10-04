@@ -3,10 +3,10 @@ package Data;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * TODO: CLASS JAVA DOC HERE
@@ -36,12 +36,29 @@ public class Invoice {
     public Invoice(String invoiceNumber, long invoiceDate, long dueDate, String customerInfo,
                    List<Item> items,
                    double credit, boolean paid, boolean done, boolean pickedUp) {
+
         this.invoiceNumber = new SimpleStringProperty(invoiceNumber);
         this.invoiceDate = new SimpleLongProperty(invoiceDate);
         this.dueDate = new SimpleLongProperty(dueDate);
         this.customerInfo = new SimpleStringProperty(customerInfo);
 
-        this.items = new SimpleListProperty<>(FXCollections.observableArrayList(items));
+        subtotal = new SimpleDoubleProperty(0);
+        tax = new SimpleDoubleProperty(0);
+        total = new SimpleDoubleProperty(0);
+
+        // bind subtotal to item list changes
+        ObservableList<Item> itemsObservableList = FXCollections.observableArrayList(Item.priceExtractor());
+        itemsObservableList.addListener((ListChangeListener<Item>) c-> {
+            double sum = 0;
+            while (c.next()) {
+                for (Item item : c.getList()) {
+                    sum += item.getPrice();
+                }
+            }
+            subtotal.setValue(sum);
+        });
+        itemsObservableList.addAll(items);
+        this.items = new SimpleListProperty<>(itemsObservableList);
 
         this.credit = new SimpleDoubleProperty(credit);
 
@@ -49,13 +66,6 @@ public class Invoice {
         this.done = new SimpleBooleanProperty(done);
         this.pickedUp = new SimpleBooleanProperty(pickedUp);
 
-        subtotal = new SimpleDoubleProperty(0);
-        tax = new SimpleDoubleProperty(0);
-        total = new SimpleDoubleProperty(0);
-
-        subtotal.bind(Bindings.createDoubleBinding(() ->
-                this.items.stream().collect(Collectors.summingDouble(Item::getPrice)),
-                this.items));
         tax.bind(Bindings.multiply(subtotal, SERVICE_TAX_RATE));
         total.bind(Bindings.add(subtotal, tax).subtract(this.credit));
     }
