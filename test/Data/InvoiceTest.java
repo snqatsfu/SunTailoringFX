@@ -2,6 +2,7 @@ package Data;
 
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class InvoiceTest {
         items.add(item1);
         items.add(item2);
 
-        Invoice invoice = new Invoice("Invoice 0", 0l, 0l, "Customer", items, 0, false, false, false);
+        Invoice invoice = new Invoice("Invoice 0", LocalDate.now(), LocalDate.now(), "Customer", items, 0, false, false, false);
         assertEquals(8.0, invoice.getSubtotal(), LAMBDA);
         assertEquals(8.4, invoice.getTotal(), LAMBDA);
 

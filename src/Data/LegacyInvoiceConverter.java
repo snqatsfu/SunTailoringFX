@@ -3,6 +3,9 @@ package Data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +17,10 @@ public class LegacyInvoiceConverter {
     public static Invoice convert(File legacyInvoiceDatFile) throws Exception {
         try (ObjectInputStream fis = new ObjectInputStream(new FileInputStream(legacyInvoiceDatFile))) {
             String invoiceNumber = fis.readUTF();
-            long invoiceDate = fis.readLong();
-            long dueDate = fis.readLong();
+            long invoiceDateLong = fis.readLong();
+            long dueDateLong = fis.readLong();
+            LocalDate invoiceDate = Instant.ofEpochMilli(invoiceDateLong).atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate dueDate = Instant.ofEpochMilli(dueDateLong).atZone(ZoneId.systemDefault()).toLocalDate();
             String customerAddress = fis.readUTF();
 
             int itemListSize = fis.readInt();

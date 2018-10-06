@@ -1,48 +1,74 @@
 package GUI;
 
 import Data.Invoice;
+import Data.Item;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.converter.CurrencyStringConverter;
+import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.IntegerStringConverter;
+import javafx.util.converter.NumberStringConverter;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
-    @FXML private TextField invoiceNumberTextField;
+    @FXML private TextField findInvoiceNumberTextField;
     @FXML private Button newInvoiceButton;
+
+    @FXML private TextField invoiceNumberTextField;
     @FXML private DatePicker invoiceDatePicker;
     @FXML private DatePicker dueDatePicker;
     @FXML private CheckBox paidCheckBox;
     @FXML private CheckBox doneCheckBox;
     @FXML private CheckBox pickedUpCheckBox;
 
+    @FXML public TextArea customerInfoTextArea;
+
+    @FXML public Label subtotalLabel;
+    @FXML public Label taxLabel;
+    @FXML public Label totalLabel;
+    @FXML public TextField creditTextField;
+
+    @FXML public TableView<Item> itemsTable;
+    @FXML public TableColumn<Item, String> itemsTableNameCol;
+    @FXML public TableColumn<Item, Integer> itemsTableQuantityCol;
+    @FXML public TableColumn<Item, Double> itemsTableUnitPriceCol;
+    @FXML public TableColumn<Item, Double> itemsTablePriceCol;
+
     @FXML private Button testButton;
 
     private final Invoice activeInvoice;
 
     public Controller() {
+        Item pant = new Item("pant", 1, 10);
+        Item shirt = new Item("shirt", 2, 5);
+        List<Item> items = new ArrayList<>();
+        items.add(pant);
+        items.add(shirt);
+
         activeInvoice = new Invoice("invoice",
-                Calendar.getInstance().getTimeInMillis(),
-                Calendar.getInstance().getTimeInMillis(),
+                LocalDate.now(),
+                LocalDate.now().plusDays(5),
                 "my address",
-                new ArrayList<>(),
+                items,
                 0,
                 true, true, false);
     }
 
     public void invoiceNumberEntered() {
-        System.out.println("Entered invoice number: " + invoiceNumberTextField.getText());
+        System.out.println("Entered invoice number: " + findInvoiceNumberTextField.getText());
     }
 
     public void invoiceNumberTextFieldClicked() {
-        invoiceNumberTextField.setText("");
+        findInvoiceNumberTextField.setText("");
     }
 
     public void newInvoiceButtonClicked() {
@@ -77,8 +103,43 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("Controller initialization");
+
+        invoiceNumberTextField.textProperty().bind(activeInvoice.invoiceNumberProperty());
+        invoiceDatePicker.valueProperty().bindBidirectional(activeInvoice.invoiceDateProperty());
+        dueDatePicker.valueProperty().bindBidirectional(activeInvoice.dueDateProperty());
+
         doneCheckBox.selectedProperty().bindBidirectional(activeInvoice.doneProperty());
         paidCheckBox.selectedProperty().bindBidirectional(activeInvoice.paidProperty());
         pickedUpCheckBox.selectedProperty().bindBidirectional(activeInvoice.pickedUpProperty());
+
+        customerInfoTextArea.textProperty().bind(activeInvoice.customerInfoProperty());
+
+        creditTextField.textProperty().bindBidirectional(activeInvoice.creditProperty(), new NumberStringConverter());
+        subtotalLabel.textProperty().bindBidirectional(activeInvoice.subtotalProperty(), new CurrencyStringConverter());
+        taxLabel.textProperty().bindBidirectional(activeInvoice.taxProperty(), new CurrencyStringConverter());
+        totalLabel.textProperty().bindBidirectional(activeInvoice.totalProperty(), new CurrencyStringConverter());
+
+        itemsTable.setItems(activeInvoice.getItems());
+        itemsTableNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        itemsTableQuantityCol.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        itemsTableUnitPriceCol.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
+        itemsTablePriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        // table edit
+        itemsTableNameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        itemsTableNameCol.setOnEditCommit(event -> {
+            Item selectedItem = itemsTable.getSelectionModel().getSelectedItem();
+            selectedItem.setName(event.getNewValue());
+        });
+        itemsTableQuantityCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        itemsTableQuantityCol.setOnEditCommit(event -> {
+            Item selectedItem = itemsTable.getSelectionModel().getSelectedItem();
+            selectedItem.setQuantity(event.getNewValue());
+        });
+        itemsTableUnitPriceCol.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        itemsTableUnitPriceCol.setOnEditCommit(event -> {
+            Item selectedItem = itemsTable.getSelectionModel().getSelectedItem();
+            selectedItem.setUnitPrice(event.getNewValue());
+        });
     }
 }

@@ -15,8 +15,8 @@ import javafx.util.converter.CurrencyStringConverter;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 
 /**
@@ -119,8 +119,8 @@ public class ItemTableTest extends Application {
 
     private Invoice createBlankInvoice() {
         return new Invoice("myInvoice",
-                Calendar.getInstance().getTimeInMillis(),
-                Calendar.getInstance().getTimeInMillis(),
+                LocalDate.now(),
+                LocalDate.now().plusDays(3),
                 "Nathan",
                 new ArrayList<>(),
                 0, false,false,false);

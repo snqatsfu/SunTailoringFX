@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -16,8 +17,8 @@ public class Invoice {
     private static final double SERVICE_TAX_RATE = 0.05;
 
     private StringProperty invoiceNumber;
-    private LongProperty invoiceDate;
-    private LongProperty dueDate;
+    private ObjectProperty<LocalDate> invoiceDate;
+    private ObjectProperty<LocalDate> dueDate;
     private StringProperty customerInfo;
 
     private ListProperty<Item> items;
@@ -33,13 +34,13 @@ public class Invoice {
     private DoubleProperty tax;
     private DoubleProperty total;
 
-    public Invoice(String invoiceNumber, long invoiceDate, long dueDate, String customerInfo,
+    public Invoice(String invoiceNumber, LocalDate invoiceDate, LocalDate dueDate, String customerInfo,
                    List<Item> items,
                    double credit, boolean paid, boolean done, boolean pickedUp) {
 
         this.invoiceNumber = new SimpleStringProperty(invoiceNumber);
-        this.invoiceDate = new SimpleLongProperty(invoiceDate);
-        this.dueDate = new SimpleLongProperty(dueDate);
+        this.invoiceDate = new SimpleObjectProperty<>(invoiceDate);
+        this.dueDate = new SimpleObjectProperty<>(dueDate);
         this.customerInfo = new SimpleStringProperty(customerInfo);
 
         subtotal = new SimpleDoubleProperty(0);
@@ -82,28 +83,20 @@ public class Invoice {
         this.invoiceNumber.set(invoiceNumber);
     }
 
-    public long getInvoiceDate() {
+    public LocalDate getInvoiceDate() {
         return invoiceDate.get();
     }
 
-    public LongProperty invoiceDateProperty() {
+    public ObjectProperty<LocalDate> invoiceDateProperty() {
         return invoiceDate;
     }
 
-    public void setInvoiceDate(long invoiceDate) {
-        this.invoiceDate.set(invoiceDate);
-    }
-
-    public long getDueDate() {
+    public LocalDate getDueDate() {
         return dueDate.get();
     }
 
-    public LongProperty dueDateProperty() {
+    public ObjectProperty<LocalDate> dueDateProperty() {
         return dueDate;
-    }
-
-    public void setDueDate(long dueDate) {
-        this.dueDate.set(dueDate);
     }
 
     public String getCustomerInfo() {
