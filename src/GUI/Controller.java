@@ -141,7 +141,11 @@ public class Controller implements Initializable {
         customerPhoneTextField.textProperty().bindBidirectional(customerInfo.phoneProperty());
         customerEmailTextField.textProperty().bindBidirectional(customerInfo.emailProperty());
 
-        creditTextField.textProperty().bindBidirectional(activeInvoice.creditProperty(), new NumberStringConverter());
+        // use a formatter to commit on Enter / loss of focus
+        TextFormatter<Number> formatter = new TextFormatter<>(new NumberStringConverter(), 0);
+        creditTextField.setTextFormatter(formatter);
+        formatter.valueProperty().bindBidirectional(activeInvoice.creditProperty());
+
         subtotalLabel.textProperty().bindBidirectional(activeInvoice.subtotalProperty(), new CurrencyStringConverter());
         taxLabel.textProperty().bindBidirectional(activeInvoice.taxProperty(), new CurrencyStringConverter());
         totalLabel.textProperty().bindBidirectional(activeInvoice.totalProperty(), new CurrencyStringConverter());
