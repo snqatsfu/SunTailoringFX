@@ -1,5 +1,6 @@
 package GUI;
 
+import Data.CustomerInfo;
 import Data.Invoice;
 import Data.Item;
 import javafx.fxml.FXML;
@@ -12,7 +13,11 @@ import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import javafx.util.converter.NumberStringConverter;
 
+import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +35,16 @@ public class Controller implements Initializable {
     @FXML private CheckBox doneCheckBox;
     @FXML private CheckBox pickedUpCheckBox;
 
-    @FXML public TextArea customerInfoTextArea;
+    @FXML public TextField customerNameTextField;
+    @FXML public TextField customerPhoneTextField;
+    @FXML public TextField customerEmailTextField;
 
     @FXML public Label subtotalLabel;
     @FXML public Label taxLabel;
     @FXML public Label totalLabel;
     @FXML public TextField creditTextField;
+
+    @FXML public Button saveInvoiceButton;
 
     @FXML public TableView<Item> itemsTable;
     @FXML public TableColumn<Item, String> itemsTableNameCol;
@@ -57,14 +66,25 @@ public class Controller implements Initializable {
         activeInvoice = new Invoice("invoice",
                 LocalDate.now(),
                 LocalDate.now().plusDays(5),
-                "my address",
+                CustomerInfo.getSAMPLE(),
                 items,
                 0,
                 true, true, false);
     }
 
     public void invoiceNumberEntered() {
-        System.out.println("Entered invoice number: " + findInvoiceNumberTextField.getText());
+        String invoiceNumber = findInvoiceNumberTextField.getText();
+        File savedDatFile = new File(SAVE_DIR_PATH + "/" + invoiceNumber + ".dat");
+        if (savedDatFile.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(savedDatFile))) {
+                Invoice deserializedInvoice = Invoice.deserialize(ois);
+                activeInvoice.cloneFrom(deserializedInvoice);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.err.println("Invoice " + invoiceNumber + " does not exist!");
+        }
     }
 
     public void invoiceNumberTextFieldClicked() {
@@ -75,36 +95,40 @@ public class Controller implements Initializable {
         System.out.println("New invoice button clicked");
     }
 
-    public void invoiceDatePickerDateSelected() {
-        System.out.println("Invoice date is " + invoiceDatePicker.getValue());
-    }
-
-    public void dueDatePickerDateSelected() {
-        System.out.println("Invoice date is " + dueDatePicker.getValue());
-    }
-
-    public void doneCheckBoxSelected() {
-        System.out.println("Done? " + activeInvoice.getDone());
-    }
-
-    public void paidCheckBoxSelected() {
-        System.out.println("Paid? " + activeInvoice.getPaid());
-    }
-
-    public void pickedUpCheckBoxSelected() {
-        System.out.println("Picked up? " + activeInvoice.getPickedUp());
-    }
-
     // todo: test function
     public void testButtonOnAction() {
         activeInvoice.setPaid(false);
     }
 
+    public void saveActiveInvoice() {
+        try {
+            createSaveDirectoryIfNecessary();
+
+            File outputFile = new File(SAVE_DIR_PATH + "/" + activeInvoice.getInvoiceNumber() + ".dat");
+            try (ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream(outputFile))) {
+                activeInvoice.serialize(fos);
+            }
+            System.out.println("Saved invoice file " + outputFile.getPath());
+
+        } catch (IOException e) {
+            System.err.println("Save invoice failed.");
+            e.printStackTrace();
+        }
+    }
+
+    private static final Path SAVE_DIR_PATH = Paths.get("Save");
+    private void createSaveDirectoryIfNecessary() throws IOException {
+        if (Files.notExists(SAVE_DIR_PATH)) {
+            Files.createDirectories(SAVE_DIR_PATH);
+        }
+    }
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("Controller initialization");
 
-        invoiceNumberTextField.textProperty().bind(activeInvoice.invoiceNumberProperty());
+        invoiceNumberTextField.textProperty().bindBidirectional(activeInvoice.invoiceNumberProperty());
         invoiceDatePicker.valueProperty().bindBidirectional(activeInvoice.invoiceDateProperty());
         dueDatePicker.valueProperty().bindBidirectional(activeInvoice.dueDateProperty());
 
@@ -112,7 +136,10 @@ public class Controller implements Initializable {
         paidCheckBox.selectedProperty().bindBidirectional(activeInvoice.paidProperty());
         pickedUpCheckBox.selectedProperty().bindBidirectional(activeInvoice.pickedUpProperty());
 
-        customerInfoTextArea.textProperty().bind(activeInvoice.customerInfoProperty());
+        CustomerInfo customerInfo = activeInvoice.getCustomerInfo();
+        customerNameTextField.textProperty().bindBidirectional(customerInfo.nameProperty());
+        customerPhoneTextField.textProperty().bindBidirectional(customerInfo.phoneProperty());
+        customerEmailTextField.textProperty().bindBidirectional(customerInfo.emailProperty());
 
         creditTextField.textProperty().bindBidirectional(activeInvoice.creditProperty(), new NumberStringConverter());
         subtotalLabel.textProperty().bindBidirectional(activeInvoice.subtotalProperty(), new CurrencyStringConverter());

@@ -6,20 +6,24 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
+import java.io.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * TODO: CLASS JAVA DOC HERE
  */
-public class Invoice {
+public class Invoice implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private static final double SERVICE_TAX_RATE = 0.05;
 
     private StringProperty invoiceNumber;
     private ObjectProperty<LocalDate> invoiceDate;
     private ObjectProperty<LocalDate> dueDate;
-    private StringProperty customerInfo;
+    private CustomerInfo customerInfo;
 
     private ListProperty<Item> items;
 
@@ -34,14 +38,14 @@ public class Invoice {
     private DoubleProperty tax;
     private DoubleProperty total;
 
-    public Invoice(String invoiceNumber, LocalDate invoiceDate, LocalDate dueDate, String customerInfo,
+    public Invoice(String invoiceNumber, LocalDate invoiceDate, LocalDate dueDate, CustomerInfo customerInfo,
                    List<Item> items,
                    double credit, boolean paid, boolean done, boolean pickedUp) {
 
         this.invoiceNumber = new SimpleStringProperty(invoiceNumber);
         this.invoiceDate = new SimpleObjectProperty<>(invoiceDate);
         this.dueDate = new SimpleObjectProperty<>(dueDate);
-        this.customerInfo = new SimpleStringProperty(customerInfo);
+        this.customerInfo = customerInfo;
 
         subtotal = new SimpleDoubleProperty(0);
         tax = new SimpleDoubleProperty(0);
@@ -49,7 +53,7 @@ public class Invoice {
 
         // bind subtotal to item list changes
         ObservableList<Item> itemsObservableList = FXCollections.observableArrayList(Item.priceExtractor());
-        itemsObservableList.addListener((ListChangeListener<Item>) c-> {
+        itemsObservableList.addListener((ListChangeListener<Item>) c -> {
             double sum = 0;
             while (c.next()) {
                 for (Item item : c.getList()) {
@@ -71,16 +75,80 @@ public class Invoice {
         total.bind(Bindings.add(subtotal, tax).subtract(this.credit));
     }
 
+    public void serialize(ObjectOutputStream os) throws IOException {
+        os.writeUTF(getInvoiceNumber());
+        os.writeLong(getInvoiceDate().toEpochDay());
+        os.writeLong(getDueDate().toEpochDay());
+
+        os.writeUTF(getCustomerInfo().getName());
+        os.writeUTF(getCustomerInfo().getPhone());
+        os.writeUTF(getCustomerInfo().getEmail());
+
+        os.writeInt(getItems().size());
+        for (Item item : getItems()) {
+            os.writeUTF(item.getName());
+            os.writeInt(item.getQuantity());
+            os.writeDouble(item.getUnitPrice());
+        }
+
+        os.writeDouble(getCredit());
+        os.writeBoolean(getPaid());
+        os.writeBoolean(getDone());
+        os.writeBoolean(getPickedUp());
+    }
+
+    public static Invoice deserialize(ObjectInputStream is) throws IOException {
+        String invoiceNumber = is.readUTF();
+        LocalDate invoiceDate = LocalDate.ofEpochDay(is.readLong());
+        LocalDate dueDate = LocalDate.ofEpochDay(is.readLong());
+
+        String customerName = is.readUTF();
+        String customerPhone = is.readUTF();
+        String customerEmail = is.readUTF();
+        CustomerInfo customerInfo = new CustomerInfo(customerName, customerPhone, customerEmail);
+
+        int numItems = is.readInt();
+        List<Item> items = new ArrayList<>(numItems);
+        for (int i = 0; i < numItems; i++) {
+            String itemName = is.readUTF();
+            int quantity = is.readInt();
+            double unitPrice = is.readDouble();
+            items.add(new Item(itemName, quantity, unitPrice));
+        }
+
+        double credit = is.readDouble();
+        boolean paid = is.readBoolean();
+        boolean done = is.readBoolean();
+        boolean pickedUp = is.readBoolean();
+
+        return new Invoice(invoiceNumber, invoiceDate, dueDate, customerInfo, items, credit, paid, done, pickedUp);
+    }
+
+    public void cloneFrom(Invoice otherInvoice) {
+        invoiceNumber.setValue(otherInvoice.getInvoiceNumber());
+        invoiceDate.setValue(otherInvoice.getInvoiceDate());
+        dueDate.setValue(otherInvoice.getDueDate());
+
+        customerInfo.setName(otherInvoice.getCustomerInfo().getName());
+        customerInfo.setPhone(otherInvoice.getCustomerInfo().getPhone());
+        customerInfo.setEmail(otherInvoice.getCustomerInfo().getEmail());
+
+        ObservableList<Item> itemsObservableList = getItems();
+        itemsObservableList.clear();
+        itemsObservableList.addAll(otherInvoice.getItems());
+
+        credit.setValue(otherInvoice.getCredit());
+        paid.setValue(otherInvoice.getPaid());
+        done.setValue(otherInvoice.getDone());
+        pickedUp.setValue(otherInvoice.getPickedUp());
+    }
+
     public String getInvoiceNumber() {
         return invoiceNumber.get();
     }
 
     public StringProperty invoiceNumberProperty() {
         return invoiceNumber;
-    }
-
-    public void setInvoiceNumber(String invoiceNumber) {
-        this.invoiceNumber.set(invoiceNumber);
     }
 
     public LocalDate getInvoiceDate() {
@@ -99,16 +167,8 @@ public class Invoice {
         return dueDate;
     }
 
-    public String getCustomerInfo() {
-        return customerInfo.get();
-    }
-
-    public StringProperty customerInfoProperty() {
+    public CustomerInfo getCustomerInfo() {
         return customerInfo;
-    }
-
-    public void setCustomerInfo(String customerInfo) {
-        this.customerInfo.set(customerInfo);
     }
 
     public ObservableList<Item> getItems() {
@@ -190,4 +250,5 @@ public class Invoice {
     public DoubleProperty totalProperty() {
         return total;
     }
+
 }

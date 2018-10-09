@@ -1,3 +1,4 @@
+import Data.CustomerInfo;
 import Data.Invoice;
 import Data.Item;
 import javafx.application.Application;
@@ -121,7 +122,7 @@ public class ItemTableTest extends Application {
         return new Invoice("myInvoice",
                 LocalDate.now(),
                 LocalDate.now().plusDays(3),
-                "Nathan",
+                CustomerInfo.getSAMPLE(),
                 new ArrayList<>(),
                 0, false,false,false);
     }

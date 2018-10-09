@@ -21,7 +21,8 @@ public class LegacyInvoiceConverter {
             long dueDateLong = fis.readLong();
             LocalDate invoiceDate = Instant.ofEpochMilli(invoiceDateLong).atZone(ZoneId.systemDefault()).toLocalDate();
             LocalDate dueDate = Instant.ofEpochMilli(dueDateLong).atZone(ZoneId.systemDefault()).toLocalDate();
-            String customerAddress = fis.readUTF();
+            String customerInfoString = fis.readUTF();
+            CustomerInfo customerInfo = CustomerInfo.parse(customerInfoString);
 
             int itemListSize = fis.readInt();
             List<Item> items = new ArrayList<>();
@@ -38,7 +39,7 @@ public class LegacyInvoiceConverter {
             return new Invoice(invoiceNumber,
                     invoiceDate,
                     dueDate,
-                    customerAddress,
+                    customerInfo,
                     items,
                     credit,
                     paid, done, pickedUp);
