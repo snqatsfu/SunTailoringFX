@@ -6,9 +6,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,6 +22,7 @@ public class Invoice implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private static final int DEFAULT_NUM_DAYS_DUE = 7;
     private static final double SERVICE_TAX_RATE = 0.05;
 
     private StringProperty invoiceNumber;
@@ -73,6 +78,13 @@ public class Invoice implements Serializable {
 
         tax.bind(Bindings.multiply(subtotal, SERVICE_TAX_RATE));
         total.bind(Bindings.add(subtotal, tax).subtract(this.credit));
+    }
+
+    public static Invoice createEmptyInvoice(String invoiceNumber) {
+        LocalDate invoiceDate = LocalDate.now();
+        LocalDate dueDate = invoiceDate.plusDays(DEFAULT_NUM_DAYS_DUE);
+        return new Invoice(invoiceNumber, invoiceDate, dueDate, CustomerInfo.getEmpty(),
+                Collections.emptyList(), 0, false, false, false);
     }
 
     public void serialize(ObjectOutputStream os) throws IOException {

@@ -5,8 +5,12 @@ import javafx.beans.property.StringProperty;
 
 public class CustomerInfo {
 
-    public static final CustomerInfo getSAMPLE() {
+    public static CustomerInfo getSAMPLE() {
         return new CustomerInfo("FirstName LastName", "604-123-4567", "first.last@gmail.com");
+    }
+
+    public static CustomerInfo getEmpty() {
+        return new CustomerInfo("Customer Name", "", "");
     }
 
     private final StringProperty name;

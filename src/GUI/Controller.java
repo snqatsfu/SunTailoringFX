@@ -19,8 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -57,19 +56,7 @@ public class Controller implements Initializable {
     private final Invoice activeInvoice;
 
     public Controller() {
-        Item pant = new Item("pant", 1, 10);
-        Item shirt = new Item("shirt", 2, 5);
-        List<Item> items = new ArrayList<>();
-        items.add(pant);
-        items.add(shirt);
-
-        activeInvoice = new Invoice("invoice",
-                LocalDate.now(),
-                LocalDate.now().plusDays(5),
-                CustomerInfo.getSAMPLE(),
-                items,
-                0,
-                true, true, false);
+        activeInvoice = Invoice.createEmptyInvoice(generateInvoiceNumber());
     }
 
     public void invoiceNumberEntered() {
@@ -92,12 +79,24 @@ public class Controller implements Initializable {
     }
 
     public void newInvoiceButtonClicked() {
-        System.out.println("New invoice button clicked");
+        String invoiceNumber = generateInvoiceNumber();
+        activeInvoice.cloneFrom(Invoice.createEmptyInvoice(invoiceNumber));
     }
 
-    // todo: test function
-    public void testButtonOnAction() {
-        activeInvoice.setPaid(false);
+    private String generateInvoiceNumber() {
+        final LocalDate now = LocalDate.now();
+        final String base = now.format(DateTimeFormatter.ofPattern("yyMMdd"));
+        int invoiceNum = 0;
+        String invoiceNumber = base + String.format("%03d", invoiceNum);
+        // todo: change to search invoice store
+        while ((new File(SAVE_DIR_PATH + "/" + invoiceNumber + ".dat")).exists()) {
+            invoiceNum++;
+            if (invoiceNum > 999) {
+                return "InvalidInvoiceNumber";
+            }
+            invoiceNumber = base + String.format("%03d", invoiceNum);
+        }
+        return invoiceNumber;
     }
 
     public void saveActiveInvoice() {
