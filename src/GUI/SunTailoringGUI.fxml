@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import java.lang.*?>
 <?import java.net.URL?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="DefaultSpacing" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.Controller">
+<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="DefaultSpacing" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.Controller">
    <top>
       <HBox styleClass="DefaultSpacing" BorderPane.alignment="CENTER">
          <children>
@@ -139,6 +139,7 @@
                         </VBox>
                         <VBox layoutX="342.0">
                            <children>
+                              <ComboBox fx:id="quickJacketComboBox" onAction="#quickJacketComboBoxOnAction" prefWidth="150.0" />
                               <TableView fx:id="itemsTable" editable="true">
                                 <columns>
                                   <TableColumn fx:id="itemsTableNameCol" minWidth="600.0" prefWidth="75.0" text="Description" />

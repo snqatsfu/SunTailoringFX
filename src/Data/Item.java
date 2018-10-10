@@ -20,6 +20,10 @@ public class Item {
         price.bind(Bindings.multiply(this.quantity, this.unitPrice));
     }
 
+    public Item copy() {
+        return new Item(getName(), getQuantity(), getUnitPrice());
+    }
+
     public String getName() {
         return name.get();
     }
@@ -66,5 +70,10 @@ public class Item {
 
     public static Callback<Item, Observable[]> priceExtractor() {
         return param -> new Observable[]{param.price};
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }
