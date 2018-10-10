@@ -3,7 +3,7 @@ package Data;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class CustomerInfo {
+public class CustomerInfo implements Comparable<CustomerInfo> {
 
     public static CustomerInfo getSAMPLE() {
         return new CustomerInfo("FirstName LastName", "604-123-4567", "first.last@gmail.com");
@@ -48,6 +48,32 @@ public class CustomerInfo {
         }
 
         return new CustomerInfo(name, phone, email);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CustomerInfo that = (CustomerInfo) o;
+
+        if (!getName().equals(that.getName())) return false;
+        if (!getPhone().equals(that.getPhone())) return false;
+        return getEmail().equals(that.getEmail());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getName().hashCode();
+        result = 31 * result + getPhone().hashCode();
+        result = 31 * result + getEmail().hashCode();
+        return result;
+    }
+
+    @Override
+    public int compareTo(CustomerInfo other) {
+        return this.getName().compareTo(other.getName());
     }
 
     public String getEmail() {
