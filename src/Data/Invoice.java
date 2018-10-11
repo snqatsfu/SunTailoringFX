@@ -141,9 +141,7 @@ public class Invoice implements Serializable {
         invoiceDate.setValue(otherInvoice.getInvoiceDate());
         dueDate.setValue(otherInvoice.getDueDate());
 
-        customerInfo.setName(otherInvoice.getCustomerInfo().getName());
-        customerInfo.setPhone(otherInvoice.getCustomerInfo().getPhone());
-        customerInfo.setEmail(otherInvoice.getCustomerInfo().getEmail());
+        customerInfo.setFrom(otherInvoice.getCustomerInfo());
 
         ObservableList<Item> itemsObservableList = getItems();
         itemsObservableList.clear();

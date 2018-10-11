@@ -84,20 +84,12 @@ public class CustomerInfo implements Comparable<CustomerInfo> {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email.set(email);
-    }
-
     public String getName() {
         return name.get();
     }
 
     public StringProperty nameProperty() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name.set(name);
     }
 
     public String getPhone() {
@@ -108,7 +100,9 @@ public class CustomerInfo implements Comparable<CustomerInfo> {
         return phone;
     }
 
-    public void setPhone(String phone) {
-        this.phone.set(phone);
+    public void setFrom(CustomerInfo other) {
+        name.setValue(other.getName());
+        phone.setValue(other.getPhone());
+        email.setValue(other.getPhone());
     }
 }

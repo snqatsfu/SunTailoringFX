@@ -252,6 +252,11 @@ public class Controller implements Initializable {
             final Parent root = fxmlLoader.load();
             final AddressBookDialogController addressBookDialogController = fxmlLoader.getController();
             addressBookDialogController.setAddressBook(addressBook);
+            addressBookDialogController.selectedCustomerInfoProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    activeInvoice.getCustomerInfo().setFrom(newValue);
+                }
+            });
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Address Book");
