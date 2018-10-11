@@ -6,7 +6,10 @@ import Data.Item;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -15,6 +18,8 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.converter.CurrencyStringConverter;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
@@ -42,6 +47,7 @@ public class Controller implements Initializable {
     @FXML private CheckBox doneCheckBox;
     @FXML private CheckBox pickedUpCheckBox;
 
+    @FXML public Button addressBookButton;
     @FXML public TextField customerNameTextField;
     @FXML public TextField customerPhoneTextField;
     @FXML public TextField customerEmailTextField;
@@ -217,4 +223,20 @@ public class Controller implements Initializable {
         quickJacketComboBox.getSelectionModel().select(0);
     }
 
+    public void showAddressBookDialog(ActionEvent actionEvent) {
+        try {
+            final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AddressBookDialog.fxml"));
+            final Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Address Book");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // todo: display a failed alert
+        }
+
+    }
 }
