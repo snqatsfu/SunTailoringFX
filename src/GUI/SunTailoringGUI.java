@@ -12,10 +12,15 @@ public class SunTailoringGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("SunTailoringGUI.fxml"));
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SunTailoringGUI.fxml"));
+        Parent root = fxmlLoader.load();
+        final Controller controller = fxmlLoader.getController();
         primaryStage.setTitle(APP_TITLE);
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
+        primaryStage.setOnCloseRequest(event -> {
+            controller.saveAddressBook();
+        });
         primaryStage.setMaximized(true);
     }
 

@@ -10,7 +10,7 @@ public class CustomerInfo implements Comparable<CustomerInfo> {
     }
 
     public static CustomerInfo getEmpty() {
-        return new CustomerInfo("Customer Name", "", "");
+        return new CustomerInfo("Customer", "", "");
     }
 
     private final StringProperty name;
@@ -48,6 +48,16 @@ public class CustomerInfo implements Comparable<CustomerInfo> {
         }
 
         return new CustomerInfo(name, phone, email);
+    }
+
+    public void setFrom(CustomerInfo other) {
+        name.setValue(other.getName());
+        phone.setValue(other.getPhone());
+        email.setValue(other.getEmail());
+    }
+
+    public CustomerInfo copy() {
+        return new CustomerInfo(getName(), getPhone(), getEmail());
     }
 
     @Override
@@ -100,9 +110,5 @@ public class CustomerInfo implements Comparable<CustomerInfo> {
         return phone;
     }
 
-    public void setFrom(CustomerInfo other) {
-        name.setValue(other.getName());
-        phone.setValue(other.getPhone());
-        email.setValue(other.getPhone());
-    }
+
 }

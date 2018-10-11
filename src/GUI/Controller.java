@@ -31,9 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -72,25 +70,23 @@ public class Controller implements Initializable {
     private final Invoice activeInvoice;
     private final AddressBook addressBook;
 
+    private static final Path SAVE_DIR_PATH = Paths.get("Save");
+    private static final Path SETTINGS_DIR_PATH = Paths.get("Settings");
+    private static final File ADDRESS_BOOK_DAT_FILE = new File(SETTINGS_DIR_PATH + "/" + "addressBook.dat");
+
     public Controller() {
         activeInvoice = Invoice.createEmptyInvoice(generateInvoiceNumber());
 
-        AddressBook addressBook;
-        File addressBookDatFile = new File(SETTINGS_DIR_PATH + "/" + "addressBook.dat");
-        if (addressBookDatFile.exists()) {
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(addressBookDatFile))) {
+        AddressBook addressBook = null;
+        if (ADDRESS_BOOK_DAT_FILE.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ADDRESS_BOOK_DAT_FILE))) {
                 addressBook = AddressBook.deserialize(ois);
-            } catch (Exception e) {
-                // todo: pop alert
-                addressBook = new AddressBook(Collections.emptyList());
-            }
-        } else {
-            // todo: pop alert and empty addressbook
-//            addressBook = new AddressBook(Collections.emptyList());
-            List<CustomerInfo> customerInfos = new ArrayList<>();
-            customerInfos.add(new CustomerInfo("Nathan Zheng", "604-123-4567", "nathan@gmail.com"));
-            customerInfos.add(new CustomerInfo("Emma Liu", "604-454-7890", "emma@gmail.com"));
-            addressBook = new AddressBook(customerInfos);
+            } catch (Exception ignore) {}
+        }
+
+        if (addressBook == null) {
+            GuiUtils.showWarningAlertAndWait("Can't find saved address book in Settings. Address book will be empty");
+            addressBook = new AddressBook(Collections.emptyList());
         }
         this.addressBook = addressBook;
     }
@@ -146,7 +142,11 @@ public class Controller implements Initializable {
                 activeInvoice.serialize(fos);
             }
 
-            showInfoAlertAndWait("Saved invoice file " + outputFile.getPath());
+            GuiUtils.showInfoAlertAndWait("Saved invoice file " + outputFile.getPath());
+
+            // add customer to address book if necessary
+            final CustomerInfo customerInfo = activeInvoice.getCustomerInfo();
+            addressBook.add(customerInfo.copy());
 
         } catch (IOException e) {
             System.err.println("Save invoice failed.");
@@ -154,16 +154,6 @@ public class Controller implements Initializable {
         }
     }
 
-    private void showInfoAlertAndWait(String alertMessage) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(null);
-        alert.setHeaderText(null);
-        alert.setContentText(alertMessage);
-        alert.showAndWait();
-    }
-
-    private static final Path SAVE_DIR_PATH = Paths.get("Save");
-    private static final Path SETTINGS_DIR_PATH = Paths.get("Settings");
     private void createDirectoryIfNecessary(Path path) throws IOException {
         if (Files.notExists(path)) {
             Files.createDirectories(path);
@@ -171,6 +161,7 @@ public class Controller implements Initializable {
     }
 
     public void quickJacketComboBoxOnAction(ActionEvent actionEvent) {
+        actionEvent.consume();
         // todo: this only fires when the selection changed
         activeInvoice.getItems().add(quickJacketComboBox.getValue().copy());
     }
@@ -247,6 +238,7 @@ public class Controller implements Initializable {
     }
 
     public void showAddressBookDialog(ActionEvent actionEvent) {
+        actionEvent.consume();
         try {
             final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AddressBookDialog.fxml"));
             final Parent root = fxmlLoader.load();
@@ -264,9 +256,20 @@ public class Controller implements Initializable {
             stage.show();
 
         } catch (Exception e) {
-            e.printStackTrace();
-            // todo: display a failed alert
+            GuiUtils.showWarningAlertAndWait("Failed loading address book dialog");
         }
+    }
 
+    public void saveAddressBook() {
+        try {
+            createDirectoryIfNecessary(SETTINGS_DIR_PATH);
+            try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(ADDRESS_BOOK_DAT_FILE))) {
+                addressBook.serialize(os);
+            }
+            System.out.println("Successfully saved address book " + ADDRESS_BOOK_DAT_FILE.getPath());
+
+        } catch (IOException e) {
+            System.err.println("Address book saving failed");
+        }
     }
 }

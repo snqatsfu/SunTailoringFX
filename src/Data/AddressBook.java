@@ -2,13 +2,13 @@ package Data;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddressBook implements Serializable {
 
@@ -17,12 +17,11 @@ public class AddressBook implements Serializable {
     private final ObservableList<CustomerInfo> entries;
 
     public AddressBook(List<CustomerInfo> startingEntries) {
-        entries = FXCollections.observableList(startingEntries);
+        entries = FXCollections.observableArrayList(startingEntries);
     }
 
     public boolean add(CustomerInfo customerInfo) {
-        // todo: add existence check
-        return entries.add(customerInfo);
+        return !entries.contains(customerInfo) && entries.add(customerInfo);
     }
 
     public boolean remove(CustomerInfo customerInfo) {
