@@ -1,31 +1,36 @@
 package Data;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 public class AddressBook implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final SortedSet<CustomerInfo> entries;
+    private final ObservableList<CustomerInfo> entries;
 
-    public AddressBook(Collection<CustomerInfo> startingEntries) {
-        entries = new TreeSet<>(startingEntries);
+    public AddressBook(List<CustomerInfo> startingEntries) {
+        entries = FXCollections.observableList(startingEntries);
     }
 
     public boolean add(CustomerInfo customerInfo) {
+        // todo: add existence check
         return entries.add(customerInfo);
     }
 
     public boolean remove(CustomerInfo customerInfo) {
         return entries.remove(customerInfo);
+    }
+
+    public ObservableList<CustomerInfo> getEntries() {
+        return entries;
     }
 
     public void serialize(ObjectOutputStream os) throws IOException {
@@ -39,7 +44,7 @@ public class AddressBook implements Serializable {
 
     public static AddressBook deserialize(ObjectInputStream is) throws IOException {
         final int numEntries = is.readInt();
-        SortedSet<CustomerInfo> entries = new TreeSet<>();
+        List<CustomerInfo> entries = new ArrayList<>();
         for (int i = 0; i < numEntries; i++) {
             final String name = is.readUTF();
             final String phone = is.readUTF();

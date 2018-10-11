@@ -1,10 +1,10 @@
 package GUI;
 
+import Data.AddressBook;
 import Data.CustomerInfo;
 import Data.Invoice;
 import Data.Item;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -16,7 +16,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -32,6 +31,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -68,9 +70,29 @@ public class Controller implements Initializable {
     @FXML public TableColumn<Item, Double> itemsTablePriceCol;
 
     private final Invoice activeInvoice;
+    private final AddressBook addressBook;
 
     public Controller() {
         activeInvoice = Invoice.createEmptyInvoice(generateInvoiceNumber());
+
+        AddressBook addressBook;
+        File addressBookDatFile = new File(SETTINGS_DIR_PATH + "/" + "addressBook.dat");
+        if (addressBookDatFile.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(addressBookDatFile))) {
+                addressBook = AddressBook.deserialize(ois);
+            } catch (Exception e) {
+                // todo: pop alert
+                addressBook = new AddressBook(Collections.emptyList());
+            }
+        } else {
+            // todo: pop alert and empty addressbook
+//            addressBook = new AddressBook(Collections.emptyList());
+            List<CustomerInfo> customerInfos = new ArrayList<>();
+            customerInfos.add(new CustomerInfo("Nathan Zheng", "604-123-4567", "nathan@gmail.com"));
+            customerInfos.add(new CustomerInfo("Emma Liu", "604-454-7890", "emma@gmail.com"));
+            addressBook = new AddressBook(customerInfos);
+        }
+        this.addressBook = addressBook;
     }
 
     public void invoiceNumberEntered() {
@@ -117,7 +139,7 @@ public class Controller implements Initializable {
 
     public void saveActiveInvoice() {
         try {
-            createSaveDirectoryIfNecessary();
+            createDirectoryIfNecessary(SAVE_DIR_PATH);
 
             File outputFile = new File(SAVE_DIR_PATH + "/" + activeInvoice.getInvoiceNumber() + ".dat");
             try (ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream(outputFile))) {
@@ -141,9 +163,10 @@ public class Controller implements Initializable {
     }
 
     private static final Path SAVE_DIR_PATH = Paths.get("Save");
-    private void createSaveDirectoryIfNecessary() throws IOException {
-        if (Files.notExists(SAVE_DIR_PATH)) {
-            Files.createDirectories(SAVE_DIR_PATH);
+    private static final Path SETTINGS_DIR_PATH = Paths.get("Settings");
+    private void createDirectoryIfNecessary(Path path) throws IOException {
+        if (Files.notExists(path)) {
+            Files.createDirectories(path);
         }
     }
 
@@ -227,6 +250,8 @@ public class Controller implements Initializable {
         try {
             final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AddressBookDialog.fxml"));
             final Parent root = fxmlLoader.load();
+            final AddressBookDialogController addressBookDialogController = fxmlLoader.getController();
+            addressBookDialogController.setAddressBook(addressBook);
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Address Book");
