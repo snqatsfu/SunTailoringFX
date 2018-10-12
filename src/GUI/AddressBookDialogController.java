@@ -12,6 +12,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -33,10 +34,16 @@ public class AddressBookDialogController implements Initializable {
     @FXML
     public TableColumn<CustomerInfo, String> emailCol;
 
+    private AddressBook addressBook;
     private FilteredList<CustomerInfo> filteredList;
     private ReadOnlyObjectWrapper<CustomerInfo> selectedCustomerInfo;
 
     public void setAddressBook(AddressBook addressBook) {
+        this.addressBook = addressBook;
+        updateTable();
+    }
+
+    private void updateTable() {
         filteredList = new FilteredList<>(addressBook.getEntries());
         SortedList<CustomerInfo> sortedList = new SortedList<>(filteredList);
         sortedList.comparatorProperty().bind(addressBookTable.comparatorProperty());
@@ -55,6 +62,7 @@ public class AddressBookDialogController implements Initializable {
         phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
         emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
 
+        // double click sets the selected customer (which in turn updates the listeners), and closes the dialog
         addressBookTable.setRowFactory(tableView -> {
             TableRow<CustomerInfo> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -67,6 +75,17 @@ public class AddressBookDialogController implements Initializable {
                 }
             });
             return row;
+        });
+
+        addressBookTable.setOnKeyPressed(event -> {
+            final int selectedIndex = addressBookTable.getSelectionModel().getSelectedIndex();
+            if (selectedIndex >= 0 && selectedIndex < filteredList.size()) {
+                final CustomerInfo customerInfo = filteredList.get(selectedIndex);
+                if (event.getCode().equals(KeyCode.DELETE)) {
+                    addressBook.remove(customerInfo);
+                    updateTable();
+                }
+            }
         });
 
         searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {

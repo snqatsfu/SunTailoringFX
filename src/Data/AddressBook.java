@@ -21,7 +21,11 @@ public class AddressBook implements Serializable {
     }
 
     public boolean add(CustomerInfo customerInfo) {
-        return !entries.contains(customerInfo) && entries.add(customerInfo);
+        boolean added = !entries.contains(customerInfo) && entries.add(customerInfo);
+        if (added) {
+            FXCollections.sort(entries);
+        }
+        return added;
     }
 
     public boolean remove(CustomerInfo customerInfo) {
