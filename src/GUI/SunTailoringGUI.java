@@ -14,13 +14,11 @@ public class SunTailoringGUI extends Application {
     public void start(Stage primaryStage) throws Exception {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SunTailoringGUI.fxml"));
         Parent root = fxmlLoader.load();
-        final Controller controller = fxmlLoader.getController();
+        final SunTailoringGUIController controller = fxmlLoader.getController();
         primaryStage.setTitle(APP_TITLE);
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
-        primaryStage.setOnCloseRequest(event -> {
-            controller.saveAddressBook();
-        });
+        primaryStage.setOnCloseRequest(event -> controller.saveAddressBook());
         primaryStage.setMaximized(true);
     }
 

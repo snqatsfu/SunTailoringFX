@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox fx:id="root" styleClass="DefaultSpacing" stylesheets="@StyleSheets/Containers.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.QuickItemsSettingsController">
+   <children>
+      <HBox styleClass="DefaultSpacing">
+         <children>
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveQuickItems" text="Save" />
+            <Button fx:id="addButton" mnemonicParsing="false" onAction="#addQuickItem" text="Add" />
+         </children>
+      </HBox>
+      <TableView fx:id="quickItemsTable" editable="true">
+        <columns>
+          <TableColumn fx:id="itemNameCol" minWidth="400.0" prefWidth="75.0" text="Name" />
+          <TableColumn fx:id="itemUnitPriceCol" prefWidth="75.0" text="Price" />
+        </columns>
+      </TableView>
+   </children>
+</VBox>

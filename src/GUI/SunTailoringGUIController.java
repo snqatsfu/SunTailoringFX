@@ -1,9 +1,7 @@
 package GUI;
 
-import Data.AddressBook;
-import Data.CustomerInfo;
-import Data.Invoice;
-import Data.Item;
+import Data.*;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,8 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -26,15 +22,15 @@ import javafx.util.converter.NumberStringConverter;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ResourceBundle;
 
-public class Controller implements Initializable {
+import static GUI.GuiUtils.*;
+
+public class SunTailoringGUIController implements Initializable {
 
     @FXML public BorderPane rootPane;
     @FXML private TextField findInvoiceNumberTextField;
@@ -67,14 +63,12 @@ public class Controller implements Initializable {
     @FXML public TableColumn<Item, Double> itemsTableUnitPriceCol;
     @FXML public TableColumn<Item, Double> itemsTablePriceCol;
 
+    @FXML public Button quickJacketsSettingsButton;
+
     private final Invoice activeInvoice;
     private final AddressBook addressBook;
 
-    private static final Path SAVE_DIR_PATH = Paths.get("Save");
-    private static final Path SETTINGS_DIR_PATH = Paths.get("Settings");
-    private static final File ADDRESS_BOOK_DAT_FILE = new File(SETTINGS_DIR_PATH + "/" + "addressBook.dat");
-
-    public Controller() {
+    public SunTailoringGUIController() {
         activeInvoice = Invoice.createEmptyInvoice(generateInvoiceNumber());
 
         AddressBook addressBook = null;
@@ -135,7 +129,7 @@ public class Controller implements Initializable {
 
     public void saveActiveInvoice() {
         try {
-            createDirectoryIfNecessary(SAVE_DIR_PATH);
+            GuiUtils.createDirectoryIfNecessary(SAVE_DIR_PATH);
 
             File outputFile = new File(SAVE_DIR_PATH + "/" + activeInvoice.getInvoiceNumber() + ".dat");
             try (ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream(outputFile))) {
@@ -154,25 +148,22 @@ public class Controller implements Initializable {
         }
     }
 
-    private void createDirectoryIfNecessary(Path path) throws IOException {
-        if (Files.notExists(path)) {
-            Files.createDirectories(path);
-        }
-    }
 
     public void quickJacketComboBoxOnAction(ActionEvent actionEvent) {
         actionEvent.consume();
         // todo: this only fires when the selection changed
-        activeInvoice.getItems().add(quickJacketComboBox.getValue().copy());
+        final Item selectedItem = quickJacketComboBox.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            activeInvoice.getItems().add(selectedItem.copy());
+        }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         invoiceNumberTextField.setStyle("-fx-control-inner-background: green");
 
-        final KeyCombination saveKeyCombo = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
         rootPane.setOnKeyPressed(keyEvent -> {
-            if (saveKeyCombo.match(keyEvent)) {
+            if (KEY_COMBO_CTRL_S.match(keyEvent)) {
                 saveActiveInvoice();
             }
         });
@@ -231,10 +222,7 @@ public class Controller implements Initializable {
             }
         });
 
-        // todo: replace with quick items list
-        quickJacketComboBox.getItems().add(new Item("Jacket - shorten", 1, 20));
-        quickJacketComboBox.getItems().add(new Item("Jacket - lengthen", 1, 10));
-        quickJacketComboBox.getSelectionModel().select(0);
+        quickJacketComboBox.setItems(loadQuickItems("Jackets").getItems());
     }
 
     public void showAddressBookDialog(ActionEvent actionEvent) {
@@ -262,7 +250,7 @@ public class Controller implements Initializable {
 
     public void saveAddressBook() {
         try {
-            createDirectoryIfNecessary(SETTINGS_DIR_PATH);
+            GuiUtils.createDirectoryIfNecessary(SETTINGS_DIR_PATH);
             try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(ADDRESS_BOOK_DAT_FILE))) {
                 addressBook.serialize(os);
             }
@@ -271,5 +259,54 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             System.err.println("Address book saving failed");
         }
+    }
+
+    public void showQuickItemsSettingsDialog(ActionEvent actionEvent) {
+        final Object source = actionEvent.getSource();
+        String quickItemName = "";
+        ComboBox<Item> quickItemComboBox = null;
+        if (source == quickJacketsSettingsButton) {
+            quickItemName = "Jackets";
+            quickItemComboBox = quickJacketComboBox;
+        } else {
+            assert false;
+        }
+        QuickItems quickItems = loadQuickItems(quickItemName);
+        try {
+            final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("QuickItemsSettingsDialog.fxml"));
+            final Parent root = fxmlLoader.load();
+            final QuickItemsSettingsController quickItemsSettingsController = fxmlLoader.getController();
+            quickItemsSettingsController.setQuickItems(quickItemName, quickItems);
+
+            Stage stage = new Stage();
+            final ComboBox<Item> finalQuickItemComboBox = quickItemComboBox;
+            stage.setOnCloseRequest(event -> {
+                final ObservableList<Item> items = quickItemsSettingsController.getQuickItems().getItems();
+                finalQuickItemComboBox.setItems(items);
+            });
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Configure Quick " + quickItemName);
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            GuiUtils.showWarningAlertAndWait("Failed loading quick jackets dialog");
+        }
+    }
+
+    private QuickItems loadQuickItems(String name) {
+        final File datFile = GuiUtils.getQuickItemsDatFile(name);
+        QuickItems quickItems = null;
+        if (datFile.exists()) {
+            try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(datFile))) {
+                quickItems = QuickItems.deserialize(is);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (quickItems == null) {
+            quickItems = new QuickItems(new ArrayList<>());
+        }
+        return quickItems;
     }
 }
