@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import java.lang.String?>
 <?import java.net.URL?>
@@ -63,7 +65,11 @@
                               <TextField fx:id="customerNameTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <TextField fx:id="customerPhoneTextField" prefHeight="30.0" prefWidth="192.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <TextField fx:id="customerEmailTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Button fx:id="addressBookButton" mnemonicParsing="false" onAction="#showAddressBookDialog" prefHeight="30.0" prefWidth="125.0" text="Address Book" />
+                              <ImageView fx:id="addressBookImageButton" onMouseClicked="#showAddressBookDialog" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2">
+                                 <image>
+                                    <Image url="@../Assets/AddressBookIcon.png" />
+                                 </image>
+                              </ImageView>
                            </children>
                         </GridPane>
                         <Separator prefWidth="200.0" />

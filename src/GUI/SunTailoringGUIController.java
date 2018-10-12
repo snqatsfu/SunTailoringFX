@@ -3,6 +3,7 @@ package GUI;
 import Data.*;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -11,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
@@ -50,7 +52,7 @@ public class SunTailoringGUIController implements Initializable {
     @FXML private CheckBox doneCheckBox;
     @FXML private CheckBox pickedUpCheckBox;
 
-    @FXML public Button addressBookButton;
+    @FXML public ImageView addressBookImageButton;
     @FXML public TextField customerNameTextField;
     @FXML public TextField customerPhoneTextField;
     @FXML public TextField customerEmailTextField;
@@ -240,8 +242,8 @@ public class SunTailoringGUIController implements Initializable {
         quickOtherComboBox.setItems(loadQuickItems("Other").getItems());
     }
 
-    public void showAddressBookDialog(ActionEvent actionEvent) {
-        actionEvent.consume();
+    public void showAddressBookDialog(Event event) {
+        event.consume();
         try {
             final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AddressBookDialog.fxml"));
             final Parent root = fxmlLoader.load();

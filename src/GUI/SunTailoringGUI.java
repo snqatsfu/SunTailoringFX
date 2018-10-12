@@ -16,6 +16,7 @@ public class SunTailoringGUI extends Application {
         Parent root = fxmlLoader.load();
         final SunTailoringGUIController controller = fxmlLoader.getController();
         primaryStage.setTitle(APP_TITLE);
+        primaryStage.getIcons().add(Assets.ST_LOGO);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
         primaryStage.setOnCloseRequest(event -> controller.saveAddressBook());
