@@ -33,6 +33,13 @@ import static GUI.GuiUtils.*;
 public class SunTailoringGUIController implements Initializable {
 
     @FXML public BorderPane rootPane;
+
+    @FXML public MenuItem quickJacketsSettingsMenuItem;
+    @FXML public MenuItem quickPantsSettingsMenuItem;
+    @FXML public MenuItem quickShirtsSettingsMenuItem;
+    @FXML public MenuItem quickDryCleansSettingsMenuItem;
+    @FXML public MenuItem quickOthersSettingsMenuItem;
+
     @FXML private TextField findInvoiceNumberTextField;
     @FXML private Button newInvoiceButton;
 
@@ -56,14 +63,16 @@ public class SunTailoringGUIController implements Initializable {
     @FXML public Button saveInvoiceButton;
 
     @FXML public ComboBox<Item> quickJacketComboBox;
+    @FXML public ComboBox<Item> quickPantComboBox;
+    @FXML public ComboBox<Item> quickShirtComboBox;
+    @FXML public ComboBox<Item> quickDryCleanComboBox;
+    @FXML public ComboBox<Item> quickOtherComboBox;
 
     @FXML public TableView<Item> itemsTable;
     @FXML public TableColumn<Item, String> itemsTableNameCol;
     @FXML public TableColumn<Item, Integer> itemsTableQuantityCol;
     @FXML public TableColumn<Item, Double> itemsTableUnitPriceCol;
     @FXML public TableColumn<Item, Double> itemsTablePriceCol;
-
-    @FXML public Button quickJacketsSettingsButton;
 
     private final Invoice activeInvoice;
     private final AddressBook addressBook;
@@ -148,13 +157,15 @@ public class SunTailoringGUIController implements Initializable {
         }
     }
 
-
-    public void quickJacketComboBoxOnAction(ActionEvent actionEvent) {
-        actionEvent.consume();
-        // todo: this only fires when the selection changed
-        final Item selectedItem = quickJacketComboBox.getSelectionModel().getSelectedItem();
-        if (selectedItem != null) {
-            activeInvoice.getItems().add(selectedItem.copy());
+    @SuppressWarnings("unchecked")
+    public void quickItemComboBoxOnAction(ActionEvent actionEvent) {
+        final Object source = actionEvent.getSource();
+        if (source == quickJacketComboBox || source == quickPantComboBox || source == quickShirtComboBox
+                || source == quickDryCleanComboBox || source == quickOtherComboBox) {
+            final Item selectedItem = ((ComboBox<Item>) source).getSelectionModel().getSelectedItem();
+            if (selectedItem != null) {
+                activeInvoice.getItems().add(selectedItem.copy());
+            }
         }
     }
 
@@ -222,7 +233,11 @@ public class SunTailoringGUIController implements Initializable {
             }
         });
 
-        quickJacketComboBox.setItems(loadQuickItems("Jackets").getItems());
+        quickJacketComboBox.setItems(loadQuickItems("Jacket").getItems());
+        quickPantComboBox.setItems(loadQuickItems("Pant").getItems());
+        quickShirtComboBox.setItems(loadQuickItems("Shirt").getItems());
+        quickDryCleanComboBox.setItems(loadQuickItems("Dry Clean").getItems());
+        quickOtherComboBox.setItems(loadQuickItems("Other").getItems());
     }
 
     public void showAddressBookDialog(ActionEvent actionEvent) {
@@ -263,34 +278,51 @@ public class SunTailoringGUIController implements Initializable {
 
     public void showQuickItemsSettingsDialog(ActionEvent actionEvent) {
         final Object source = actionEvent.getSource();
-        String quickItemName = "";
+        String quickItemsName = "";
         ComboBox<Item> quickItemComboBox = null;
-        if (source == quickJacketsSettingsButton) {
-            quickItemName = "Jackets";
+        if (source == quickJacketsSettingsMenuItem) {
+            quickItemsName = "Jacket";
             quickItemComboBox = quickJacketComboBox;
+
+        } else if (source == quickPantsSettingsMenuItem) {
+            quickItemsName = "Pant";
+            quickItemComboBox = quickPantComboBox;
+
+        } else if (source == quickShirtsSettingsMenuItem) {
+            quickItemsName = "Shirt";
+            quickItemComboBox = quickShirtComboBox;
+
+        } else if (source == quickDryCleansSettingsMenuItem) {
+            quickItemsName = "Dry Clean";
+            quickItemComboBox = quickDryCleanComboBox;
+
+        } else if (source == quickOthersSettingsMenuItem) {
+            quickItemsName = "Other";
+            quickItemComboBox = quickOtherComboBox;
+
         } else {
             assert false;
         }
-        QuickItems quickItems = loadQuickItems(quickItemName);
+        QuickItems quickItems = loadQuickItems(quickItemsName);
         try {
             final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("QuickItemsSettingsDialog.fxml"));
             final Parent root = fxmlLoader.load();
-            final QuickItemsSettingsController quickItemsSettingsController = fxmlLoader.getController();
-            quickItemsSettingsController.setQuickItems(quickItemName, quickItems);
+            final QuickItemsSettingsDialogController quickItemsSettingsDialogController = fxmlLoader.getController();
+            quickItemsSettingsDialogController.setQuickItems(quickItemsName, quickItems);
 
             Stage stage = new Stage();
             final ComboBox<Item> finalQuickItemComboBox = quickItemComboBox;
             stage.setOnCloseRequest(event -> {
-                final ObservableList<Item> items = quickItemsSettingsController.getQuickItems().getItems();
+                final ObservableList<Item> items = quickItemsSettingsDialogController.getQuickItems().getItems();
                 finalQuickItemComboBox.setItems(items);
             });
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Configure Quick " + quickItemName);
+            stage.setTitle("Configure Quick " + quickItemsName);
             stage.setScene(new Scene(root));
             stage.show();
 
         } catch (Exception e) {
-            GuiUtils.showWarningAlertAndWait("Failed loading quick jackets dialog");
+            GuiUtils.showWarningAlertAndWait("Failed loading quick items dialog");
         }
     }
 

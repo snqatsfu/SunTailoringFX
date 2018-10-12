@@ -34,7 +34,7 @@ public class GuiUtils {
     static final Path SETTINGS_DIR_PATH = Paths.get("Settings");
     static final File ADDRESS_BOOK_DAT_FILE = new File(SETTINGS_DIR_PATH + "/" + "addressBook.dat");
     static File getQuickItemsDatFile(String name) {
-        return new File(SETTINGS_DIR_PATH + "/" + "quick" + name + ".dat");
+        return new File(SETTINGS_DIR_PATH + "/" + "quick" + name.replaceAll(" ", "") + "Settings.dat");
     }
 
     public static void createDirectoryIfNecessary(Path path) throws IOException {

@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
 import static GUI.GuiUtils.KEY_COMBO_CTRL_S;
 import static GUI.GuiUtils.SETTINGS_DIR_PATH;
 
-public class QuickItemsSettingsController implements Initializable {
+public class QuickItemsSettingsDialogController implements Initializable {
 
     public VBox root;
     public Button saveButton;
@@ -85,6 +85,7 @@ public class QuickItemsSettingsController implements Initializable {
     public void saveQuickItems() {
         try {
             GuiUtils.createDirectoryIfNecessary(SETTINGS_DIR_PATH);
+
             try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(GuiUtils.getQuickItemsDatFile(name)))) {
                 quickItems.serialize(os);
             }
@@ -97,7 +98,7 @@ public class QuickItemsSettingsController implements Initializable {
 
     public void addQuickItem(ActionEvent actionEvent) {
         actionEvent.consume();
-        quickItems.getItems().add(new Item("Name", 1, 0));
+        quickItems.getItems().add(new Item(name + " - ", 1, 0));
         modified.setValue(true);
     }
 }

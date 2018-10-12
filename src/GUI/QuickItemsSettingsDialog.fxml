@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox fx:id="root" styleClass="DefaultSpacing" stylesheets="@StyleSheets/Containers.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.QuickItemsSettingsController">
+<VBox fx:id="root" styleClass="DefaultSpacing" stylesheets="@StyleSheets/Containers.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.QuickItemsSettingsDialogController">
    <children>
       <HBox styleClass="DefaultSpacing">
          <children>
