@@ -19,7 +19,7 @@
             <HBox styleClass="DefaultSpacing">
                <children>
                   <Button fx:id="newInvoiceButton" mnemonicParsing="false" onAction="#newInvoiceButtonClicked" styleClass="big-button" text="New Invoice" />
-                  <TextField fx:id="findInvoiceNumberTextField" onAction="#invoiceNumberEntered" onMouseClicked="#invoiceNumberTextFieldClicked" promptText="Invoice #" styleClass="big-text-field" />
+                  <TextField fx:id="findInvoiceNumberTextField" onAction="#openInvoice" onMouseClicked="#invoiceNumberTextFieldClicked" promptText="Invoice #" styleClass="big-text-field" />
                </children>
             </HBox>
             <Separator prefWidth="200.0" />

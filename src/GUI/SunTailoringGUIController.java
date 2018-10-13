@@ -76,8 +76,11 @@ public class SunTailoringGUIController implements Initializable {
     @FXML public TableColumn<Item, Double> itemsTableUnitPriceCol;
     @FXML public TableColumn<Item, Double> itemsTablePriceCol;
 
+    private final InvoiceStore invoiceStore = InvoiceStore.getInstance();
+
     private final Invoice activeInvoice;
     private final AddressBook addressBook;
+
 
     public SunTailoringGUIController() {
         activeInvoice = Invoice.createEmptyInvoice(generateInvoiceNumber());
@@ -96,19 +99,14 @@ public class SunTailoringGUIController implements Initializable {
         this.addressBook = addressBook;
     }
 
-    public void invoiceNumberEntered() {
+    public void openInvoice() {
         String invoiceNumber = findInvoiceNumberTextField.getText();
-        File savedDatFile = new File(SAVE_DIR_PATH + "/" + invoiceNumber + ".dat");
-        if (savedDatFile.exists()) {
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(savedDatFile))) {
-                Invoice deserializedInvoice = Invoice.deserialize(ois);
-                activeInvoice.cloneFrom(deserializedInvoice);
-                invoiceNumberTextField.setStyle("-fx-control-inner-background: pink");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        final Invoice invoice = invoiceStore.get(invoiceNumber);
+        if (invoice != null) {
+            activeInvoice.cloneFrom(invoice);
+            invoiceNumberTextField.setStyle("-fx-control-inner-background: lightpink");
         } else {
-            System.err.println("Invoice " + invoiceNumber + " does not exist!");
+            GuiUtils.showInfoAlertAndWait(invoiceNumber + " does not exist");
         }
     }
 
@@ -119,7 +117,7 @@ public class SunTailoringGUIController implements Initializable {
     public void newInvoiceButtonClicked() {
         String invoiceNumber = generateInvoiceNumber();
         activeInvoice.cloneFrom(Invoice.createEmptyInvoice(invoiceNumber));
-        invoiceNumberTextField.setStyle("-fx-control-inner-background: green");
+        invoiceNumberTextField.setStyle("-fx-control-inner-background: lightgreen");
     }
 
     private String generateInvoiceNumber() {
@@ -128,7 +126,7 @@ public class SunTailoringGUIController implements Initializable {
         int invoiceNum = 0;
         String invoiceNumber = base + String.format("%03d", invoiceNum);
         // todo: change to search invoice store
-        while ((new File(SAVE_DIR_PATH + "/" + invoiceNumber + ".dat")).exists()) {
+        while (invoiceStore.contains(invoiceNumber)) {
             invoiceNum++;
             if (invoiceNum > 999) {
                 return "InvalidInvoiceNumber";
@@ -139,24 +137,7 @@ public class SunTailoringGUIController implements Initializable {
     }
 
     public void saveActiveInvoice() {
-        try {
-            GuiUtils.createDirectoryIfNecessary(SAVE_DIR_PATH);
-
-            File outputFile = new File(SAVE_DIR_PATH + "/" + activeInvoice.getInvoiceNumber() + ".dat");
-            try (ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream(outputFile))) {
-                activeInvoice.serialize(fos);
-            }
-
-            GuiUtils.showInfoAlertAndWait("Saved invoice file " + outputFile.getPath());
-
-            // add customer to address book if necessary
-            final CustomerInfo customerInfo = activeInvoice.getCustomerInfo();
-            addressBook.add(customerInfo.copy());
-
-        } catch (IOException e) {
-            System.err.println("Save invoice failed.");
-            e.printStackTrace();
-        }
+        invoiceStore.save(activeInvoice);
     }
 
     @SuppressWarnings("unchecked")
@@ -173,7 +154,7 @@ public class SunTailoringGUIController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        invoiceNumberTextField.setStyle("-fx-control-inner-background: green");
+        invoiceNumberTextField.setStyle("-fx-control-inner-background: lightgreen");
 
         rootPane.setOnKeyPressed(keyEvent -> {
             if (KEY_COMBO_CTRL_S.match(keyEvent)) {

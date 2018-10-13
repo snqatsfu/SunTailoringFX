@@ -153,6 +153,18 @@ public class Invoice implements Serializable {
         pickedUp.setValue(otherInvoice.getPickedUp());
     }
 
+    public Invoice copy() {
+        return new Invoice(getInvoiceNumber(),
+                getInvoiceDate(),
+                getDueDate(),
+                getCustomerInfo(),
+                getItems(),
+                getCredit(),
+                getPaid(),
+                getDone(),
+                getPickedUp());
+    }
+
     public String getInvoiceNumber() {
         return invoiceNumber.get();
     }
