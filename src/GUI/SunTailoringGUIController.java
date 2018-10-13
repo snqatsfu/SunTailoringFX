@@ -34,47 +34,80 @@ import static GUI.GuiUtils.*;
 
 public class SunTailoringGUIController implements Initializable {
 
-    @FXML public BorderPane rootPane;
+    @FXML
+    public BorderPane rootPane;
 
-    @FXML public MenuItem quickJacketsSettingsMenuItem;
-    @FXML public MenuItem quickPantsSettingsMenuItem;
-    @FXML public MenuItem quickShirtsSettingsMenuItem;
-    @FXML public MenuItem quickDryCleansSettingsMenuItem;
-    @FXML public MenuItem quickOthersSettingsMenuItem;
+    @FXML
+    public MenuItem quickJacketsSettingsMenuItem;
+    @FXML
+    public MenuItem quickPantsSettingsMenuItem;
+    @FXML
+    public MenuItem quickShirtsSettingsMenuItem;
+    @FXML
+    public MenuItem quickDryCleansSettingsMenuItem;
+    @FXML
+    public MenuItem quickOthersSettingsMenuItem;
 
-    @FXML private TextField findInvoiceNumberTextField;
-    @FXML private Button newInvoiceButton;
+    @FXML
+    private TextField findInvoiceNumberTextField;
+    @FXML
+    private Button newInvoiceButton;
 
-    @FXML private TextField invoiceNumberTextField;
-    @FXML private DatePicker invoiceDatePicker;
-    @FXML private DatePicker dueDatePicker;
-    @FXML private CheckBox paidCheckBox;
-    @FXML private CheckBox doneCheckBox;
-    @FXML private CheckBox pickedUpCheckBox;
+    @FXML
+    private TextField invoiceNumberTextField;
+    @FXML
+    private DatePicker invoiceDatePicker;
+    @FXML
+    private DatePicker dueDatePicker;
+    @FXML
+    private CheckBox paidCheckBox;
+    @FXML
+    private CheckBox doneCheckBox;
+    @FXML
+    private CheckBox pickedUpCheckBox;
 
-    @FXML public ImageView addressBookImageButton;
-    @FXML public TextField customerNameTextField;
-    @FXML public TextField customerPhoneTextField;
-    @FXML public TextField customerEmailTextField;
+    @FXML
+    public ImageView addressBookImageButton;
+    @FXML
+    public TextField customerNameTextField;
+    @FXML
+    public TextField customerPhoneTextField;
+    @FXML
+    public TextField customerEmailTextField;
 
-    @FXML public Label subtotalLabel;
-    @FXML public Label taxLabel;
-    @FXML public Label totalLabel;
-    @FXML public TextField creditTextField;
+    @FXML
+    public Label subtotalLabel;
+    @FXML
+    public Label taxLabel;
+    @FXML
+    public Label totalLabel;
+    @FXML
+    public TextField creditTextField;
 
-    @FXML public Button saveInvoiceButton;
+    @FXML
+    public Button saveInvoiceButton;
 
-    @FXML public ComboBox<Item> quickJacketComboBox;
-    @FXML public ComboBox<Item> quickPantComboBox;
-    @FXML public ComboBox<Item> quickShirtComboBox;
-    @FXML public ComboBox<Item> quickDryCleanComboBox;
-    @FXML public ComboBox<Item> quickOtherComboBox;
+    @FXML
+    public ComboBox<Item> quickJacketComboBox;
+    @FXML
+    public ComboBox<Item> quickPantComboBox;
+    @FXML
+    public ComboBox<Item> quickShirtComboBox;
+    @FXML
+    public ComboBox<Item> quickDryCleanComboBox;
+    @FXML
+    public ComboBox<Item> quickOtherComboBox;
 
-    @FXML public TableView<Item> itemsTable;
-    @FXML public TableColumn<Item, String> itemsTableNameCol;
-    @FXML public TableColumn<Item, Integer> itemsTableQuantityCol;
-    @FXML public TableColumn<Item, Double> itemsTableUnitPriceCol;
-    @FXML public TableColumn<Item, Double> itemsTablePriceCol;
+    @FXML
+    public TableView<Item> itemsTable;
+    @FXML
+    public TableColumn<Item, String> itemsTableNameCol;
+    @FXML
+    public TableColumn<Item, Integer> itemsTableQuantityCol;
+    @FXML
+    public TableColumn<Item, Double> itemsTableUnitPriceCol;
+    @FXML
+    public TableColumn<Item, Double> itemsTablePriceCol;
 
     private final InvoiceStore invoiceStore = InvoiceStore.getInstance();
 
@@ -89,7 +122,8 @@ public class SunTailoringGUIController implements Initializable {
         if (ADDRESS_BOOK_DAT_FILE.exists()) {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ADDRESS_BOOK_DAT_FILE))) {
                 addressBook = AddressBook.deserialize(ois);
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
         }
 
         if (addressBook == null) {
@@ -159,6 +193,8 @@ public class SunTailoringGUIController implements Initializable {
         rootPane.setOnKeyPressed(keyEvent -> {
             if (KEY_COMBO_CTRL_S.match(keyEvent)) {
                 saveActiveInvoice();
+            } else if (KEY_COMBO_CTRL_F.match(keyEvent)) {
+                showInvoiceStoreDialog();
             }
         });
 
@@ -323,5 +359,23 @@ public class SunTailoringGUIController implements Initializable {
             quickItems = new QuickItems(new ArrayList<>());
         }
         return quickItems;
+    }
+
+    public void showInvoiceStoreDialog() {
+        try {
+            final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("InvoiceStoreDialog.fxml"));
+            final Parent root = fxmlLoader.load();
+            final InvoiceStoreDialogController controller = fxmlLoader.getController();
+            controller.setInvoiceStore(invoiceStore);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Invoice Store");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            GuiUtils.showWarningAlertAndWait("Failed loading invoice store dialog");
+        }
     }
 }

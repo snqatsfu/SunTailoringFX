@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import java.lang.String?>
+<?import java.net.URL?>
+<VBox fx:id="root" styleClass="DefaultSpacing" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.InvoiceStoreDialogController">
+   <children>
+      <VBox>
+         <children>
+            <HBox styleClass="DefaultSpacing">
+               <children>
+                  <Label text="Customer" />
+                  <TextField fx:id="searchByCustomerTextField" />
+               </children>
+            </HBox>
+         </children>
+         <styleClass>
+            <String fx:value="DefaultSpacing" />
+            <String fx:value="medium-text-field" />
+         </styleClass>
+      </VBox>
+      <TableView fx:id="invoiceStoreTable">
+        <columns>
+          <TableColumn fx:id="invoiceNumberCol" minWidth="100.0" prefWidth="75.0" text="Invoice Number" />
+          <TableColumn fx:id="invoiceDateCol" minWidth="100.0" prefWidth="75.0" text="Invoice Date" />
+            <TableColumn fx:id="dueDateCol" minWidth="100.0" prefWidth="75.0" text="Due Date" />
+            <TableColumn fx:id="customerInfoCol" minWidth="400.0" prefWidth="75.0" text="Customer" />
+            <TableColumn fx:id="itemsCol" minWidth="500.0" prefWidth="75.0" text="Items" />
+            <TableColumn fx:id="totalCol" prefWidth="70.0" text="Total" />
+            <TableColumn fx:id="paidCol" prefWidth="50.0" text="Paid" />
+            <TableColumn fx:id="doneCol" prefWidth="50.0" text="Done" />
+            <TableColumn fx:id="pickedUpCol" prefWidth="70.0" text="Picked Up" />
+        </columns>
+      </TableView>
+   </children>
+   <stylesheets>
+      <URL value="@StyleSheets/Containers.css" />
+      <URL value="@StyleSheets/TextControls.css" />
+   </stylesheets>
+</VBox>

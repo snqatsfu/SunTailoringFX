@@ -29,6 +29,7 @@ public class GuiUtils {
     }
 
     public static final KeyCombination KEY_COMBO_CTRL_S = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
+    public static final KeyCombination KEY_COMBO_CTRL_F = new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
 
     static final Path SAVE_DIR_PATH = Paths.get("Save");
     static final Path SETTINGS_DIR_PATH = Paths.get("Settings");

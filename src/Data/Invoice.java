@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * TODO: CLASS JAVA DOC HERE
  */
-public class Invoice implements Serializable {
+public class Invoice implements Serializable, Comparable<Invoice> {
 
     private static final long serialVersionUID = 1L;
 
@@ -165,6 +165,19 @@ public class Invoice implements Serializable {
                 getPickedUp());
     }
 
+    public String getItemsAsString() {
+        String retVal = "";
+        for (Item item : getItems()) {
+            retVal += item.shortSummary() + "; ";
+        }
+        retVal = retVal.trim();
+        if (retVal.endsWith(";")) {
+            retVal = retVal.substring(0, retVal.length() - 1);
+        }
+        return retVal;
+    }
+
+
     public String getInvoiceNumber() {
         return invoiceNumber.get();
     }
@@ -273,4 +286,8 @@ public class Invoice implements Serializable {
         return total;
     }
 
+    @Override
+    public int compareTo(Invoice o) {
+        return this.getInvoiceNumber().compareTo(o.getInvoiceNumber());
+    }
 }

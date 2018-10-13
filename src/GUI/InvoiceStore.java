@@ -1,11 +1,14 @@
 package GUI;
 
 import Data.Invoice;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static GUI.GuiUtils.SAVE_DIR_PATH;
 
@@ -23,7 +26,7 @@ public class InvoiceStore {
     private final Map<String, Invoice> invoiceMap;
 
     private InvoiceStore() {
-        invoiceMap = new HashMap<>();
+        invoiceMap = new TreeMap<>();
 
         try {
             GuiUtils.createDirectoryIfNecessary(GuiUtils.SAVE_DIR_PATH);
@@ -64,5 +67,8 @@ public class InvoiceStore {
         return invoiceMap.size();
     }
 
+    public ObservableList<Invoice> all() {
+        return FXCollections.observableList(new ArrayList<>(invoiceMap.values()));
+    }
 
 }

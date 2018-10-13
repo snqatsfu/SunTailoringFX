@@ -76,4 +76,8 @@ public class Item {
     public String toString() {
         return getName();
     }
+
+    public String shortSummary() {
+        return getName() + " x " + getQuantity();
+    }
 }

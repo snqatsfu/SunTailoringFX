@@ -26,8 +26,8 @@ public class CustomerInfo implements Comparable<CustomerInfo> {
     @Override
     public String toString() {
         return getName()
-                + (getPhone().isEmpty() ? " ; " + getPhone() : "")
-                + (getEmail().isEmpty() ? " ; " + getEmail() : "");
+                + (!getPhone().isEmpty() ? " ; " + getPhone() : "")
+                + (!getEmail().isEmpty() ? " ; " + getEmail() : "");
     }
 
     public static CustomerInfo parse(String customerInfoString) {
