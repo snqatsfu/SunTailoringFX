@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.util.converter.CurrencyStringConverter;
@@ -52,7 +53,10 @@ public class InvoiceStoreDialogController implements Initializable {
         itemsCol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getItemsAsString()));
         totalCol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(new CurrencyStringConverter().toString(cellData.getValue().getTotal())));
         paidCol.setCellValueFactory(new PropertyValueFactory<>("paid"));
+        paidCol.setCellFactory(column -> new CheckBoxTableCell<>());
         doneCol.setCellValueFactory(new PropertyValueFactory<>("done"));
+        doneCol.setCellFactory(column -> new CheckBoxTableCell<>());
         pickedUpCol.setCellValueFactory(new PropertyValueFactory<>("pickedUp"));
+        pickedUpCol.setCellFactory(column -> new CheckBoxTableCell<>());
     }
 }
