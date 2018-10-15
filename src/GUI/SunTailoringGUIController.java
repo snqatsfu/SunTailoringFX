@@ -172,6 +172,7 @@ public class SunTailoringGUIController implements Initializable {
 
     public void saveActiveInvoice() {
         invoiceStore.save(activeInvoice);
+        GuiUtils.showInfoAlertAndWait("Saved Invoice " + activeInvoice.getInvoiceNumber());
     }
 
     @SuppressWarnings("unchecked")
