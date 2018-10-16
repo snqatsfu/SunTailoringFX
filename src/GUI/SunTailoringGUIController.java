@@ -368,6 +368,12 @@ public class SunTailoringGUIController implements Initializable {
             final Parent root = fxmlLoader.load();
             final InvoiceStoreDialogController controller = fxmlLoader.getController();
             controller.setInvoiceStore(invoiceStore);
+            controller.selectedInvoiceProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    activeInvoice.cloneFrom(newValue);
+                    invoiceNumberTextField.setStyle("-fx-control-inner-background: lightpink");
+                }
+            });
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);

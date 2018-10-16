@@ -12,7 +12,8 @@
             <HBox styleClass="DefaultSpacing">
                <children>
                   <Label text="Customer" />
-                  <TextField fx:id="searchByCustomerTextField" />
+                  <TextField fx:id="searchByCustomerTextField"/>
+                  <CheckBox fx:id="notDoneOnlyCheckBox" mnemonicParsing="false" text="Display Only Not Done" />
                </children>
             </HBox>
          </children>

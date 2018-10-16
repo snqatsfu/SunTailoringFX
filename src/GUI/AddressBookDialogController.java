@@ -67,8 +67,6 @@ public class AddressBookDialogController implements Initializable {
             TableRow<CustomerInfo> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    final CustomerInfo customerInfo = row.getItem();
-                    System.out.println(customerInfo.getName());
                     selectedCustomerInfo.setValue(row.getItem());
                     final Stage stage = (Stage) addressBookTable.getScene().getWindow();
                     stage.close();
@@ -89,16 +87,8 @@ public class AddressBookDialogController implements Initializable {
         });
 
         searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredList.setPredicate(customerInfo -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-
-                final String searchText = newValue.toLowerCase();
-                return customerInfo.getName().toLowerCase().contains(searchText) ||
-                        customerInfo.getPhone().toLowerCase().contains(searchText) ||
-                        customerInfo.getEmail().toLowerCase().contains(searchText);
-            });
+            filteredList.setPredicate(customerInfo ->
+                    newValue == null || newValue.isEmpty() || customerInfo.containsText(newValue));
         });
     }
 }

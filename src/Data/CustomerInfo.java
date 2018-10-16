@@ -56,6 +56,13 @@ public class CustomerInfo implements Comparable<CustomerInfo> {
         email.setValue(other.getEmail());
     }
 
+    public boolean containsText(String text) {
+        final String searchString = text.toLowerCase();
+        return getName().toLowerCase().contains(searchString) ||
+                getPhone().toLowerCase().contains(searchString) ||
+                getEmail().toLowerCase().contains(searchString);
+    }
+
     public CustomerInfo copy() {
         return new CustomerInfo(getName(), getPhone(), getEmail());
     }
