@@ -111,7 +111,9 @@ public class InvoiceStoreDialogController implements Initializable {
 
         invoiceNumberCol.setCellValueFactory(new PropertyValueFactory<>("invoiceNumber"));
         invoiceDateCol.setCellValueFactory(new PropertyValueFactory<>("invoiceDate"));
+        invoiceDateCol.setCellFactory(column -> new FormattedLocalDateTableCell());
         dueDateCol.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
+        dueDateCol.setCellFactory(column -> new FormattedLocalDateTableCell());
         customerInfoCol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getCustomerInfo().toString()));
         itemsCol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getItemsAsString()));
         totalCol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(new CurrencyStringConverter().toString(cellData.getValue().getTotal())));
@@ -206,5 +208,17 @@ public class InvoiceStoreDialogController implements Initializable {
     public void filter(ActionEvent actionEvent) {
         actionEvent.consume();
         filteredInvoices.setPredicate(getAllPredicates());
+    }
+
+    private class FormattedLocalDateTableCell extends TableCell<Invoice, LocalDate> {
+        private final LocalDateConverter formatter = new LocalDateConverter();
+
+        @Override
+        protected void updateItem(LocalDate localDate, boolean empty) {
+            super.updateItem(localDate, empty);
+            if (localDate != null && !empty) {
+                setText(formatter.toString(localDate));
+            }
+        }
     }
 }

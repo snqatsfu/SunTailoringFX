@@ -201,7 +201,9 @@ public class SunTailoringGUIController implements Initializable {
 
         invoiceNumberTextField.textProperty().bindBidirectional(activeInvoice.invoiceNumberProperty());
         invoiceDatePicker.valueProperty().bindBidirectional(activeInvoice.invoiceDateProperty());
+        invoiceDatePicker.setConverter(new LocalDateConverter());
         dueDatePicker.valueProperty().bindBidirectional(activeInvoice.dueDateProperty());
+        dueDatePicker.setConverter(new LocalDateConverter());
 
         doneCheckBox.selectedProperty().bindBidirectional(activeInvoice.doneProperty());
         paidCheckBox.selectedProperty().bindBidirectional(activeInvoice.paidProperty());
