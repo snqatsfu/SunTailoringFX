@@ -2,42 +2,82 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import java.lang.String?>
+<?import java.lang.*?>
 <?import java.net.URL?>
 <VBox fx:id="root" styleClass="DefaultSpacing" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.InvoiceStoreDialogController">
    <children>
-      <VBox>
+      <HBox styleClass="DefaultSpacing">
          <children>
-            <HBox styleClass="DefaultSpacing">
+            <VBox>
                <children>
-                  <Label text="Customer" />
-                  <TextField fx:id="searchByCustomerTextField" />
-                  <CheckBox fx:id="notDoneOnlyCheckBox" mnemonicParsing="false" text="Display Only Not Done" />
-                  <Region HBox.hgrow="ALWAYS" />
-                  <GridPane styleClass="DefaultSpacing">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                  <HBox>
                      <children>
-                        <Label text="# Invoices" />
-                        <Label text="Total $" GridPane.rowIndex="1" />
-                        <Label fx:id="numInvoicesLabel" GridPane.columnIndex="1" />
-                        <Label fx:id="invoicesTotalLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Customer" />
+                        <TextField fx:id="searchByCustomerTextField" />
+                        <CheckBox fx:id="notDoneOnlyCheckBox" mnemonicParsing="false" text="Display Only Not Done" />
                      </children>
-                  </GridPane>
+                     <styleClass>
+                        <String fx:value="DefaultSpacing" />
+                        <String fx:value="medium-text-field" />
+                     </styleClass>
+                  </HBox>
+                  <HBox layoutX="15.0" layoutY="15.0" styleClass="DefaultSpacing">
+                     <children>
+                        <Label text="Due Date" />
+                        <ToggleButton fx:id="dueTodayToggleButton" mnemonicParsing="false" onAction="#filter" text="Today">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="dueDateToggleGroup" />
+                           </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton fx:id="dueTodayAndTomorrowToggleButton" layoutX="76.0" layoutY="15.0" mnemonicParsing="false" onAction="#filter" text="Today or Tomorrow" toggleGroup="$dueDateToggleGroup" />
+                        <ToggleButton fx:id="due3DaysToggleButton" layoutX="135.0" layoutY="15.0" mnemonicParsing="false" onAction="#filter" text="3 Days" toggleGroup="$dueDateToggleGroup" />
+                        <ToggleButton fx:id="due1WeekToggleButton" layoutX="287.0" layoutY="15.0" mnemonicParsing="false" onAction="#filter" text="1 Week" toggleGroup="$dueDateToggleGroup" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="15.0" layoutY="60.0" styleClass="DefaultSpacing">
+                     <children>
+                        <Label text="In Date" />
+                        <ToggleButton fx:id="inTodayToggleButton" mnemonicParsing="false" onAction="#filter" text="Today">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="inDateToggleGroup" />
+                           </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton fx:id="inTodayYesterdayToggleButton" layoutX="76.0" layoutY="15.0" mnemonicParsing="false" onAction="#filter" text="Today or Yesterday" toggleGroup="$inDateToggleGroup" />
+                        <ToggleButton fx:id="in3DaysToggleButton" layoutX="135.0" layoutY="15.0" mnemonicParsing="false" onAction="#filter" text="3 Days" toggleGroup="$inDateToggleGroup" />
+                        <ToggleButton fx:id="in1WeekToggleButton" layoutX="287.0" layoutY="15.0" mnemonicParsing="false" onAction="#filter" text="1 Week" toggleGroup="$inDateToggleGroup" />
+                        <ToggleButton fx:id="in2WeeksToggleButton" layoutX="321.0" layoutY="15.0" mnemonicParsing="false" onAction="#filter" text="2 Weeks" toggleGroup="$inDateToggleGroup" />
+                        <ToggleButton fx:id="in1MonthToggleButton" layoutX="388.0" layoutY="15.0" mnemonicParsing="false" onAction="#filter" text="1 Month" toggleGroup="$inDateToggleGroup" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+               <styleClass>
+                  <String fx:value="DefaultSpacing" />
+                  <String fx:value="medium-text-field" />
+               </styleClass>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label text="# Invoices" />
+                  <Label text="Total $" GridPane.rowIndex="1" />
+                  <Label fx:id="numInvoicesLabel" GridPane.columnIndex="1" />
+                  <Label fx:id="invoicesTotalLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               </children>
+               <styleClass>
+                  <String fx:value="DefaultSpacing" />
+                  <String fx:value="medium-text-field" />
+               </styleClass>
+            </GridPane>
          </children>
-         <styleClass>
-            <String fx:value="DefaultSpacing" />
-            <String fx:value="medium-text-field" />
-         </styleClass>
-      </VBox>
+      </HBox>
       <TableView fx:id="invoiceStoreTable">
         <columns>
           <TableColumn fx:id="invoiceNumberCol" minWidth="100.0" prefWidth="75.0" text="Invoice Number" />

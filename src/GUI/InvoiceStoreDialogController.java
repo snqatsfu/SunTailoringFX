@@ -7,6 +7,7 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -29,6 +30,17 @@ public class InvoiceStoreDialogController implements Initializable {
     public VBox root;
     @FXML
     public TextField searchByCustomerTextField;
+    @FXML
+    public ToggleGroup dueDateToggleGroup;
+    @FXML
+    public ToggleButton dueTodayToggleButton;
+    @FXML
+    public ToggleButton dueTodayAndTomorrowToggleButton;
+    @FXML
+    public ToggleButton due3DaysToggleButton;
+    @FXML
+    public ToggleButton due1WeekToggleButton;
+
     @FXML
     public TableView<Invoice> invoiceStoreTable;
     @FXML
@@ -55,6 +67,14 @@ public class InvoiceStoreDialogController implements Initializable {
     public Label numInvoicesLabel;
     @FXML
     public Label invoicesTotalLabel;
+    public ToggleGroup inDateToggleGroup;
+    public ToggleButton inTodayToggleButton;
+    public ToggleButton inTodayYesterdayToggleButton;
+    public ToggleButton in3DaysToggleButton;
+    public ToggleButton in1WeekToggleButton;
+    public ToggleButton in2WeeksToggleButton;
+    public ToggleButton in1MonthToggleButton;
+
 
     private InvoiceStore invoiceStore;
     private FilteredList<Invoice> filteredInvoices;
@@ -125,7 +145,9 @@ public class InvoiceStoreDialogController implements Initializable {
 
     private Predicate<Invoice> getAllPredicates() {
         return getCustomerTextPredicate()
-                .and(getNotDoneOnlyPredicate());
+                .and(getNotDoneOnlyPredicate())
+                .and(getDueDatePredicate())
+                .and(getInvoiceDatePredicate());
     }
 
     private Predicate<Invoice> getCustomerTextPredicate() {
@@ -138,7 +160,51 @@ public class InvoiceStoreDialogController implements Initializable {
         return invoice -> !notDoneOnly || !invoice.getDone();
     }
 
+    private Predicate<Invoice> getDueDatePredicate() {
+        final Toggle selectedToggle = dueDateToggleGroup.getSelectedToggle();
+        if (selectedToggle != null) {
+            final LocalDate today = LocalDate.now();
+            if (selectedToggle == dueTodayToggleButton) {
+                return invoice -> invoice.getDueDate().equals(today);
+            } else if (selectedToggle == dueTodayAndTomorrowToggleButton) {
+                // todo: skip weekends
+                return invoice -> !(invoice.getDueDate().isBefore(today) || invoice.getDueDate().isAfter(today.plusDays(1)));
+            } else if (selectedToggle == due3DaysToggleButton) {
+                return invoice -> !(invoice.getDueDate().isBefore(today) || invoice.getDueDate().isAfter(today.plusDays(3)));
+            } else if (selectedToggle == due1WeekToggleButton) {
+                return invoice -> !(invoice.getDueDate().isBefore(today) || invoice.getDueDate().isAfter(today.plusWeeks(1)));
+            }
+        }
+        return invoice -> true;
+    }
+
+    private Predicate<Invoice> getInvoiceDatePredicate() {
+        final Toggle selectedToggle = inDateToggleGroup.getSelectedToggle();
+        if (selectedToggle != null) {
+            final LocalDate today = LocalDate.now();
+            if (selectedToggle == inTodayToggleButton) {
+                return invoice -> invoice.getInvoiceDate().equals(today);
+            } else if (selectedToggle == inTodayYesterdayToggleButton) {
+                return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusDays(1)) || invoice.getInvoiceDate().isAfter(today));
+            } else if (selectedToggle == in3DaysToggleButton) {
+                return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusDays(3)) || invoice.getInvoiceDate().isAfter(today));
+            } else if (selectedToggle == in1WeekToggleButton) {
+                return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusWeeks(1)) || invoice.getInvoiceDate().isAfter(today));
+            } else if (selectedToggle == in2WeeksToggleButton) {
+                return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusWeeks(2)) || invoice.getInvoiceDate().isAfter(today));
+            } else if (selectedToggle == in1MonthToggleButton) {
+                return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusMonths(1)) || invoice.getInvoiceDate().isAfter(today));
+            }
+        }
+        return invoice -> true;
+    }
+
     public ReadOnlyObjectWrapper<Invoice> selectedInvoiceProperty() {
         return selectedInvoice;
+    }
+
+    public void filter(ActionEvent actionEvent) {
+        actionEvent.consume();
+        filteredInvoices.setPredicate(getAllPredicates());
     }
 }
