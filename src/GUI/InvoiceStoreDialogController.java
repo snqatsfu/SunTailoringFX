@@ -1,8 +1,10 @@
 package GUI;
 
 import Data.Invoice;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
@@ -19,6 +21,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class InvoiceStoreDialogController implements Initializable {
 
@@ -48,6 +51,10 @@ public class InvoiceStoreDialogController implements Initializable {
     public TableColumn<Invoice, Boolean> pickedUpCol;
     @FXML
     public CheckBox notDoneOnlyCheckBox;
+    @FXML
+    public Label numInvoicesLabel;
+    @FXML
+    public Label invoicesTotalLabel;
 
     private InvoiceStore invoiceStore;
     private FilteredList<Invoice> filteredInvoices;
@@ -63,6 +70,12 @@ public class InvoiceStoreDialogController implements Initializable {
         SortedList<Invoice> sortedList = new SortedList<>(filteredInvoices);
         sortedList.comparatorProperty().bind(invoiceStoreTable.comparatorProperty());
         invoiceStoreTable.setItems(sortedList);
+
+        final ObservableList<Invoice> tableItems = invoiceStoreTable.getItems();
+        numInvoicesLabel.textProperty().bind(Bindings.size(tableItems).asString());
+        invoicesTotalLabel.textProperty().bind(Bindings.createDoubleBinding(() ->
+                        tableItems.stream().collect(Collectors.summingDouble(Invoice::getTotal)),
+                tableItems).asString());
     }
 
     @Override
