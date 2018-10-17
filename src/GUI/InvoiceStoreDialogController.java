@@ -218,6 +218,9 @@ public class InvoiceStoreDialogController implements Initializable {
             super.updateItem(localDate, empty);
             if (localDate != null && !empty) {
                 setText(formatter.toString(localDate));
+            } else {
+                setText(null);
+                setStyle("");
             }
         }
     }
