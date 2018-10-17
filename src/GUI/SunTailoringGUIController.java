@@ -147,7 +147,6 @@ public class SunTailoringGUIController implements Initializable {
 
             if (activeInvoiceState != oldState) {
                 updateInvoiceNumberTextFieldBackgroundColor();
-                System.out.println("set state to " + activeInvoiceState);
             }
         }
     }
