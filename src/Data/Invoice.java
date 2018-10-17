@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * TODO: CLASS JAVA DOC HERE
@@ -145,7 +146,7 @@ public class Invoice implements Serializable, Comparable<Invoice> {
 
         ObservableList<Item> itemsObservableList = getItems();
         itemsObservableList.clear();
-        itemsObservableList.addAll(otherInvoice.getItems());
+        itemsObservableList.addAll(otherInvoice.getItems().stream().map(Item::copy).collect(Collectors.toList()));
 
         credit.setValue(otherInvoice.getCredit());
         paid.setValue(otherInvoice.getPaid());
@@ -157,12 +158,35 @@ public class Invoice implements Serializable, Comparable<Invoice> {
         return new Invoice(getInvoiceNumber(),
                 getInvoiceDate(),
                 getDueDate(),
-                getCustomerInfo(),
-                getItems(),
+                getCustomerInfo().copy(),
+                getItems().stream().map(Item::copy).collect(Collectors.toList()),
                 getCredit(),
                 getPaid(),
                 getDone(),
                 getPickedUp());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Invoice invoice = (Invoice) o;
+
+        if (!getInvoiceNumber().equals(invoice.getInvoiceNumber())) return false;
+        if (!getInvoiceDate().equals(invoice.getInvoiceDate())) return false;
+        if (!getDueDate().equals(invoice.getDueDate())) return false;
+        if (!getCustomerInfo().equals(invoice.getCustomerInfo())) return false;
+        if (!getItems().equals(invoice.getItems())) return false;
+        if (!(getCredit() == invoice.getCredit())) return false;
+        if (!(getPaid() == invoice.getPaid())) return false;
+        if (!(getDone() == invoice.getDone())) return false;
+        return getPickedUp() == invoice.getPickedUp();
+    }
+
+    @Override
+    public int hashCode() {
+        return getInvoiceNumber().hashCode();
     }
 
     public String getItemsAsString() {

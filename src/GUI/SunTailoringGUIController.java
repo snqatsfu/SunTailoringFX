@@ -112,11 +112,61 @@ public class SunTailoringGUIController implements Initializable {
     private final InvoiceStore invoiceStore = InvoiceStore.getInstance();
 
     private final Invoice activeInvoice;
+    private Invoice baselineInvoice;
+    private ActiveInvoiceState activeInvoiceState;
     private final AddressBook addressBook;
 
+    private enum ActiveInvoiceState {
+        NEW,
+        EDITED,
+        SAVED
+    }
+
+    private void setActiveInvoiceState(ActiveInvoiceState newState) {
+        // any edit to a new invoice won't change the state to the EDITED state
+        ActiveInvoiceState oldState = activeInvoiceState;
+        switch (newState) {
+            case NEW: case SAVED:
+                activeInvoiceState = newState;
+                break;
+            case EDITED:
+                if (oldState != ActiveInvoiceState.NEW) {
+                    if (activeInvoice.equals(baselineInvoice)) {
+                        activeInvoiceState = ActiveInvoiceState.SAVED;
+                    } else {
+                        activeInvoiceState = newState;
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        updateInvoiceNumberTextFieldBackgroundColor();
+    }
+
+    private void updateInvoiceNumberTextFieldBackgroundColor() {
+        if (invoiceNumberTextField != null) {
+            switch (activeInvoiceState) {
+                case NEW:
+                    invoiceNumberTextField.setStyle("-fx-control-inner-background: lightgreen");
+                    break;
+                case EDITED:
+                    invoiceNumberTextField.setStyle("-fx-control-inner-background: lightpink");
+                    break;
+                case SAVED:
+                    invoiceNumberTextField.setStyle("-fx-control-inner-background: white");
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     public SunTailoringGUIController() {
         activeInvoice = Invoice.createEmptyInvoice(generateInvoiceNumber());
+        baselineInvoice = activeInvoice.copy();
+        activeInvoiceState = ActiveInvoiceState.NEW;
+        updateInvoiceNumberTextFieldBackgroundColor();
 
         AddressBook addressBook = null;
         if (ADDRESS_BOOK_DAT_FILE.exists()) {
@@ -138,7 +188,8 @@ public class SunTailoringGUIController implements Initializable {
         final Invoice invoice = invoiceStore.get(invoiceNumber);
         if (invoice != null) {
             activeInvoice.cloneFrom(invoice);
-            invoiceNumberTextField.setStyle("-fx-control-inner-background: lightpink");
+            baselineInvoice = activeInvoice.copy();
+            setActiveInvoiceState(ActiveInvoiceState.SAVED);
         } else {
             GuiUtils.showInfoAlertAndWait(invoiceNumber + " does not exist");
         }
@@ -151,7 +202,8 @@ public class SunTailoringGUIController implements Initializable {
     public void newInvoiceButtonClicked() {
         String invoiceNumber = generateInvoiceNumber();
         activeInvoice.cloneFrom(Invoice.createEmptyInvoice(invoiceNumber));
-        invoiceNumberTextField.setStyle("-fx-control-inner-background: lightgreen");
+        baselineInvoice = activeInvoice.copy();
+        setActiveInvoiceState(ActiveInvoiceState.NEW);
     }
 
     private String generateInvoiceNumber() {
@@ -172,6 +224,8 @@ public class SunTailoringGUIController implements Initializable {
 
     public void saveActiveInvoice() {
         invoiceStore.save(activeInvoice);
+        baselineInvoice = activeInvoice.copy();
+        setActiveInvoiceState(ActiveInvoiceState.SAVED);
         GuiUtils.showInfoAlertAndWait("Saved Invoice " + activeInvoice.getInvoiceNumber());
     }
 
@@ -183,6 +237,7 @@ public class SunTailoringGUIController implements Initializable {
             final Item selectedItem = ((ComboBox<Item>) source).getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
                 activeInvoice.getItems().add(selectedItem.copy());
+                setActiveInvoiceState(ActiveInvoiceState.EDITED);
             }
         }
     }
@@ -202,22 +257,31 @@ public class SunTailoringGUIController implements Initializable {
         invoiceNumberTextField.textProperty().bindBidirectional(activeInvoice.invoiceNumberProperty());
         invoiceDatePicker.valueProperty().bindBidirectional(activeInvoice.invoiceDateProperty());
         invoiceDatePicker.setConverter(new LocalDateConverter());
+        invoiceDatePicker.setOnAction(e -> setActiveInvoiceState(ActiveInvoiceState.EDITED));
         dueDatePicker.valueProperty().bindBidirectional(activeInvoice.dueDateProperty());
         dueDatePicker.setConverter(new LocalDateConverter());
+        dueDatePicker.setOnAction(e -> setActiveInvoiceState(ActiveInvoiceState.EDITED));
 
         doneCheckBox.selectedProperty().bindBidirectional(activeInvoice.doneProperty());
+        doneCheckBox.setOnAction(e -> setActiveInvoiceState(ActiveInvoiceState.EDITED));
         paidCheckBox.selectedProperty().bindBidirectional(activeInvoice.paidProperty());
+        paidCheckBox.setOnAction(e -> setActiveInvoiceState(ActiveInvoiceState.EDITED));
         pickedUpCheckBox.selectedProperty().bindBidirectional(activeInvoice.pickedUpProperty());
+        pickedUpCheckBox.setOnAction(e -> setActiveInvoiceState(ActiveInvoiceState.EDITED));
 
         CustomerInfo customerInfo = activeInvoice.getCustomerInfo();
         customerNameTextField.textProperty().bindBidirectional(customerInfo.nameProperty());
         customerPhoneTextField.textProperty().bindBidirectional(customerInfo.phoneProperty());
         customerEmailTextField.textProperty().bindBidirectional(customerInfo.emailProperty());
+        customerInfo.nameProperty().addListener((observable, oldValue, newValue) -> setActiveInvoiceState(ActiveInvoiceState.EDITED));
+        customerInfo.phoneProperty().addListener((observable, oldValue, newValue) -> setActiveInvoiceState(ActiveInvoiceState.EDITED));
+        customerInfo.emailProperty().addListener((observable, oldValue, newValue) -> setActiveInvoiceState(ActiveInvoiceState.EDITED));
 
         // use a formatter to commit on Enter / loss of focus
         TextFormatter<Number> formatter = new TextFormatter<>(new NumberStringConverter(), 0);
         creditTextField.setTextFormatter(formatter);
         formatter.valueProperty().bindBidirectional(activeInvoice.creditProperty());
+        activeInvoice.creditProperty().addListener(event -> setActiveInvoiceState(ActiveInvoiceState.EDITED));
 
         subtotalLabel.textProperty().bindBidirectional(activeInvoice.subtotalProperty(), new CurrencyStringConverter());
         taxLabel.textProperty().bindBidirectional(activeInvoice.taxProperty(), new CurrencyStringConverter());
@@ -234,16 +298,19 @@ public class SunTailoringGUIController implements Initializable {
         itemsTableNameCol.setOnEditCommit(event -> {
             Item selectedItem = itemsTable.getSelectionModel().getSelectedItem();
             selectedItem.setName(event.getNewValue());
+            setActiveInvoiceState(ActiveInvoiceState.EDITED);
         });
         itemsTableQuantityCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         itemsTableQuantityCol.setOnEditCommit(event -> {
             Item selectedItem = itemsTable.getSelectionModel().getSelectedItem();
             selectedItem.setQuantity(event.getNewValue());
+            setActiveInvoiceState(ActiveInvoiceState.EDITED);
         });
         itemsTableUnitPriceCol.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
         itemsTableUnitPriceCol.setOnEditCommit(event -> {
             Item selectedItem = itemsTable.getSelectionModel().getSelectedItem();
             selectedItem.setUnitPrice(event.getNewValue());
+            setActiveInvoiceState(ActiveInvoiceState.EDITED);
         });
 
         itemsTable.setOnKeyPressed(event -> {
@@ -251,6 +318,7 @@ public class SunTailoringGUIController implements Initializable {
             if (selectedIndex >= 0 && selectedIndex < activeInvoice.getItems().size()) {
                 if (event.getCode().equals(KeyCode.DELETE)) {
                     activeInvoice.getItems().remove(selectedIndex);
+                    setActiveInvoiceState(ActiveInvoiceState.EDITED);
                 }
             }
         });
@@ -272,6 +340,7 @@ public class SunTailoringGUIController implements Initializable {
             addressBookDialogController.selectedCustomerInfoProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     activeInvoice.getCustomerInfo().setFrom(newValue);
+                    setActiveInvoiceState(ActiveInvoiceState.EDITED);
                 }
             });
             Stage stage = new Stage();
@@ -373,7 +442,8 @@ public class SunTailoringGUIController implements Initializable {
             controller.selectedInvoiceProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     activeInvoice.cloneFrom(newValue);
-                    invoiceNumberTextField.setStyle("-fx-control-inner-background: lightpink");
+                    baselineInvoice = activeInvoice.copy();
+                    setActiveInvoiceState(ActiveInvoiceState.SAVED);
                 }
             });
 
