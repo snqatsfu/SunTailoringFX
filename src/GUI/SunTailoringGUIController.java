@@ -255,6 +255,8 @@ public class SunTailoringGUIController implements Initializable {
                 saveActiveInvoice();
             } else if (KEY_COMBO_CTRL_F.match(keyEvent)) {
                 showInvoiceStoreDialog();
+            } else if (KEY_COMBO_CTRL_N.match(keyEvent)) {
+                createNewInvoice();
             }
         });
 
