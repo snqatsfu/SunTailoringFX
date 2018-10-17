@@ -114,6 +114,7 @@ public class SunTailoringGUIController implements Initializable {
     private final Invoice activeInvoice;
     private Invoice baselineInvoice;
     private ActiveInvoiceState activeInvoiceState;
+    private boolean suspendActiveInvoiceStateUpdate;
     private final AddressBook addressBook;
 
     private enum ActiveInvoiceState {
@@ -123,25 +124,32 @@ public class SunTailoringGUIController implements Initializable {
     }
 
     private void setActiveInvoiceState(ActiveInvoiceState newState) {
-        // any edit to a new invoice won't change the state to the EDITED state
-        ActiveInvoiceState oldState = activeInvoiceState;
-        switch (newState) {
-            case NEW: case SAVED:
-                activeInvoiceState = newState;
-                break;
-            case EDITED:
-                if (oldState != ActiveInvoiceState.NEW) {
-                    if (activeInvoice.equals(baselineInvoice)) {
-                        activeInvoiceState = ActiveInvoiceState.SAVED;
-                    } else {
-                        activeInvoiceState = newState;
+        if (!suspendActiveInvoiceStateUpdate) {
+            ActiveInvoiceState oldState = activeInvoiceState;
+            switch (newState) {
+                case NEW:
+                case SAVED:
+                    activeInvoiceState = newState;
+                    break;
+                case EDITED:
+                    // any edit to a new invoice won't change the state to the EDITED state
+                    if (oldState != ActiveInvoiceState.NEW) {
+                        if (activeInvoice.equals(baselineInvoice)) {
+                            activeInvoiceState = ActiveInvoiceState.SAVED;
+                        } else {
+                            activeInvoiceState = newState;
+                        }
                     }
-                }
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
+            }
+
+            if (activeInvoiceState != oldState) {
+                updateInvoiceNumberTextFieldBackgroundColor();
+                System.out.println("set state to " + activeInvoiceState);
+            }
         }
-        updateInvoiceNumberTextFieldBackgroundColor();
     }
 
     private void updateInvoiceNumberTextFieldBackgroundColor() {
@@ -187,9 +195,7 @@ public class SunTailoringGUIController implements Initializable {
         String invoiceNumber = findInvoiceNumberTextField.getText();
         final Invoice invoice = invoiceStore.get(invoiceNumber);
         if (invoice != null) {
-            activeInvoice.cloneFrom(invoice);
-            baselineInvoice = activeInvoice.copy();
-            setActiveInvoiceState(ActiveInvoiceState.SAVED);
+            setActiveInvoice(invoice, ActiveInvoiceState.SAVED);
         } else {
             GuiUtils.showInfoAlertAndWait(invoiceNumber + " does not exist");
         }
@@ -199,11 +205,9 @@ public class SunTailoringGUIController implements Initializable {
 //        findInvoiceNumberTextField.setText("");
     }
 
-    public void newInvoiceButtonClicked() {
+    public void createNewInvoice() {
         String invoiceNumber = generateInvoiceNumber();
-        activeInvoice.cloneFrom(Invoice.createEmptyInvoice(invoiceNumber));
-        baselineInvoice = activeInvoice.copy();
-        setActiveInvoiceState(ActiveInvoiceState.NEW);
+        setActiveInvoice(Invoice.createEmptyInvoice(invoiceNumber), ActiveInvoiceState.NEW);
     }
 
     private String generateInvoiceNumber() {
@@ -441,9 +445,7 @@ public class SunTailoringGUIController implements Initializable {
             controller.setInvoiceStore(invoiceStore);
             controller.selectedInvoiceProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    activeInvoice.cloneFrom(newValue);
-                    baselineInvoice = activeInvoice.copy();
-                    setActiveInvoiceState(ActiveInvoiceState.SAVED);
+                    setActiveInvoice(newValue, ActiveInvoiceState.SAVED);
                 }
             });
 
@@ -456,5 +458,13 @@ public class SunTailoringGUIController implements Initializable {
         } catch (Exception e) {
             GuiUtils.showWarningAlertAndWait("Failed loading invoice store dialog");
         }
+    }
+
+    private void setActiveInvoice(Invoice target, ActiveInvoiceState state) {
+        suspendActiveInvoiceStateUpdate = true; // prevent unnecessary state updates
+        activeInvoice.cloneFrom(target);
+        baselineInvoice = activeInvoice.copy();
+        suspendActiveInvoiceStateUpdate = false;
+        setActiveInvoiceState(state);
     }
 }

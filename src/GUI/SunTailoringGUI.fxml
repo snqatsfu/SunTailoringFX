@@ -18,7 +18,7 @@
          <children>
             <HBox styleClass="DefaultSpacing">
                <children>
-                  <Button fx:id="newInvoiceButton" mnemonicParsing="false" onAction="#newInvoiceButtonClicked" styleClass="big-button" text="New Invoice" />
+                  <Button fx:id="newInvoiceButton" mnemonicParsing="false" onAction="#createNewInvoice" styleClass="big-button" text="New Invoice" />
                   <TextField fx:id="findInvoiceNumberTextField" onAction="#openInvoice" onMouseClicked="#invoiceNumberTextFieldClicked" promptText="Invoice #" styleClass="big-text-field" />
                </children>
             </HBox>
