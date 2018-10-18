@@ -34,7 +34,7 @@ public class GuiUtils {
 
     static final Path SAVE_DIR_PATH = Paths.get("Save");
     static final Path REPORT_DIR_PATH = Paths.get("InvoiceReports");
-    static final Path SETTINGS_DIR_PATH = Paths.get("Settings");
+    public static final Path SETTINGS_DIR_PATH = Paths.get("Settings");
     static final File ADDRESS_BOOK_DAT_FILE = new File(SETTINGS_DIR_PATH + "/" + "addressBook.dat");
     static File getQuickItemsDatFile(String name) {
         return new File(SETTINGS_DIR_PATH + "/" + "quick" + name.replaceAll(" ", "") + "Settings.dat");

@@ -1,6 +1,7 @@
 package GUI;
 
 import Data.*;
+import Utils.GmailSender;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -86,6 +87,8 @@ public class SunTailoringGUIController implements Initializable {
 
     @FXML
     public Button saveInvoiceButton;
+    @FXML
+    public Button mailInvoiceButton;
 
     @FXML
     public ComboBox<Item> quickJacketComboBox;
@@ -116,6 +119,15 @@ public class SunTailoringGUIController implements Initializable {
     private ActiveInvoiceState activeInvoiceState;
     private boolean suspendActiveInvoiceStateUpdate;
     private final AddressBook addressBook;
+
+    public void mailInvoice(ActionEvent actionEvent) {
+        try {
+            GmailSender.DEFAULT.sendMail("nathanzheng87@gmail.com", Collections.emptyList(), "test email subject", "test email", null);
+            System.out.println("send email success");
+        } catch (Exception e) {
+            showWarningAlertAndWait("send email failed");
+        }
+    }
 
     private enum ActiveInvoiceState {
         NEW,
