@@ -1,6 +1,8 @@
 package GUI;
 
 import Data.*;
+import Html.Element;
+import Html.InvoiceHtml;
 import Utils.PropertiesConfiguration;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -484,11 +486,11 @@ public class SunTailoringGUIController implements Initializable {
             }
             final String subject = String.format(config.getProperty("invoice.maker.default.mail.subject"), activeInvoice.getInvoiceNumber());
             controller.setSubject(subject);
-            controller.setBody(config.getProperty("invoice.maker.default.mail.message"));
-            File report = new File(GuiUtils.REPORT_DIR_PATH + "/" + activeInvoice.getInvoiceNumber() + ".html");
-            if (report.exists()) {
-                controller.setAttachment(report.getAbsolutePath());
-            }
+
+            Element html = new Element("html");
+            InvoiceHtml.buildHead(html);
+            InvoiceHtml.buildBody(html, activeInvoice);
+            controller.setBodyHtml(html.print());
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);

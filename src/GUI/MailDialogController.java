@@ -8,9 +8,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -34,7 +34,7 @@ public class MailDialogController implements Initializable {
     public TextField ccTextField;
     public TextField subjectTextField;
     public TextField attachmentTextField;
-    public TextArea bodyTextArea;
+    public HTMLEditor bodyHtmlEditor;
     public Button sendButton;
     public Button attachButton;
 
@@ -56,7 +56,7 @@ public class MailDialogController implements Initializable {
             GmailSender.DEFAULT.sendMail(toTextField.getText().trim(),
                     parseCCField(),
                     subjectTextField.getText(),
-                    bodyTextArea.getText(),
+                    bodyHtmlEditor.getHtmlText(),
                     attachmentFileAbsolutePath);
             System.out.println("Mail send success");
             ((Stage) root.getScene().getWindow()).close();
@@ -89,12 +89,8 @@ public class MailDialogController implements Initializable {
         subjectTextField.setText(subject);
     }
 
-    public void setBody(String body) {
-        bodyTextArea.setText(body);
-    }
-
-    public void setAttachment(String attachment) {
-        attachmentTextField.setText(attachment);
+    public void setBodyHtml(String html) {
+        bodyHtmlEditor.setHtmlText(html);
     }
 
     public List<String> parseCCField() {

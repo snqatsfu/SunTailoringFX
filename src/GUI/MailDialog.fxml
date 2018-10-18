@@ -2,14 +2,15 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.web.HTMLEditor?>
 <?import java.net.URL?>
 <VBox fx:id="root" styleClass="DefaultSpacing" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.MailDialogController">
    <children>
       <GridPane styleClass="DefaultSpacing">
         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="70.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="65.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.0" minWidth="10.0" prefWidth="462.0" />
+            <ColumnConstraints maxWidth="274.0" minWidth="10.0" prefWidth="77.0" />
+          <ColumnConstraints maxWidth="274.0" minWidth="10.0" prefWidth="77.0" />
+          <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="636.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -18,7 +19,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="sendButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="50.0" mnemonicParsing="false" onAction="#send" prefHeight="114.0" prefWidth="61.0" text="Send" GridPane.halignment="CENTER" GridPane.rowSpan="4" GridPane.vgrow="ALWAYS" />
+            <Button fx:id="sendButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="50.0" mnemonicParsing="false" onAction="#send" prefHeight="114.0" prefWidth="61.0" styleClass="DefaultSpacing" text="Send" GridPane.halignment="CENTER" GridPane.rowSpan="4" GridPane.vgrow="ALWAYS" />
             <Button fx:id="toButton" alignment="CENTER" minWidth="50.0" mnemonicParsing="false" onAction="#showAddressBookDialog" text="To..." GridPane.columnIndex="1" GridPane.halignment="CENTER" />
             <Button fx:id="ccButton" minWidth="50.0" mnemonicParsing="false" onAction="#showAddressBookDialog" text="CC..." GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <Button fx:id="attachButton" mnemonicParsing="false" onAction="#selectAttachment" text="Attach..." GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
@@ -29,7 +30,7 @@
             <TextField fx:id="attachmentTextField" GridPane.columnIndex="2" GridPane.rowIndex="3" />
          </children>
       </GridPane>
-      <TextArea fx:id="bodyTextArea" minHeight="300.0" minWidth="600.0" prefHeight="200.0" prefWidth="200.0" />
+      <HTMLEditor fx:id="bodyHtmlEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" minWidth="900.0" />
    </children>
    <stylesheets>
       <URL value="@StyleSheets/Containers.css" />

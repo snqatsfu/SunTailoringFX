@@ -25,7 +25,7 @@ public class InvoiceHtml {
         }
     }
 
-    private static void buildHead(Element parent) {
+    public static void buildHead(Element parent) {
         Element head = new Element("head");
         Element style = new Element("style");
         head.addChild(style);
@@ -121,7 +121,7 @@ public class InvoiceHtml {
         parent.addChild(head);
     }
 
-    private static void buildBody(Element parent, Invoice invoice) {
+    public static void buildBody(Element parent, Invoice invoice) {
         Element body = new Element("body");
         parent.addChild(body);
 

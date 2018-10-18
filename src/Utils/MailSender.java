@@ -45,7 +45,7 @@ public abstract class MailSender {
         message.setSubject(subject);
 
         BodyPart bodyPart = new MimeBodyPart();
-        bodyPart.setText(body);
+        bodyPart.setContent(body, "text/html; charset=utf-8");
 
         Multipart multipart = new MimeMultipart();
         multipart.addBodyPart(bodyPart);
