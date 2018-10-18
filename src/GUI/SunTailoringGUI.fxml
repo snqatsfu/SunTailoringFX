@@ -115,7 +115,7 @@
                         <VBox prefHeight="200.0" prefWidth="100.0" styleClass="DefaultSpacing">
                            <children>
                               <Button fx:id="saveInvoiceButton" mnemonicParsing="false" onAction="#saveActiveInvoice" text="Save" />
-                              <Button fx:id="mailInvoiceButton" mnemonicParsing="false" onAction="#mailInvoice" text="Email" />
+                              <Button fx:id="mailInvoiceButton" mnemonicParsing="false" onAction="#showMailDialog" text="Email" />
                            </children>
                         </VBox>
                      </children>

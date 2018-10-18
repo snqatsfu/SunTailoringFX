@@ -1,7 +1,7 @@
 package GUI;
 
 import Data.*;
-import Utils.GmailSender;
+import Utils.PropertiesConfiguration;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import static GUI.GuiUtils.*;
@@ -112,22 +113,14 @@ public class SunTailoringGUIController implements Initializable {
     @FXML
     public TableColumn<Item, Double> itemsTablePriceCol;
 
-    private final InvoiceStore invoiceStore = InvoiceStore.getInstance();
+    private static final InvoiceStore invoiceStore = InvoiceStore.getInstance();
+    private static final Properties config = PropertiesConfiguration.getInstance();
 
     private final Invoice activeInvoice;
     private Invoice baselineInvoice;
     private ActiveInvoiceState activeInvoiceState;
     private boolean suspendActiveInvoiceStateUpdate;
     private final AddressBook addressBook;
-
-    public void mailInvoice(ActionEvent actionEvent) {
-        try {
-            GmailSender.DEFAULT.sendMail("nathanzheng87@gmail.com", Collections.emptyList(), "test email subject", "test email", null);
-            System.out.println("send email success");
-        } catch (Exception e) {
-            showWarningAlertAndWait("send email failed");
-        }
-    }
 
     private enum ActiveInvoiceState {
         NEW,
@@ -241,6 +234,7 @@ public class SunTailoringGUIController implements Initializable {
         invoiceStore.save(activeInvoice);
         baselineInvoice = activeInvoice.copy();
         setActiveInvoiceState(ActiveInvoiceState.SAVED);
+        addressBook.add(activeInvoice.getCustomerInfo().copy());
         GuiUtils.showInfoAlertAndWait("Saved Invoice " + activeInvoice.getInvoiceNumber());
     }
 
@@ -470,6 +464,40 @@ public class SunTailoringGUIController implements Initializable {
 
         } catch (Exception e) {
             GuiUtils.showWarningAlertAndWait("Failed loading invoice store dialog");
+        }
+    }
+
+    public void showMailDialog() {
+        try {
+            final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MailDialog.fxml"));
+            final Parent root = fxmlLoader.load();
+            final MailDialogController controller = fxmlLoader.getController();
+            controller.setAddressBook(addressBook);
+
+            final String email = activeInvoice.getCustomerInfo().getEmail();
+            if (!email.isEmpty()) {
+                controller.setTo(email);
+            }
+            final String cc = PropertiesConfiguration.getInstance().getProperty("invoice.maker.default.mail.cc", "");
+            if (!cc.isEmpty()) {
+                controller.setCC(cc);
+            }
+            final String subject = String.format(config.getProperty("invoice.maker.default.mail.subject"), activeInvoice.getInvoiceNumber());
+            controller.setSubject(subject);
+            controller.setBody(config.getProperty("invoice.maker.default.mail.message"));
+            File report = new File(GuiUtils.REPORT_DIR_PATH + "/" + activeInvoice.getInvoiceNumber() + ".html");
+            if (report.exists()) {
+                controller.setAttachment(report.getAbsolutePath());
+            }
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Mail");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            GuiUtils.showWarningAlertAndWait("Failed loading mail dialog");
         }
     }
 

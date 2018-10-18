@@ -50,7 +50,7 @@ public abstract class MailSender {
         Multipart multipart = new MimeMultipart();
         multipart.addBodyPart(bodyPart);
 
-        if (attachmentFileName != null) {
+        if (attachmentFileName != null && !attachmentFileName.isEmpty()) {
             bodyPart = new MimeBodyPart();
 
             File file = new File(attachmentFileName);
