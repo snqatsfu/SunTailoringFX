@@ -2,9 +2,11 @@ package GUI;
 
 import Data.AddressBook;
 import Utils.GmailSender;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,7 +17,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import javax.mail.MessagingException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -51,21 +52,36 @@ public class MailDialogController implements Initializable {
 
     public void send() {
         final String attachmentFileAbsolutePath = getAttachmentFileAbsolutePath();
-        try {
-            // todo: add email address validation
-            GmailSender.DEFAULT.sendMail(toTextField.getText().trim(),
-                    parseCCField(),
-                    subjectTextField.getText(),
-                    bodyHtmlEditor.getHtmlText(),
-                    attachmentFileAbsolutePath);
-            System.out.println("Mail send success");
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                root.getScene().setCursor(Cursor.WAIT);
+                // todo: add email address validation
+                GmailSender.DEFAULT.sendMail(toTextField.getText().trim(),
+                        parseCCField(),
+                        subjectTextField.getText(),
+                        bodyHtmlEditor.getHtmlText(),
+                        attachmentFileAbsolutePath);
+                System.out.println("Mail send success");
+                return null;
+            }
+        };
+        task.setOnSucceeded(e -> {
+            root.getScene().setCursor(Cursor.DEFAULT);
             ((Stage) root.getScene().getWindow()).close();
-
-        } catch (FileNotFoundException e) {
-            GuiUtils.showWarningAlertAndWait("Attachment file not found " + attachmentFileAbsolutePath);
-        } catch (MessagingException e) {
-            GuiUtils.showWarningAlertAndWait("Failed sending email");
-        }
+        });
+        task.setOnFailed(e -> {
+            final Throwable exception = task.getException();
+            if (exception instanceof FileNotFoundException) {
+                GuiUtils.showWarningAlertAndWait("Attachment file not found " + attachmentFileAbsolutePath);
+            } else {
+                GuiUtils.showWarningAlertAndWait("Failed sending email");
+            }
+            root.getScene().setCursor(Cursor.DEFAULT);
+        });
+        final Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public void setAddressBook(AddressBook addressBook) {
