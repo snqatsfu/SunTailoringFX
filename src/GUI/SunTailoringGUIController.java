@@ -508,6 +508,24 @@ public class SunTailoringGUIController implements Initializable {
         }
     }
 
+    public void showStatsDialog() {
+        try {
+            final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("StatsDialog.fxml"));
+            final Parent root = fxmlLoader.load();
+            final StatsDialogController controller = fxmlLoader.getController();
+            controller.setInvoiceStore(invoiceStore);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Invoice Store Statistics");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            GuiUtils.showWarningAlertAndWait("Failed loading invoice store dialog");
+        }
+    }
+
     private void setActiveInvoice(Invoice target, ActiveInvoiceState state) {
         suspendActiveInvoiceStateUpdate = true; // prevent unnecessary state updates
         activeInvoice.cloneFrom(target);

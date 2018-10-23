@@ -167,6 +167,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#saveActiveInvoice" text="Save Invoice (Ctrl + S)" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#showInvoiceStoreDialog" text="Invoice Store (Ctrl + F) ..." />
+                  <MenuItem mnemonicParsing="false" onAction="#showStatsDialog" text="Statistics..." />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Settings">

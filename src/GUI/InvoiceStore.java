@@ -35,8 +35,10 @@ public class InvoiceStore {
                 try (ObjectInputStream is = new ObjectInputStream(Files.newInputStream(file))) {
                     final Invoice invoice = Invoice.deserialize(is);
                     invoiceMap.put(invoice.getInvoiceNumber(), invoice);
-                } catch (IOException ignore) {}
+                } catch (IOException ignore) {
+                }
             });
+            System.out.println("Invoice store loaded " + invoiceMap.size() + " invoices.");
 
         } catch (IOException e) {
             e.printStackTrace();

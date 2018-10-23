@@ -26,7 +26,7 @@ public class GenerateFakeInvoicesOneYear {
             for (int j = 0; j < numInvoicesThisDay; j++) {
                 String invoiceNumber = invoiceDate + "_" + j;
                 final LocalDate dueDate = invoiceDate.plusDays(new Random().nextInt(7));
-                final int numItems = random.nextInt(5);
+                final int numItems = random.nextInt(10);
                 List<Item> items = new ArrayList<>(numItems);
                 for (int k = 0; k < numItems; k++) {
                     items.add(new Item("Fake Item", random.nextInt(3), random.nextInt(20)));
