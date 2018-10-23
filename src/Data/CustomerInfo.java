@@ -31,7 +31,7 @@ public class CustomerInfo implements Comparable<CustomerInfo> {
     }
 
     public static CustomerInfo parse(String customerInfoString) {
-        String[] strings = customerInfoString.split(";");
+        String[] strings = customerInfoString.split("[\n;]");
         int length = strings.length;
 
         String name = "no name";

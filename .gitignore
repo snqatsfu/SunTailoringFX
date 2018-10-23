@@ -3,3 +3,5 @@ out/
 Save/
 Settings/
 InvoiceReports/
+src/scripts/OldInvoices/
+src/scripts/AddressBook.csv

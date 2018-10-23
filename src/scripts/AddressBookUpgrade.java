@@ -20,7 +20,7 @@ public class AddressBookUpgrade {
             AddressBook addressBook = AddressBook.deserialize(ois);
 
             // read old address book csv file
-            try (Stream<String> stream = Files.lines(Paths.get("AddressBook.csv"))) {
+            try (Stream<String> stream = Files.lines(Paths.get("src/scripts/AddressBook.csv"))) {
                 stream.forEach(line -> {
                     if (!line.equals(ADDRESS_BOOK_CSV_FILE_HEADER)) {
                         final String[] split = line.split(",");

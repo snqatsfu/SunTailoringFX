@@ -1,7 +1,6 @@
 package GUI;
 
 import Data.Invoice;
-import Html.InvoiceHtml;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static GUI.GuiUtils.REPORT_DIR_PATH;
 import static GUI.GuiUtils.SAVE_DIR_PATH;
 
 public class InvoiceStore {
@@ -66,12 +64,12 @@ public class InvoiceStore {
         }
 
         // generate HTML report
-        File reportFile = new File(REPORT_DIR_PATH + "/" + invoiceCopy.getInvoiceNumber() + ".html");
-        try {
-            InvoiceHtml.createHtml(invoiceCopy, reportFile);
-        } catch (FileNotFoundException e) {
-            System.err.println("Generate report failed");
-        }
+//        File reportFile = new File(REPORT_DIR_PATH + "/" + invoiceCopy.getInvoiceNumber() + ".html");
+//        try {
+//            InvoiceHtml.createHtml(invoiceCopy, reportFile);
+//        } catch (FileNotFoundException e) {
+//            System.err.println("Generate report failed");
+//        }
     }
 
     public int getSize() {
