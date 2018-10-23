@@ -122,6 +122,7 @@ public class SunTailoringGUIController implements Initializable {
     private Invoice baselineInvoice;
     private ActiveInvoiceState activeInvoiceState;
     private boolean suspendActiveInvoiceStateUpdate;
+    private boolean suspendQuickItemComboBoxAction;
     private final AddressBook addressBook;
 
     private enum ActiveInvoiceState {
@@ -242,13 +243,15 @@ public class SunTailoringGUIController implements Initializable {
 
     @SuppressWarnings("unchecked")
     public void quickItemComboBoxOnAction(ActionEvent actionEvent) {
-        final Object source = actionEvent.getSource();
-        if (source == quickJacketComboBox || source == quickPantComboBox || source == quickShirtComboBox
-                || source == quickDryCleanComboBox || source == quickOtherComboBox) {
-            final Item selectedItem = ((ComboBox<Item>) source).getSelectionModel().getSelectedItem();
-            if (selectedItem != null) {
-                activeInvoice.getItems().add(selectedItem.copy());
-                setActiveInvoiceState(ActiveInvoiceState.EDITED);
+        if (!suspendQuickItemComboBoxAction) {
+            final Object source = actionEvent.getSource();
+            if (source == quickJacketComboBox || source == quickPantComboBox || source == quickShirtComboBox
+                    || source == quickDryCleanComboBox || source == quickOtherComboBox) {
+                final Item selectedItem = ((ComboBox<Item>) source).getSelectionModel().getSelectedItem();
+                if (selectedItem != null) {
+                    activeInvoice.getItems().add(selectedItem.copy());
+                    setActiveInvoiceState(ActiveInvoiceState.EDITED);
+                }
             }
         }
     }
@@ -418,7 +421,9 @@ public class SunTailoringGUIController implements Initializable {
             final ComboBox<Item> finalQuickItemComboBox = quickItemComboBox;
             stage.setOnCloseRequest(event -> {
                 final ObservableList<Item> items = quickItemsSettingsDialogController.getQuickItems().getItems();
+                suspendQuickItemComboBoxAction = true;
                 finalQuickItemComboBox.setItems(items);
+                suspendQuickItemComboBoxAction = false;
             });
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Configure Quick " + quickItemsName);
