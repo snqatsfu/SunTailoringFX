@@ -144,7 +144,7 @@ public class InvoiceHtml {
 
         div = new Element("div");
         div.addAttribute(new Attribute("id", "halfBlock"));
-        div.setContent("suntailoringvancouver.com<br>604-683-6817<br>U-13 555 W Hasting St<br> Vancouver, BC V6B 4N6");
+        div.setContent("www.suntailoringvancouver.com<br>604-683-6817<br>U-13 555 W Hasting St<br> Vancouver, BC V6B 4N6");
         container.addChild(div);
 
         div = new Element("div");
