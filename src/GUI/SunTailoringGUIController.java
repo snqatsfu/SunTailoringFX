@@ -3,6 +3,7 @@ package GUI;
 import Data.*;
 import Html.Element;
 import Html.InvoiceHtml;
+import Html.InvoicePrinter;
 import Utils.PropertiesConfiguration;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,6 +26,12 @@ import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import javafx.util.converter.NumberStringConverter;
 
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.MediaSizeName;
+import javax.print.attribute.standard.OrientationRequested;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.*;
 import java.net.URL;
 import java.time.LocalDate;
@@ -92,6 +99,8 @@ public class SunTailoringGUIController implements Initializable {
     public Button saveInvoiceButton;
     @FXML
     public Button mailInvoiceButton;
+    @FXML
+    public Button printInvoiceButton;
 
     @FXML
     public ComboBox<Item> quickJacketComboBox;
@@ -536,5 +545,21 @@ public class SunTailoringGUIController implements Initializable {
         baselineInvoice = activeInvoice.copy();
         suspendActiveInvoiceStateUpdate = false;
         setActiveInvoiceState(state);
+    }
+
+    public void printInvoice(ActionEvent event) {
+        event.consume();
+        final InvoicePrinter invoicePrinter = new InvoicePrinter(activeInvoice, config);
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(invoicePrinter);
+
+        PrintRequestAttributeSet set = new HashPrintRequestAttributeSet();
+        set.add(OrientationRequested.PORTRAIT);
+        set.add(MediaSizeName.INVOICE);
+        try {
+            job.print(set);
+        } catch (PrinterException e) {
+            e.printStackTrace();
+        }
     }
 }

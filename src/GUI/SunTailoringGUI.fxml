@@ -116,6 +116,7 @@
                            <children>
                               <Button fx:id="saveInvoiceButton" mnemonicParsing="false" onAction="#saveActiveInvoice" text="Save" />
                               <Button fx:id="mailInvoiceButton" mnemonicParsing="false" onAction="#showMailDialog" text="Email" />
+                              <Button fx:id="printInvoiceButton" mnemonicParsing="false" onAction="#printInvoice" text="Print" />
                            </children>
                         </VBox>
                      </children>
