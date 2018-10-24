@@ -9,6 +9,7 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -28,14 +29,17 @@ public class StatsDialogController implements Initializable {
         numInvoicesSeries.setName("# invoices");
 
         final LocalDate twelveMonthsBeforeNow = LocalDate.now().minusMonths(11);
-        for (int i = 0; i <= 12; i++) {
-            final Month searchMonth = twelveMonthsBeforeNow.plusMonths(i).getMonth();
-            final Double total = store.all().stream()
-                    .filter(invoice -> invoice.getInvoiceDate().getMonth().equals(searchMonth))
-                    .collect(Collectors.summingDouble(Invoice::getTotal));
-            final Long count = store.all().stream()
-                    .filter(invoice -> invoice.getInvoiceDate().getMonth().equals(searchMonth))
-                    .count();
+        for (int i = 0; i <= 11; i++) {
+            final LocalDate searchDate = twelveMonthsBeforeNow.plusMonths(i);
+            final int searchYear = searchDate.getYear();
+            final Month searchMonth = searchDate.getMonth();
+            final List<Invoice> filteredInvoices = store.all().stream()
+                    .filter(invoice -> invoice.getInvoiceDate().getMonth().equals(searchMonth)
+                            && invoice.getInvoiceDate().getYear() == searchYear)
+                    .collect(Collectors.toList());
+
+            final Double total = filteredInvoices.stream().collect(Collectors.summingDouble(Invoice::getTotal));
+            final Long count = filteredInvoices.stream().count();
 
             totalSeries.getData().add(new XYChart.Data<>(searchMonth.name(), total));
             numInvoicesSeries.getData().add(new XYChart.Data<>(searchMonth.name(), count));

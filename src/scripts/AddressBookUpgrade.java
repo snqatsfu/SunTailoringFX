@@ -23,7 +23,7 @@ public class AddressBookUpgrade {
             try (Stream<String> stream = Files.lines(Paths.get("src/scripts/AddressBook.csv"))) {
                 stream.forEach(line -> {
                     if (!line.equals(ADDRESS_BOOK_CSV_FILE_HEADER)) {
-                        final String[] split = line.split(",");
+                        final String[] split = line.split(",", -1);
                         String name = split[0].trim();
                         String addressName = split[1].trim();
                         String addressStreet = split[2].trim();
