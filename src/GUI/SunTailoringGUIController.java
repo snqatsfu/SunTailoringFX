@@ -230,14 +230,13 @@ public class SunTailoringGUIController implements Initializable {
         final LocalDate now = LocalDate.now();
         final String base = now.format(DateTimeFormatter.ofPattern("yyMMdd"));
         int invoiceNum = 0;
-        String invoiceNumber = base + String.format("%03d", invoiceNum);
-        // todo: change to search invoice store
+        String invoiceNumber = base + String.format("%02d", invoiceNum);
         while (invoiceStore.contains(invoiceNumber)) {
             invoiceNum++;
-            if (invoiceNum > 999) {
+            if (invoiceNum > 99) {
                 return "InvalidInvoiceNumber";
             }
-            invoiceNumber = base + String.format("%03d", invoiceNum);
+            invoiceNumber = base + String.format("%02d", invoiceNum);
         }
         return invoiceNumber;
     }
