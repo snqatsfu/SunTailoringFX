@@ -5,25 +5,7 @@ import Data.Invoice;
 import Data.Item;
 import Utils.MathUtil;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-
 public class InvoiceHtml {
-
-    public static void createHtml(Invoice invoice, File reportFile) throws FileNotFoundException {
-        try (PrintWriter pw = new PrintWriter(reportFile)) {
-            pw.println("<!DOCTYPE html>");
-
-            Element html = new Element("html");
-            buildHead(html);
-
-            buildBody(html, invoice);
-
-            pw.println(html.print());
-            pw.close();
-        }
-    }
 
     public static void buildHead(Element parent) {
         Element head = new Element("head");

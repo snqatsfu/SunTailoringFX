@@ -34,7 +34,6 @@ public class GuiUtils {
     public static final KeyCombination KEY_COMBO_CTRL_ENTER = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
 
     static final Path SAVE_DIR_PATH = Paths.get("Save");
-    static final Path REPORT_DIR_PATH = Paths.get("InvoiceReports");
     public static final Path SETTINGS_DIR_PATH = Paths.get("Settings");
     public static final File ADDRESS_BOOK_DAT_FILE = new File(SETTINGS_DIR_PATH + "/" + "addressBook.dat");
     static File getQuickItemsDatFile(String name) {

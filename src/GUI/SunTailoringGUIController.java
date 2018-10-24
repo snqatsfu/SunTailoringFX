@@ -362,6 +362,7 @@ public class SunTailoringGUIController implements Initializable {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Address Book");
+            stage.getIcons().add(Assets.ADDRESS_BOOK_ICON);
             stage.setScene(new Scene(root));
             stage.show();
 
@@ -427,6 +428,7 @@ public class SunTailoringGUIController implements Initializable {
             });
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Configure Quick " + quickItemsName);
+            stage.getIcons().add(Assets.SETTINGS_ICON);
             stage.setScene(new Scene(root));
             stage.show();
 
@@ -500,6 +502,7 @@ public class SunTailoringGUIController implements Initializable {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Mail");
+            stage.getIcons().add(Assets.EMAIL_ICON);
             stage.setScene(new Scene(root));
             stage.show();
 
@@ -518,6 +521,7 @@ public class SunTailoringGUIController implements Initializable {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Invoice Store Statistics");
+            stage.getIcons().add(Assets.STATS_ICON);
             stage.setScene(new Scene(root));
             stage.show();
 

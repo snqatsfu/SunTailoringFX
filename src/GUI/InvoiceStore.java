@@ -30,7 +30,6 @@ public class InvoiceStore {
 
         try {
             GuiUtils.createDirectoryIfNecessary(GuiUtils.SAVE_DIR_PATH);
-            GuiUtils.createDirectoryIfNecessary(GuiUtils.REPORT_DIR_PATH);
             Files.walk(GuiUtils.SAVE_DIR_PATH).forEach(file -> {
                 try (ObjectInputStream is = new ObjectInputStream(Files.newInputStream(file))) {
                     final Invoice invoice = Invoice.deserialize(is);
@@ -64,14 +63,6 @@ public class InvoiceStore {
         } catch (IOException e) {
             System.err.println("Save invoice failed.");
         }
-
-        // generate HTML report
-//        File reportFile = new File(REPORT_DIR_PATH + "/" + invoiceCopy.getInvoiceNumber() + ".html");
-//        try {
-//            InvoiceHtml.createHtml(invoiceCopy, reportFile);
-//        } catch (FileNotFoundException e) {
-//            System.err.println("Generate report failed");
-//        }
     }
 
     public int getSize() {
