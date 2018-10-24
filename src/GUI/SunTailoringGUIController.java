@@ -164,6 +164,7 @@ public class SunTailoringGUIController implements Initializable {
 
             if (activeInvoiceState != oldState) {
                 updateInvoiceNumberTextFieldBackgroundColor();
+                saveInvoiceButton.setDisable(activeInvoiceState == ActiveInvoiceState.SAVED);
             }
         }
     }
@@ -242,11 +243,21 @@ public class SunTailoringGUIController implements Initializable {
     }
 
     public void saveActiveInvoice() {
-        invoiceStore.save(activeInvoice);
-        baselineInvoice = activeInvoice.copy();
-        setActiveInvoiceState(ActiveInvoiceState.SAVED);
-        addressBook.add(activeInvoice.getCustomerInfo().copy());
-        GuiUtils.showInfoAlertAndWait("Saved Invoice " + activeInvoice.getInvoiceNumber());
+        boolean doSave = true;
+        if (activeInvoiceState == ActiveInvoiceState.EDITED) {
+            doSave = GuiUtils.showConfirmationAlertAndWait("Are you sure that you want to modify existing invoice "
+                    + activeInvoice.getInvoiceNumber() + "?");
+
+        }
+        if (doSave) {
+            invoiceStore.save(activeInvoice);
+            baselineInvoice = activeInvoice.copy();
+            setActiveInvoiceState(ActiveInvoiceState.SAVED);
+            addressBook.add(activeInvoice.getCustomerInfo().copy());
+            GuiUtils.showInfoAlertAndWait("Saved Invoice " + activeInvoice.getInvoiceNumber());
+        } else {
+            System.out.println("Cancelled saving " + activeInvoice.getInvoiceNumber());
+        }
     }
 
     @SuppressWarnings("unchecked")

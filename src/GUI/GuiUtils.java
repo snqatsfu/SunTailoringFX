@@ -1,6 +1,7 @@
 package GUI;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 public class GuiUtils {
     public static void showInfoAlertAndWait(String alertMessage) {
@@ -26,6 +28,15 @@ public class GuiUtils {
         alert.setHeaderText(null);
         alert.setContentText(alertMessage);
         alert.showAndWait();
+    }
+
+    public static boolean showConfirmationAlertAndWait(String confirmationMessage) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Warning");
+        alert.setHeaderText(null);
+        alert.setContentText(confirmationMessage);
+        final Optional<ButtonType> option = alert.showAndWait();
+        return option.get() == ButtonType.OK;
     }
 
     public static final KeyCombination KEY_COMBO_CTRL_S = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
