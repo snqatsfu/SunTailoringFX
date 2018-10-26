@@ -57,6 +57,8 @@ public class SunTailoringGUIController implements Initializable {
     @FXML
     public MenuItem quickDryCleansSettingsMenuItem;
     @FXML
+    public MenuItem quickDressSettingsMenuItem;
+    @FXML
     public MenuItem quickOthersSettingsMenuItem;
 
     @FXML
@@ -110,6 +112,8 @@ public class SunTailoringGUIController implements Initializable {
     public ComboBox<Item> quickShirtComboBox;
     @FXML
     public ComboBox<Item> quickDryCleanComboBox;
+    @FXML
+    public ComboBox<Item> quickDressComboBox;
     @FXML
     public ComboBox<Item> quickOtherComboBox;
 
@@ -265,7 +269,7 @@ public class SunTailoringGUIController implements Initializable {
         if (!suspendQuickItemComboBoxAction) {
             final Object source = actionEvent.getSource();
             if (source == quickJacketComboBox || source == quickPantComboBox || source == quickShirtComboBox
-                    || source == quickDryCleanComboBox || source == quickOtherComboBox) {
+                    || source == quickDryCleanComboBox || source == quickDressComboBox || source == quickOtherComboBox) {
                 final Item selectedItem = ((ComboBox<Item>) source).getSelectionModel().getSelectedItem();
                 if (selectedItem != null) {
                     activeInvoice.getItems().add(selectedItem.copy());
@@ -362,6 +366,7 @@ public class SunTailoringGUIController implements Initializable {
         quickPantComboBox.setItems(loadQuickItems("Pant").getItems());
         quickShirtComboBox.setItems(loadQuickItems("Shirt").getItems());
         quickDryCleanComboBox.setItems(loadQuickItems("Dry Clean").getItems());
+        quickDressComboBox.setItems(loadQuickItems("Dress").getItems());
         quickOtherComboBox.setItems(loadQuickItems("Other").getItems());
     }
 
@@ -422,6 +427,10 @@ public class SunTailoringGUIController implements Initializable {
         } else if (source == quickDryCleansSettingsMenuItem) {
             quickItemsName = "Dry Clean";
             quickItemComboBox = quickDryCleanComboBox;
+
+        } else if (source == quickDressSettingsMenuItem) {
+            quickItemsName = "Dress";
+            quickItemComboBox = quickDressComboBox;
 
         } else if (source == quickOthersSettingsMenuItem) {
             quickItemsName = "Other";

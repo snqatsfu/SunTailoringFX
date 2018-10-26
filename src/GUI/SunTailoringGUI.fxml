@@ -137,6 +137,7 @@
                               <ComboBox fx:id="quickPantComboBox" layoutX="15.0" layoutY="15.0" onAction="#quickItemComboBoxOnAction" prefWidth="150.0" promptText="Pants" />
                               <ComboBox fx:id="quickShirtComboBox" layoutX="170.0" layoutY="15.0" onAction="#quickItemComboBoxOnAction" prefWidth="150.0" promptText="Shirts" />
                               <ComboBox fx:id="quickDryCleanComboBox" layoutX="325.0" layoutY="15.0" onAction="#quickItemComboBoxOnAction" prefWidth="150.0" promptText="Dry Clean" />
+                              <ComboBox fx:id="quickDressComboBox" layoutX="635.0" layoutY="15.0" onAction="#quickItemComboBoxOnAction" prefWidth="150.0" promptText="Dress" />
                               <ComboBox fx:id="quickOtherComboBox" layoutX="480.0" layoutY="15.0" onAction="#quickItemComboBoxOnAction" prefWidth="150.0" promptText="Others" />
                            </children>
                         </HBox>
@@ -177,6 +178,7 @@
                 <MenuItem fx:id="quickPantsSettingsMenuItem" mnemonicParsing="false" onAction="#showQuickItemsSettingsDialog" text="Quick Pants..." />
                  <MenuItem fx:id="quickShirtsSettingsMenuItem" mnemonicParsing="false" onAction="#showQuickItemsSettingsDialog" text="Quick Shirts..." />
                   <MenuItem fx:id="quickDryCleansSettingsMenuItem" mnemonicParsing="false" onAction="#showQuickItemsSettingsDialog" text="Quick Dry Cleans..." />
+                  <MenuItem fx:id="quickDressSettingsMenuItem" mnemonicParsing="false" onAction="#showQuickItemsSettingsDialog" text="Quick Dresses..." />
                   <MenuItem fx:id="quickOthersSettingsMenuItem" mnemonicParsing="false" onAction="#showQuickItemsSettingsDialog" text="Quick Others..." />
             </items>
           </Menu>
