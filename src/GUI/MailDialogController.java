@@ -2,6 +2,7 @@ package GUI;
 
 import Data.AddressBook;
 import Utils.GmailSender;
+import Utils.PathUtils;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -126,7 +127,7 @@ public class MailDialogController implements Initializable {
 
     public void selectAttachment() {
         final FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File(GuiUtils.SAVE_DIR_PATH + "/"));
+        fileChooser.setInitialDirectory(new File(PathUtils.SAVE_DIR_PATH + "/"));
         final File file = fileChooser.showOpenDialog(root.getScene().getWindow());
         if (file != null) {
             attachmentTextField.setText(file.getAbsolutePath());

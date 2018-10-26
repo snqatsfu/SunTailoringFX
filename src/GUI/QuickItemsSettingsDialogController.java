@@ -2,6 +2,7 @@ package GUI;
 
 import Data.Item;
 import Data.QuickItems;
+import Utils.PathUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
@@ -22,7 +23,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static GUI.GuiUtils.KEY_COMBO_CTRL_S;
-import static GUI.GuiUtils.SETTINGS_DIR_PATH;
 
 public class QuickItemsSettingsDialogController implements Initializable {
 
@@ -84,9 +84,9 @@ public class QuickItemsSettingsDialogController implements Initializable {
 
     public void saveQuickItems() {
         try {
-            GuiUtils.createDirectoryIfNecessary(SETTINGS_DIR_PATH);
+            PathUtils.createDirectoryIfNecessary(PathUtils.SETTINGS_DIR_PATH);
 
-            try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(GuiUtils.getQuickItemsDatFile(name)))) {
+            try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(PathUtils.getQuickItemsDatFile(name)))) {
                 quickItems.serialize(os);
             }
             modified.setValue(false);

@@ -2,7 +2,7 @@ package scripts;
 
 import Data.Item;
 import Data.QuickItems;
-import GUI.GuiUtils;
+import Utils.PathUtils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class QuickItemsUpgrade {
         QuickItems quickItems = new QuickItems(quickItemsList);
 
         // save
-        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(GuiUtils.getQuickItemsDatFile("Dress")))) {
+        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(PathUtils.getQuickItemsDatFile("Dress")))) {
             quickItems.serialize(os);
         }
     }

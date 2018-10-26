@@ -4,6 +4,7 @@ import Data.*;
 import Html.Element;
 import Html.InvoiceHtml;
 import Html.InvoicePrinter;
+import Utils.PathUtils;
 import Utils.PropertiesConfiguration;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -42,6 +43,8 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import static GUI.GuiUtils.*;
+import static Utils.PathUtils.ADDRESS_BOOK_DAT_FILE;
+import static Utils.PathUtils.SETTINGS_DIR_PATH;
 
 public class SunTailoringGUIController implements Initializable {
 
@@ -403,7 +406,7 @@ public class SunTailoringGUIController implements Initializable {
 
     public void saveAddressBook() {
         try {
-            GuiUtils.createDirectoryIfNecessary(SETTINGS_DIR_PATH);
+            PathUtils.createDirectoryIfNecessary(SETTINGS_DIR_PATH);
             try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(ADDRESS_BOOK_DAT_FILE))) {
                 addressBook.serialize(os);
             }
@@ -472,7 +475,7 @@ public class SunTailoringGUIController implements Initializable {
     }
 
     private QuickItems loadQuickItems(String name) {
-        final File datFile = GuiUtils.getQuickItemsDatFile(name);
+        final File datFile = PathUtils.getQuickItemsDatFile(name);
         QuickItems quickItems = null;
         if (datFile.exists()) {
             try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(datFile))) {

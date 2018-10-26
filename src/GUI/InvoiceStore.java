@@ -1,6 +1,7 @@
 package GUI;
 
 import Data.Invoice;
+import Utils.PathUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static GUI.GuiUtils.SAVE_DIR_PATH;
+import static Utils.PathUtils.SAVE_DIR_PATH;
 
 public class InvoiceStore {
 
@@ -29,8 +30,8 @@ public class InvoiceStore {
         invoiceMap = new TreeMap<>();
 
         try {
-            GuiUtils.createDirectoryIfNecessary(GuiUtils.SAVE_DIR_PATH);
-            Files.walk(GuiUtils.SAVE_DIR_PATH).forEach(file -> {
+            PathUtils.createDirectoryIfNecessary(SAVE_DIR_PATH);
+            Files.walk(SAVE_DIR_PATH).forEach(file -> {
                 try (ObjectInputStream is = new ObjectInputStream(Files.newInputStream(file))) {
                     final Invoice invoice = Invoice.deserialize(is);
                     invoiceMap.put(invoice.getInvoiceNumber(), invoice);

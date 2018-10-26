@@ -2,20 +2,18 @@ package scripts;
 
 import Data.AddressBook;
 import Data.CustomerInfo;
-import GUI.GuiUtils;
+import Utils.PathUtils;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
-import static GUI.GuiUtils.ADDRESS_BOOK_DAT_FILE;
-
 public class AddressBookUpgrade {
     private static final String ADDRESS_BOOK_CSV_FILE_HEADER = "Name,Address Name,Address Street,Address City,Address Province,Address Postal Code,Phone,Email,";
 
     public static void main(String[] args) {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(GuiUtils.ADDRESS_BOOK_DAT_FILE))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PathUtils.ADDRESS_BOOK_DAT_FILE))) {
             // read current address book
             AddressBook addressBook = AddressBook.deserialize(ois);
 
@@ -40,7 +38,7 @@ public class AddressBookUpgrade {
             }
 
             // save
-            try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(ADDRESS_BOOK_DAT_FILE))) {
+            try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(PathUtils.ADDRESS_BOOK_DAT_FILE))) {
                 addressBook.serialize(os);
             }
         } catch (Exception e) {
