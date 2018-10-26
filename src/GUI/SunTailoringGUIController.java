@@ -290,6 +290,8 @@ public class SunTailoringGUIController implements Initializable {
                 showInvoiceStoreDialog();
             } else if (KEY_COMBO_CTRL_N.match(keyEvent)) {
                 createNewInvoice();
+            } else if (KEY_COMBO_CTRL_P.match(keyEvent)) {
+                printActiveInvoice();
             }
         });
 
@@ -368,6 +370,9 @@ public class SunTailoringGUIController implements Initializable {
         quickDryCleanComboBox.setItems(loadQuickItems("Dry Clean").getItems());
         quickDressComboBox.setItems(loadQuickItems("Dress").getItems());
         quickOtherComboBox.setItems(loadQuickItems("Other").getItems());
+
+        saveInvoiceButton.setTooltip(new Tooltip("Ctrl + S"));
+        printInvoiceButton.setTooltip(new Tooltip("Ctrl + P"));
     }
 
     public void showAddressBookDialog(Event event) {
@@ -496,6 +501,7 @@ public class SunTailoringGUIController implements Initializable {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Invoice Store");
+            stage.getIcons().add(Assets.STORE_ICON);
             stage.setScene(new Scene(root));
             stage.show();
 
@@ -566,8 +572,7 @@ public class SunTailoringGUIController implements Initializable {
         setActiveInvoiceState(state);
     }
 
-    public void printInvoice(ActionEvent event) {
-        event.consume();
+    public void printActiveInvoice() {
         final InvoicePrinter invoicePrinter = new InvoicePrinter(activeInvoice, config);
         PrinterJob job = PrinterJob.getPrinterJob();
         job.setPrintable(invoicePrinter);

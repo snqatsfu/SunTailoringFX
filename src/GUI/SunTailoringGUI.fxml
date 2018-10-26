@@ -65,7 +65,7 @@
                               <TextField fx:id="customerNameTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <TextField fx:id="customerPhoneTextField" prefHeight="30.0" prefWidth="192.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <TextField fx:id="customerEmailTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <ImageView fx:id="addressBookImageButton" onMouseClicked="#showAddressBookDialog" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2">
+                              <ImageView fx:id="addressBookImageButton" fitWidth="32.0" onMouseClicked="#showAddressBookDialog" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2">
                                  <image>
                                     <Image url="@../Assets/AddressBookIcon.png" />
                                  </image>
@@ -114,9 +114,22 @@
                         <Separator prefWidth="200.0" />
                         <VBox prefHeight="200.0" prefWidth="100.0" styleClass="DefaultSpacing">
                            <children>
-                              <Button fx:id="saveInvoiceButton" mnemonicParsing="false" onAction="#saveActiveInvoice" text="Save" />
-                              <Button fx:id="mailInvoiceButton" mnemonicParsing="false" onAction="#showMailDialog" text="Email" />
-                              <Button fx:id="printInvoiceButton" mnemonicParsing="false" onAction="#printInvoice" text="Print" />
+                              <GridPane styleClass="DefaultSpacing">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Button fx:id="saveInvoiceButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveActiveInvoice" text="Save" GridPane.hgrow="ALWAYS" />
+                                    <Button fx:id="mailInvoiceButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showMailDialog" text="Email" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+                                    <Button fx:id="printInvoiceButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#printActiveInvoice" text="Print" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" />
+                                 </children>
+                              </GridPane>
+                              <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </children>
@@ -168,6 +181,7 @@
               <MenuItem mnemonicParsing="false" onAction="#createNewInvoice" text="New Invoice (Ctrl + N)" />
                   <MenuItem mnemonicParsing="false" onAction="#saveActiveInvoice" text="Save Invoice (Ctrl + S)" />
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#showAddressBookDialog" text="Address Book ..." />
                   <MenuItem mnemonicParsing="false" onAction="#showInvoiceStoreDialog" text="Invoice Store (Ctrl + F) ..." />
                   <MenuItem mnemonicParsing="false" onAction="#showStatsDialog" text="Statistics..." />
             </items>
