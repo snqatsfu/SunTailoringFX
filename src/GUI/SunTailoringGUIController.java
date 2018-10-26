@@ -371,6 +371,7 @@ public class SunTailoringGUIController implements Initializable {
         quickDressComboBox.setItems(loadQuickItems("Dress").getItems());
         quickOtherComboBox.setItems(loadQuickItems("Other").getItems());
 
+        newInvoiceButton.setTooltip(new Tooltip("Ctrl + N"));
         saveInvoiceButton.setTooltip(new Tooltip("Ctrl + S"));
         printInvoiceButton.setTooltip(new Tooltip("Ctrl + P"));
     }
