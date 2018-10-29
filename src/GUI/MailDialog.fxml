@@ -6,7 +6,7 @@
 <?import java.net.URL?>
 <VBox fx:id="root" styleClass="DefaultSpacing" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.MailDialogController">
    <children>
-      <GridPane styleClass="DefaultSpacing">
+      <GridPane hgap="5.0" styleClass="DefaultSpacing" vgap="5.0">
         <columnConstraints>
             <ColumnConstraints maxWidth="274.0" minWidth="10.0" prefWidth="77.0" />
           <ColumnConstraints maxWidth="274.0" minWidth="10.0" prefWidth="77.0" />

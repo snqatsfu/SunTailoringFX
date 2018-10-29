@@ -76,7 +76,8 @@ public class MailDialogController implements Initializable {
             if (exception instanceof FileNotFoundException) {
                 GuiUtils.showWarningAlertAndWait("Attachment file not found " + attachmentFileAbsolutePath);
             } else {
-                GuiUtils.showWarningAlertAndWait("Failed sending email");
+                exception.printStackTrace();
+                GuiUtils.showWarningAlertAndWait("Failed sending email - " + exception.getMessage());
             }
             root.getScene().setCursor(Cursor.DEFAULT);
         });

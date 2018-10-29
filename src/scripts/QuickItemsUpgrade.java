@@ -17,9 +17,18 @@ public class QuickItemsUpgrade {
     private static final String QUICK_ITEMS_CSV_FILE_HEADER = "Name,Unit Price,";
 
     public static void main(String[] args) throws IOException {
+        extract("src/scripts/QuickJackets.csv", "Jacket");
+        extract("src/scripts/QuickPants.csv", "Pant");
+        extract("src/scripts/QuickShirts.csv", "Shirt");
+        extract("src/scripts/QuickDress.csv", "Dress");
+        extract("src/scripts/QuickDryClean.csv", "Dry Clean");
+        extract("src/scripts/QuickOthers.csv", "Other");
+    }
+
+    private static void extract(String oldCsvPath, String quickItemName) throws IOException {
         // read old csv file
         List<Item> quickItemsList = new ArrayList<>();
-        try (Stream<String> stream = Files.lines(Paths.get("src/scripts/QuickDress.csv"))) {
+        try (Stream<String> stream = Files.lines(Paths.get(oldCsvPath))) {
             stream.forEach(line -> {
                 if (!line.equals(QUICK_ITEMS_CSV_FILE_HEADER)) {
                     final String[] split = line.split(",", -1);
@@ -34,7 +43,7 @@ public class QuickItemsUpgrade {
         QuickItems quickItems = new QuickItems(quickItemsList);
 
         // save
-        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(PathUtils.getQuickItemsDatFile("Dress")))) {
+        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(PathUtils.getQuickItemsDatFile(quickItemName)))) {
             quickItems.serialize(os);
         }
     }

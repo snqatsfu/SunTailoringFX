@@ -125,8 +125,9 @@ public class InvoicePrinter implements Printable {
         y += (int) MEDIUM_FONT_SIZE + 1;
         graphics.drawString(txt, x, y);
 
+        g2d.setFont(g2d.getFont().deriveFont(SMALL_FONT_SIZE));
         txt = "www.suntailoringvancouver.com";
-        y += (int) MEDIUM_FONT_SIZE + 1;
+        y += (int) SMALL_FONT_SIZE + 1;
         graphics.drawString(txt, x, y);
 
         return PAGE_EXISTS;
