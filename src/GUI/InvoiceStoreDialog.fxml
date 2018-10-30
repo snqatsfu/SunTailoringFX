@@ -15,6 +15,7 @@
                         <Label text="Customer" />
                         <TextField fx:id="searchByCustomerTextField" />
                         <CheckBox fx:id="notDoneOnlyCheckBox" mnemonicParsing="false" text="Display Only Not Done" />
+                        <CheckBox fx:id="hideDryCleanOnlyCheckBox" layoutX="294.0" layoutY="15.0" mnemonicParsing="false" text="Hide Dry Clean Only" />
                      </children>
                      <styleClass>
                         <String fx:value="DefaultSpacing" />

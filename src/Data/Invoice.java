@@ -201,6 +201,20 @@ public class Invoice implements Serializable, Comparable<Invoice> {
         return retVal;
     }
 
+    public boolean isDryCleanOnly() {
+        if (getItems().isEmpty()) {
+            return false;
+        }
+
+        boolean retVal = true;
+        for (Item item : getItems()) {
+            if (!item.getName().toLowerCase().trim().startsWith("dry clean")) {
+                retVal = false;
+                break;
+            }
+        }
+        return retVal;
+    }
 
     public String getInvoiceNumber() {
         return invoiceNumber.get();

@@ -64,6 +64,8 @@ public class InvoiceStoreDialogController implements Initializable {
     @FXML
     public CheckBox notDoneOnlyCheckBox;
     @FXML
+    public CheckBox hideDryCleanOnlyCheckBox;
+    @FXML
     public Label numInvoicesLabel;
     @FXML
     public Label invoicesTotalLabel;
@@ -143,11 +145,16 @@ public class InvoiceStoreDialogController implements Initializable {
         notDoneOnlyCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             filteredInvoices.setPredicate(getAllPredicates());
         });
+
+        hideDryCleanOnlyCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            filteredInvoices.setPredicate(getAllPredicates());
+        });
     }
 
     private Predicate<Invoice> getAllPredicates() {
         return getCustomerTextPredicate()
                 .and(getNotDoneOnlyPredicate())
+                .and(getHideDryCleanOnlyPredicate())
                 .and(getDueDatePredicate())
                 .and(getInvoiceDatePredicate());
     }
@@ -160,6 +167,11 @@ public class InvoiceStoreDialogController implements Initializable {
     private Predicate<Invoice> getNotDoneOnlyPredicate() {
         boolean notDoneOnly = notDoneOnlyCheckBox.isSelected();
         return invoice -> !notDoneOnly || !invoice.getDone();
+    }
+
+    private Predicate<Invoice> getHideDryCleanOnlyPredicate() {
+        boolean hideDryCleanOnly = hideDryCleanOnlyCheckBox.isSelected();
+        return invoice -> !hideDryCleanOnly || !invoice.isDryCleanOnly();
     }
 
     private Predicate<Invoice> getDueDatePredicate() {
