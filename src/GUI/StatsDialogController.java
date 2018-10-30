@@ -1,6 +1,7 @@
 package GUI;
 
 import Data.Invoice;
+import Utils.Utils;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
@@ -8,9 +9,7 @@ import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.Month;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -28,21 +27,24 @@ public class StatsDialogController implements Initializable {
         XYChart.Series<String, Number> numInvoicesSeries = new XYChart.Series<>();
         numInvoicesSeries.setName("# invoices");
 
-        final LocalDate twelveMonthsBeforeNow = LocalDate.now().minusMonths(11);
-        for (int i = 0; i <= 11; i++) {
-            final LocalDate searchDate = twelveMonthsBeforeNow.plusMonths(i);
-            final int searchYear = searchDate.getYear();
-            final Month searchMonth = searchDate.getMonth();
-            final List<Invoice> filteredInvoices = store.all().stream()
-                    .filter(invoice -> invoice.getInvoiceDate().getMonth().equals(searchMonth)
-                            && invoice.getInvoiceDate().getYear() == searchYear)
-                    .collect(Collectors.toList());
+        Map<LocalDate, List<Invoice>> groupedInvoices = new LinkedHashMap<>();
+        List<Utils.LocalDateRange> dateRanges = Utils.getLast12MonthsDateRanges(LocalDate.now());
+        dateRanges.forEach(dateRange -> groupedInvoices.put(dateRange.start, new ArrayList<>()));
+        store.all().stream().forEach(invoice -> {
+            final LocalDate invoiceDate = invoice.getInvoiceDate();
+            for (Utils.LocalDateRange localDateRange : dateRanges) {
+                if (localDateRange.contains(invoiceDate)) {
+                    groupedInvoices.get(localDateRange.start).add(invoice);
+                    break;
+                }
+            }
+        });
 
-            final Double total = filteredInvoices.stream().collect(Collectors.summingDouble(Invoice::getTotal));
-            final Long count = filteredInvoices.stream().count();
-
-            totalSeries.getData().add(new XYChart.Data<>(searchMonth.name(), total));
-            numInvoicesSeries.getData().add(new XYChart.Data<>(searchMonth.name(), count));
+        for (LocalDate periodStart : groupedInvoices.keySet()) {
+            double total = groupedInvoices.get(periodStart).stream().collect(Collectors.summingDouble(Invoice::getTotal));
+            int count = groupedInvoices.get(periodStart).size();
+            totalSeries.getData().add(new XYChart.Data<>(periodStart.toString(), total));
+            numInvoicesSeries.getData().add(new XYChart.Data<>(periodStart.toString(), count));
         }
 
         totalLineChart.getData().add(totalSeries);

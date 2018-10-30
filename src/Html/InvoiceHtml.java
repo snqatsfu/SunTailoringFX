@@ -193,7 +193,7 @@ public class InvoiceHtml {
         td = new Element("td", "Subtotal:");
         td.addAttribute(new Attribute("id", "tableColMiddle"));
         subtotalRow.addChild(td);
-        td = new Element("td", Utils.Utils.formatCurrency(invoice.getSubtotal()));
+        td = new Element("td", Utils.formatCurrency(invoice.getSubtotal()));
         td.addAttribute(new Attribute("id", "tableColRight"));
         subtotalRow.addChild(td);
         table.addChild(subtotalRow);
@@ -208,7 +208,7 @@ public class InvoiceHtml {
         td = new Element("td", "Tax (5%):");
         td.addAttribute(new Attribute("id", "tableColMiddle"));
         taxRow.addChild(td);
-        td = new Element("td", Utils.Utils.formatCurrency(invoice.getTax()));
+        td = new Element("td", Utils.formatCurrency(invoice.getTax()));
         td.addAttribute(new Attribute("id", "tableColRight"));
         taxRow.addChild(td);
         table.addChild(taxRow);
@@ -224,7 +224,7 @@ public class InvoiceHtml {
             td = new Element("td", "Credit:");
             td.addAttribute(new Attribute("id", "tableColMiddle"));
             creditRow.addChild(td);
-            td = new Element("td", "(" + Utils.Utils.formatCurrency(invoice.getCredit()) + ")");
+            td = new Element("td", "(" + Utils.formatCurrency(invoice.getCredit()) + ")");
             td.addAttribute(new Attribute("id", "tableColRight"));
             creditRow.addChild(td);
             table.addChild(creditRow);
@@ -244,7 +244,7 @@ public class InvoiceHtml {
         totalRow.addChild(td);
         td = new Element("td");
         td.addAttribute(new Attribute("id", "tableColRight"));
-        bold = new Element("b", Utils.Utils.formatCurrency(invoice.getTotal()));
+        bold = new Element("b", Utils.formatCurrency(invoice.getTotal()));
         td.addChild(bold);
         totalRow.addChild(td);
         table.addChild(totalRow);
@@ -269,11 +269,11 @@ public class InvoiceHtml {
         cell.addAttribute(new Attribute("id", "tableColMiddle"));
         row.addChild(cell);
 
-        cell = new Element("td", Utils.Utils.formatCurrency(item.getUnitPrice()));
+        cell = new Element("td", Utils.formatCurrency(item.getUnitPrice()));
         cell.addAttribute(new Attribute("id", "tableColMiddle"));
         row.addChild(cell);
 
-        cell = new Element("td", Utils.Utils.formatCurrency(item.getPrice()));
+        cell = new Element("td", Utils.formatCurrency(item.getPrice()));
         cell.addAttribute(new Attribute("id", "tableColRight"));
         row.addChild(cell);
 

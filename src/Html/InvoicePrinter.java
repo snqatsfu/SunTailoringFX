@@ -97,22 +97,22 @@ public class InvoicePrinter implements Printable {
         drawDash(g2d, graphics);
 
         // subtotal, tax, credit, and total
-        txt = "Subtotal: $ " + Utils.Utils.formatCurrency(invoice.getSubtotal());
+        txt = "Subtotal: $ " + Utils.formatCurrency(invoice.getSubtotal());
         y += (int) SMALL_FONT_SIZE + 3;
         graphics.drawString(txt, x, y);
 
-        txt = "Tax: $ " + Utils.Utils.formatCurrency(invoice.getTax());
+        txt = "Tax: $ " + Utils.formatCurrency(invoice.getTax());
         y += (int) SMALL_FONT_SIZE + 1;
         graphics.drawString(txt, x, y);
 
         if (invoice.getCredit() > 0) {
-            txt = "Credit: $ " + Utils.Utils.formatCurrency(invoice.getCredit());
+            txt = "Credit: $ " + Utils.formatCurrency(invoice.getCredit());
             y += (int) SMALL_FONT_SIZE + 1;
             graphics.drawString(txt, x, y);
         }
 
         g2d.setFont(g2d.getFont().deriveFont(MEDIUM_FONT_SIZE));
-        txt = "Total: $ " + Utils.Utils.formatCurrency(invoice.getTotal());
+        txt = "Total: $ " + Utils.formatCurrency(invoice.getTotal());
         y += (int) MEDIUM_FONT_SIZE + 1;
         graphics.drawString(txt, x, y);
 
