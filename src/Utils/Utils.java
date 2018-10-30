@@ -2,7 +2,7 @@ package Utils;
 
 import java.text.DecimalFormat;
 
-public class MathUtil {
+public class Utils {
 
     public static final DecimalFormat currencyFormatter = new DecimalFormat("0.00");
 
