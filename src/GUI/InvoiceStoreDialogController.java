@@ -1,13 +1,11 @@
 package GUI;
 
 import Data.Invoice;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -19,6 +17,7 @@ import javafx.stage.Stage;
 import javafx.util.converter.CurrencyStringConverter;
 
 import java.net.URL;
+import java.text.NumberFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -91,12 +90,7 @@ public class InvoiceStoreDialogController implements Initializable {
         SortedList<Invoice> sortedList = new SortedList<>(filteredInvoices);
         sortedList.comparatorProperty().bind(invoiceStoreTable.comparatorProperty());
         invoiceStoreTable.setItems(sortedList);
-
-        final ObservableList<Invoice> tableItems = invoiceStoreTable.getItems();
-        numInvoicesLabel.textProperty().bind(Bindings.size(tableItems).asString());
-        invoicesTotalLabel.textProperty().bind(Bindings.createDoubleBinding(() ->
-                        tableItems.stream().collect(Collectors.summingDouble(Invoice::getTotal)),
-                tableItems).asString());
+        updateTotalLabels();
     }
 
     @Override
@@ -138,8 +132,7 @@ public class InvoiceStoreDialogController implements Initializable {
         });
 
         searchByCustomerTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredInvoices.setPredicate(getAllPredicates());
-            updateFilterLabel();
+            filter();
         });
 
         updateFilterLabel();
@@ -213,10 +206,17 @@ public class InvoiceStoreDialogController implements Initializable {
         return selectedInvoice;
     }
 
-    public void filter(ActionEvent actionEvent) {
-        actionEvent.consume();
+    public void filter() {
         filteredInvoices.setPredicate(getAllPredicates());
         updateFilterLabel();
+        updateTotalLabels();
+    }
+
+    private void updateTotalLabels() {
+        final ObservableList<Invoice> tableItems = invoiceStoreTable.getItems();
+        numInvoicesLabel.setText(Integer.toString(tableItems.size()));
+        Double total = tableItems.stream().collect(Collectors.summingDouble(Invoice::getTotal));
+        invoicesTotalLabel.setText(NumberFormat.getCurrencyInstance().format(total));
     }
 
     private void updateFilterLabel() {
