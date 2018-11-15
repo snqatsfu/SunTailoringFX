@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import java.net.URL?>
+<VBox fx:id="root" styleClass="DefaultSpacing" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.ExpenseStoreDialogController">
+   <children>
+      <HBox>
+         <children>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox>
+                     <children>
+                        <Label minWidth="60.0" text="Date" />
+                        <DatePicker fx:id="datePicker" />
+                        <Label minWidth="60.0" text="Total" />
+                        <TextField fx:id="totalTextField" />
+                     </children>
+                     <styleClass>
+                        <String fx:value="DefaultSpacing" />
+                        <String fx:value="medium-text-field" />
+                     </styleClass>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label minWidth="100.0" text="Description" />
+                        <TextField fx:id="descriptionTextField" minWidth="400.0" HBox.hgrow="ALWAYS" />
+                     </children>
+                     <styleClass>
+                        <String fx:value="DefaultSpacing" />
+                        <String fx:value="medium-text-field" />
+                     </styleClass>
+                  </HBox>
+               </children>
+               <styleClass>
+                  <String fx:value="DefaultSpacing" />
+                  <String fx:value="big-text-field" />
+               </styleClass>
+            </VBox>
+            <Button maxHeight="1.7976931348623157E308" minWidth="80.0" mnemonicParsing="false" onAction="#addExpense" text="Add" />
+         </children>
+      </HBox>
+      <HBox>
+         <styleClass>
+            <String fx:value="DefaultSpacing" />
+            <String fx:value="medium-text-field" />
+         </styleClass>
+      </HBox>
+      <TableView fx:id="expensesTable" editable="true">
+        <columns>
+          <TableColumn fx:id="dateCol" editable="false" prefWidth="75.0" text="Date" />
+          <TableColumn fx:id="descriptionCol" minWidth="400.0" prefWidth="75.0" text="Description" />
+            <TableColumn fx:id="totalCol" prefWidth="75.0" text="Total" />
+        </columns>
+      </TableView>
+   </children>
+   <stylesheets>
+      <URL value="@StyleSheets/Containers.css" />
+      <URL value="@StyleSheets/TextControls.css" />
+   </stylesheets>
+</VBox>

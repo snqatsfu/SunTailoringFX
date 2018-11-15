@@ -2,8 +2,8 @@ package scripts;
 
 import Data.CustomerInfo;
 import Data.Invoice;
+import Data.InvoiceStore;
 import Data.Item;
-import GUI.InvoiceStore;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

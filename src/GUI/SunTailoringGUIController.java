@@ -131,8 +131,9 @@ public class SunTailoringGUIController implements Initializable {
     @FXML
     public TableColumn<Item, Double> itemsTablePriceCol;
 
-    private static final InvoiceStore invoiceStore = InvoiceStore.getInstance();
     private static final Properties config = PropertiesConfiguration.getInstance();
+    private static final InvoiceStore invoiceStore = InvoiceStore.getInstance();
+    private static final ExpenseStore expenseStore = ExpenseStore.getInstance();
 
     private final Invoice activeInvoice;
     private Invoice baselineInvoice;
@@ -511,6 +512,25 @@ public class SunTailoringGUIController implements Initializable {
 
         } catch (Exception e) {
             GuiUtils.showWarningAlertAndWait("Failed loading invoice store dialog");
+        }
+    }
+
+    public void showExpenseStoreDialog() {
+        try {
+            final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ExpenseStoreDialog.fxml"));
+            final Parent root = fxmlLoader.load();
+            final ExpenseStoreDialogController controller = fxmlLoader.getController();
+            controller.setExpenseStore(expenseStore);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Expense Store");
+            stage.getIcons().add(Assets.STORE_ICON);
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            GuiUtils.showWarningAlertAndWait("Failed loading expense store dialog");
         }
     }
 

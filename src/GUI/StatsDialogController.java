@@ -1,6 +1,7 @@
 package GUI;
 
 import Data.Invoice;
+import Data.InvoiceStore;
 import Utils.Utils;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;

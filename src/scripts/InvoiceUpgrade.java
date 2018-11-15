@@ -1,8 +1,8 @@
 package scripts;
 
 import Data.Invoice;
+import Data.InvoiceStore;
 import Data.LegacyInvoiceConverter;
-import GUI.InvoiceStore;
 
 import java.io.File;
 import java.nio.file.Files;

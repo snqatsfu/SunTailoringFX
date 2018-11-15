@@ -1,6 +1,7 @@
 package GUI;
 
 import Data.Invoice;
+import Data.InvoiceStore;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
@@ -83,10 +84,10 @@ public class InvoiceStoreDialogController implements Initializable {
     public void setInvoiceStore(InvoiceStore invoiceStore) {
         this.invoiceStore = invoiceStore;
         filteredInvoices = new FilteredList<>(invoiceStore.all(), invoice -> true);
-        updateInvoiceStoreTable();
+        setupInvoiceStoreTable();
     }
 
-    private void updateInvoiceStoreTable() {
+    private void setupInvoiceStoreTable() {
         SortedList<Invoice> sortedList = new SortedList<>(filteredInvoices);
         sortedList.comparatorProperty().bind(invoiceStoreTable.comparatorProperty());
         invoiceStoreTable.setItems(sortedList);
