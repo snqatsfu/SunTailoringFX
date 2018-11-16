@@ -44,6 +44,16 @@ public class Utils {
         return retVal;
     }
 
+    public static List<LocalDateRange> getLast8WeeksDateRanges(LocalDate from) {
+        List<LocalDateRange> retVal = new ArrayList<>();
+        TemporalField weekField = WeekFields.of(Locale.CANADA).dayOfWeek();
+        for (int i = 7; i >= 0; i--) {
+            LocalDate localDate = from.minusWeeks(i);
+            retVal.add(new LocalDateRange(localDate.with(weekField, 1), localDate.with(weekField, 7)));
+        }
+        return retVal;
+    }
+
     public static List<LocalDateRange> getLast52WeeksDateRanges(LocalDate from) {
         List<LocalDateRange> retVal = new ArrayList<>();
         TemporalField weekField = WeekFields.of(Locale.CANADA).dayOfWeek();
