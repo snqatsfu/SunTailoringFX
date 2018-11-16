@@ -574,7 +574,7 @@ public class SunTailoringGUIController implements Initializable {
             final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("StatsDialog.fxml"));
             final Parent root = fxmlLoader.load();
             final StatsDialogController controller = fxmlLoader.getController();
-            controller.setInvoiceStore(invoiceStore);
+            controller.setInvoiceStore(invoiceStore, expenseStore);
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
