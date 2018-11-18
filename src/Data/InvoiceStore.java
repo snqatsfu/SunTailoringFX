@@ -1,6 +1,5 @@
-package GUI;
+package Data;
 
-import Data.Invoice;
 import Utils.PathUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,7 +37,7 @@ public class InvoiceStore {
                 } catch (IOException ignore) {
                 }
             });
-            System.out.println("Invoice store loaded " + invoiceMap.size() + " invoices.");
+            System.out.println("Loaded " + invoiceMap.size() + " invoices.");
 
         } catch (IOException e) {
             e.printStackTrace();

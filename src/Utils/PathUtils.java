@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 public class PathUtils {
     public static final Path SAVE_DIR_PATH = Paths.get("Save");
 
+    public static final Path EXPENSES_DIR_PATH = Paths.get("Expenses");
+
     public static final Path SETTINGS_DIR_PATH = Paths.get("Settings");
 
     public static final File ADDRESS_BOOK_DAT_FILE = new File(SETTINGS_DIR_PATH + "/" + "addressBook.dat");

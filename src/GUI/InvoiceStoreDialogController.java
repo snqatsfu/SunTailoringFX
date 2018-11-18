@@ -1,13 +1,12 @@
 package GUI;
 
 import Data.Invoice;
-import javafx.beans.binding.Bindings;
+import Data.InvoiceStore;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -19,27 +18,34 @@ import javafx.stage.Stage;
 import javafx.util.converter.CurrencyStringConverter;
 
 import java.net.URL;
+import java.text.NumberFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class InvoiceStoreDialogController implements Initializable {
 
-    @FXML
     public VBox root;
-    @FXML
     public TextField searchByCustomerTextField;
-    @FXML
+
     public ToggleGroup dueDateToggleGroup;
-    @FXML
-    public ToggleButton dueTodayToggleButton;
-    @FXML
-    public ToggleButton dueTodayAndTomorrowToggleButton;
-    @FXML
-    public ToggleButton due3DaysToggleButton;
-    @FXML
-    public ToggleButton due1WeekToggleButton;
+    public RadioButton dueAnyRadioButton;
+    public RadioButton dueTodayRadioButton;
+    public RadioButton dueTomorrowRadioButton;
+    public RadioButton due3DaysRadioButton;
+    public RadioButton due1WeekRadioButton;
+
+    public ToggleGroup inDateToggleGroup;
+    public RadioButton inAnyRadioButton;
+    public RadioButton inTodayRadioButton;
+    public RadioButton inYesterdayRadioButton;
+    public RadioButton in3DaysRadioButton;
+    public RadioButton in1WeekRadioButton;
+    public RadioButton in1MonthRadioButton;
 
     @FXML
     public TableView<Invoice> invoiceStoreTable;
@@ -69,14 +75,7 @@ public class InvoiceStoreDialogController implements Initializable {
     public Label numInvoicesLabel;
     @FXML
     public Label invoicesTotalLabel;
-    public ToggleGroup inDateToggleGroup;
-    public ToggleButton inTodayToggleButton;
-    public ToggleButton inTodayYesterdayToggleButton;
-    public ToggleButton in3DaysToggleButton;
-    public ToggleButton in1WeekToggleButton;
-    public ToggleButton in2WeeksToggleButton;
-    public ToggleButton in1MonthToggleButton;
-
+    public Label filterLabel;
 
     private InvoiceStore invoiceStore;
     private FilteredList<Invoice> filteredInvoices;
@@ -85,19 +84,14 @@ public class InvoiceStoreDialogController implements Initializable {
     public void setInvoiceStore(InvoiceStore invoiceStore) {
         this.invoiceStore = invoiceStore;
         filteredInvoices = new FilteredList<>(invoiceStore.all(), invoice -> true);
-        updateInvoiceStoreTable();
+        setupInvoiceStoreTable();
     }
 
-    private void updateInvoiceStoreTable() {
+    private void setupInvoiceStoreTable() {
         SortedList<Invoice> sortedList = new SortedList<>(filteredInvoices);
         sortedList.comparatorProperty().bind(invoiceStoreTable.comparatorProperty());
         invoiceStoreTable.setItems(sortedList);
-
-        final ObservableList<Invoice> tableItems = invoiceStoreTable.getItems();
-        numInvoicesLabel.textProperty().bind(Bindings.size(tableItems).asString());
-        invoicesTotalLabel.textProperty().bind(Bindings.createDoubleBinding(() ->
-                        tableItems.stream().collect(Collectors.summingDouble(Invoice::getTotal)),
-                tableItems).asString());
+        updateTotalLabels();
     }
 
     @Override
@@ -139,16 +133,10 @@ public class InvoiceStoreDialogController implements Initializable {
         });
 
         searchByCustomerTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredInvoices.setPredicate(getAllPredicates());
+            filter();
         });
 
-        notDoneOnlyCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            filteredInvoices.setPredicate(getAllPredicates());
-        });
-
-        hideDryCleanOnlyCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            filteredInvoices.setPredicate(getAllPredicates());
-        });
+        updateFilterLabel();
     }
 
     private Predicate<Invoice> getAllPredicates() {
@@ -178,14 +166,18 @@ public class InvoiceStoreDialogController implements Initializable {
         final Toggle selectedToggle = dueDateToggleGroup.getSelectedToggle();
         if (selectedToggle != null) {
             final LocalDate today = LocalDate.now();
-            if (selectedToggle == dueTodayToggleButton) {
+            if (selectedToggle == dueTodayRadioButton) {
                 return invoice -> invoice.getDueDate().equals(today);
-            } else if (selectedToggle == dueTodayAndTomorrowToggleButton) {
-                // todo: skip weekends
-                return invoice -> !(invoice.getDueDate().isBefore(today) || invoice.getDueDate().isAfter(today.plusDays(1)));
-            } else if (selectedToggle == due3DaysToggleButton) {
+            } else if (selectedToggle == dueTomorrowRadioButton) {
+                LocalDate endDate = today.plusDays(1);
+                if (endDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                    endDate = endDate.plusDays(1);
+                }
+                final LocalDate finalEndDate = endDate;
+                return invoice -> !(invoice.getDueDate().isBefore(today) || invoice.getDueDate().isAfter(finalEndDate));
+            } else if (selectedToggle == due3DaysRadioButton) {
                 return invoice -> !(invoice.getDueDate().isBefore(today) || invoice.getDueDate().isAfter(today.plusDays(3)));
-            } else if (selectedToggle == due1WeekToggleButton) {
+            } else if (selectedToggle == due1WeekRadioButton) {
                 return invoice -> !(invoice.getDueDate().isBefore(today) || invoice.getDueDate().isAfter(today.plusWeeks(1)));
             }
         }
@@ -196,17 +188,15 @@ public class InvoiceStoreDialogController implements Initializable {
         final Toggle selectedToggle = inDateToggleGroup.getSelectedToggle();
         if (selectedToggle != null) {
             final LocalDate today = LocalDate.now();
-            if (selectedToggle == inTodayToggleButton) {
+            if (selectedToggle == inTodayRadioButton) {
                 return invoice -> invoice.getInvoiceDate().equals(today);
-            } else if (selectedToggle == inTodayYesterdayToggleButton) {
+            } else if (selectedToggle == inYesterdayRadioButton) {
                 return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusDays(1)) || invoice.getInvoiceDate().isAfter(today));
-            } else if (selectedToggle == in3DaysToggleButton) {
+            } else if (selectedToggle == in3DaysRadioButton) {
                 return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusDays(3)) || invoice.getInvoiceDate().isAfter(today));
-            } else if (selectedToggle == in1WeekToggleButton) {
+            } else if (selectedToggle == in1WeekRadioButton) {
                 return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusWeeks(1)) || invoice.getInvoiceDate().isAfter(today));
-            } else if (selectedToggle == in2WeeksToggleButton) {
-                return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusWeeks(2)) || invoice.getInvoiceDate().isAfter(today));
-            } else if (selectedToggle == in1MonthToggleButton) {
+            } else if (selectedToggle == in1MonthRadioButton) {
                 return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusMonths(1)) || invoice.getInvoiceDate().isAfter(today));
             }
         }
@@ -217,9 +207,66 @@ public class InvoiceStoreDialogController implements Initializable {
         return selectedInvoice;
     }
 
-    public void filter(ActionEvent actionEvent) {
-        actionEvent.consume();
+    public void filter() {
         filteredInvoices.setPredicate(getAllPredicates());
+        updateFilterLabel();
+        updateTotalLabels();
+    }
+
+    private void updateTotalLabels() {
+        final ObservableList<Invoice> tableItems = invoiceStoreTable.getItems();
+        numInvoicesLabel.setText(Integer.toString(tableItems.size()));
+        Double total = tableItems.stream().collect(Collectors.summingDouble(Invoice::getTotal));
+        invoicesTotalLabel.setText(NumberFormat.getCurrencyInstance().format(total));
+    }
+
+    private void updateFilterLabel() {
+        String label = "Displaying ";
+        if (searchByCustomerTextField.getText().isEmpty()
+                && !notDoneOnlyCheckBox.isSelected()
+                && !hideDryCleanOnlyCheckBox.isSelected()
+                && dueDateToggleGroup.getSelectedToggle() == dueAnyRadioButton
+                && inDateToggleGroup.getSelectedToggle() == inAnyRadioButton) {
+            label += "all invoices";
+
+        } else {
+            label += "invoices that are ";
+            List<String> filterLabels = new ArrayList<>();
+
+            RadioButton inRadioButton = (RadioButton) inDateToggleGroup.getSelectedToggle();
+            if (inRadioButton != inAnyRadioButton) {
+                filterLabels.add("in " + inRadioButton.getText());
+            }
+
+            RadioButton dueRadioButton = (RadioButton) dueDateToggleGroup.getSelectedToggle();
+            if (dueRadioButton != dueAnyRadioButton) {
+                filterLabels.add("due " + dueRadioButton.getText());
+            }
+
+            if (notDoneOnlyCheckBox.isSelected()) {
+                filterLabels.add("not done");
+            }
+
+            if (hideDryCleanOnlyCheckBox.isSelected()) {
+                filterLabels.add("not dry clean only");
+            }
+
+            if (!searchByCustomerTextField.getText().isEmpty()) {
+                filterLabels.add("containing \'" + searchByCustomerTextField.getText().trim() + "\'");
+            }
+
+            for (int i = 0; i < filterLabels.size(); i++) {
+                String element = filterLabels.get(i);
+                if (i == 0) {
+                    label += element;
+                } else if (i == filterLabels.size() - 1) {
+                    label += ", and " + element;
+                } else {
+                    label += ", " + element;
+                }
+            }
+        }
+        filterLabel.setText(label);
     }
 
     private class FormattedLocalDateTableCell extends TableCell<Invoice, LocalDate> {

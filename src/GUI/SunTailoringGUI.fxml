@@ -186,6 +186,7 @@
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#showAddressBookDialog" text="Address Book ..." />
                   <MenuItem mnemonicParsing="false" onAction="#showInvoiceStoreDialog" text="Invoice Store (Ctrl + F) ..." />
+                  <MenuItem mnemonicParsing="false" onAction="#showExpenseStoreDialog" text="Expense Store ..." />
                   <MenuItem mnemonicParsing="false" onAction="#showStatsDialog" text="Statistics..." />
             </items>
           </Menu>

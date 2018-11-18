@@ -131,8 +131,9 @@ public class SunTailoringGUIController implements Initializable {
     @FXML
     public TableColumn<Item, Double> itemsTablePriceCol;
 
-    private static final InvoiceStore invoiceStore = InvoiceStore.getInstance();
     private static final Properties config = PropertiesConfiguration.getInstance();
+    private static final InvoiceStore invoiceStore = InvoiceStore.getInstance();
+    private static final ExpenseStore expenseStore = ExpenseStore.getInstance();
 
     private final Invoice activeInvoice;
     private Invoice baselineInvoice;
@@ -514,6 +515,25 @@ public class SunTailoringGUIController implements Initializable {
         }
     }
 
+    public void showExpenseStoreDialog() {
+        try {
+            final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ExpenseStoreDialog.fxml"));
+            final Parent root = fxmlLoader.load();
+            final ExpenseStoreDialogController controller = fxmlLoader.getController();
+            controller.setExpenseStore(expenseStore);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Expense Store");
+            stage.getIcons().add(Assets.STORE_ICON);
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            GuiUtils.showWarningAlertAndWait("Failed loading expense store dialog");
+        }
+    }
+
     public void showMailDialog() {
         try {
             final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MailDialog.fxml"));
@@ -554,7 +574,7 @@ public class SunTailoringGUIController implements Initializable {
             final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("StatsDialog.fxml"));
             final Parent root = fxmlLoader.load();
             final StatsDialogController controller = fxmlLoader.getController();
-            controller.setInvoiceStore(invoiceStore);
+            controller.setInvoiceStore(invoiceStore, expenseStore);
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);

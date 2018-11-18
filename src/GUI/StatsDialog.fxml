@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.*?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import java.lang.String?>
+<?import java.net.URL?>
 <VBox fx:id="root" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.StatsDialogController">
    <children>
-      <LineChart fx:id="totalLineChart" title="Invoice total for the last 12 months">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </LineChart>
-      <LineChart fx:id="numInvoicesLineChart" title="# Invoices for the last 12 months">
+      <HBox>
+         <stylesheets>
+            <URL value="@StyleSheets/Containers.css" />
+            <URL value="@StyleSheets/TextControls.css" />
+         </stylesheets>
+         <styleClass>
+            <String fx:value="DefaultSpacing" />
+            <String fx:value="medium-text-field" />
+         </styleClass>
+         <children>
+            <ComboBox fx:id="timeRangeComboBox" minWidth="200.0" onAction="#timeRangeChanged" promptText="Time" />
+            <CheckBox fx:id="showInvoicesCheckBox" mnemonicParsing="false" onAction="#seriesSelectionChanged" selected="true" text="Show Invoices" />
+            <CheckBox fx:id="showExpensesCheckBox" layoutX="220.0" layoutY="15.0" mnemonicParsing="false" onAction="#seriesSelectionChanged" selected="true" text="Show Expenses" />
+            <CheckBox fx:id="showProfitsCheckBox" layoutX="354.0" layoutY="15.0" mnemonicParsing="false" onAction="#seriesSelectionChanged" selected="true" text="Show Profits" />
+         </children>
+      </HBox>
+      <LineChart fx:id="chart" animated="false" minWidth="800.0" title="Invoice total for the last 12 months">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>

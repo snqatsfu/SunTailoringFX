@@ -1,4 +1,4 @@
-import GUI.InvoiceStore;
+import Data.InvoiceStore;
 import org.junit.Test;
 
 public class InvoiceStoreTest {
