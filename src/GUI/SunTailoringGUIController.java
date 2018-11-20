@@ -364,6 +364,10 @@ public class SunTailoringGUIController implements Initializable {
                 if (event.getCode().equals(KeyCode.DELETE)) {
                     activeInvoice.getItems().remove(selectedIndex);
                     setActiveInvoiceState(ActiveInvoiceState.EDITED);
+                } else if (KEY_COMBO_CTRL_D.match(event)) {
+                    Item item = activeInvoice.getItems().get(selectedIndex);
+                    activeInvoice.getItems().add(selectedIndex + 1, item.copy());
+                    setActiveInvoiceState(ActiveInvoiceState.EDITED);
                 }
             }
         });

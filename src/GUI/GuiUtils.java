@@ -38,6 +38,7 @@ public class GuiUtils {
     public static final KeyCombination KEY_COMBO_CTRL_F = new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
     public static final KeyCombination KEY_COMBO_CTRL_N = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
     public static final KeyCombination KEY_COMBO_CTRL_P = new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN);
+    public static final KeyCombination KEY_COMBO_CTRL_D = new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN);
     public static final KeyCombination KEY_COMBO_CTRL_ENTER = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
 
 }
