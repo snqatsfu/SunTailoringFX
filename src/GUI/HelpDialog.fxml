@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox fx:id="root" prefHeight="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.HelpDialogController">
+   <children>
+      <Accordion>
+        <panes>
+          <TitledPane animated="false" text="Shortcuts">
+            <content>
+              <AnchorPane styleClass="medium-text-field">
+                     <children>
+                        <TableView fx:id="shortcutTable" layoutX="-7.0" layoutY="-100.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                          <columns>
+                            <TableColumn fx:id="shortcutKeyCol" minWidth="100.0" prefWidth="75.0" text="Shortcut" />
+                            <TableColumn fx:id="shortcutDescriptionCol" minWidth="500.0" prefWidth="75.0" text="Description" />
+                          </columns>
+                        </TableView>
+                     </children></AnchorPane>
+            </content>
+          </TitledPane>
+          <TitledPane animated="false" text="Color Codes">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </TitledPane>
+        </panes>
+      </Accordion>
+   </children>
+</VBox>

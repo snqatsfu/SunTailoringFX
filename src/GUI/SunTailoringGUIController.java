@@ -296,6 +296,8 @@ public class SunTailoringGUIController implements Initializable {
                 createNewInvoice();
             } else if (KEY_COMBO_CTRL_P.match(keyEvent)) {
                 printActiveInvoice();
+            } else if (keyEvent.getCode().equals(KeyCode.F1)) {
+                showHelpDialog();
             }
         });
 
@@ -535,6 +537,23 @@ public class SunTailoringGUIController implements Initializable {
 
         } catch (Exception e) {
             GuiUtils.showWarningAlertAndWait("Failed loading expense store dialog");
+        }
+    }
+
+    public void showHelpDialog() {
+        try {
+            final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("HelpDialog.fxml"));
+            final Parent root = fxmlLoader.load();
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Help");
+            stage.getIcons().add(Assets.HELP_ICON);
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            GuiUtils.showWarningAlertAndWait("Failed loading help dialog");
         }
     }
 

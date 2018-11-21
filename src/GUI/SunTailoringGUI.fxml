@@ -202,7 +202,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" onAction="#showHelpDialog" text="Help ... (F1)" />
             </items>
           </Menu>
         </menus>

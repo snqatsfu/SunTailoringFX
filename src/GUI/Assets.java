@@ -10,4 +10,5 @@ public class Assets {
     public static final Image SETTINGS_ICON = new Image("Assets/SettingsIcon.png");
     public static final Image STORE_ICON = new Image("Assets/StoreIcon.png");
     public static final Image ADDRESS_BOOK_ICON = new Image("Assets/AddressBookIcon.png");
+    public static final Image HELP_ICON = new Image("Assets/HelpIcon.png");
 }
