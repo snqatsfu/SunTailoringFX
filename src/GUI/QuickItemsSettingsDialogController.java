@@ -22,8 +22,6 @@ import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static GUI.GuiUtils.KEY_COMBO_CTRL_S;
-
 public class QuickItemsSettingsDialogController implements Initializable {
 
     public VBox root;
@@ -41,7 +39,7 @@ public class QuickItemsSettingsDialogController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         root.setOnKeyPressed(keyEvent -> {
-            if (KEY_COMBO_CTRL_S.match(keyEvent)) {
+            if (Shortcut.CTRL_S.getKeyCombo().match(keyEvent)) {
                 saveQuickItems();
             }
         });

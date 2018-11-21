@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static GUI.GuiUtils.KEY_COMBO_CTRL_ENTER;
-
 public class MailDialogController implements Initializable {
 
     public VBox root;
@@ -45,7 +43,7 @@ public class MailDialogController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         root.setOnKeyPressed(keyEvent -> {
-            if (KEY_COMBO_CTRL_ENTER.match(keyEvent)) {
+            if (Shortcut.CTRL_ENTER.getKeyCombo().match(keyEvent)) {
                 send();
             }
         });

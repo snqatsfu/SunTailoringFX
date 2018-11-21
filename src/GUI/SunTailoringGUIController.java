@@ -42,7 +42,6 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import static GUI.GuiUtils.*;
 import static Utils.PathUtils.ADDRESS_BOOK_DAT_FILE;
 import static Utils.PathUtils.SETTINGS_DIR_PATH;
 
@@ -288,15 +287,15 @@ public class SunTailoringGUIController implements Initializable {
         invoiceNumberTextField.setStyle("-fx-control-inner-background: lightgreen");
 
         rootPane.setOnKeyPressed(keyEvent -> {
-            if (KEY_COMBO_CTRL_S.match(keyEvent)) {
+            if (Shortcut.CTRL_S.getKeyCombo().match(keyEvent)) {
                 saveActiveInvoice();
-            } else if (KEY_COMBO_CTRL_F.match(keyEvent)) {
+            } else if (Shortcut.CTRL_F.getKeyCombo().match(keyEvent)) {
                 showInvoiceStoreDialog();
-            } else if (KEY_COMBO_CTRL_N.match(keyEvent)) {
+            } else if (Shortcut.CTRL_N.getKeyCombo().match(keyEvent)) {
                 createNewInvoice();
-            } else if (KEY_COMBO_CTRL_P.match(keyEvent)) {
+            } else if (Shortcut.CTRL_P.getKeyCombo().match(keyEvent)) {
                 printActiveInvoice();
-            } else if (keyEvent.getCode().equals(KeyCode.F1)) {
+            } else if (Shortcut.F1.getKeyCombo().match(keyEvent)) {
                 showHelpDialog();
             }
         });
@@ -366,7 +365,7 @@ public class SunTailoringGUIController implements Initializable {
                 if (event.getCode().equals(KeyCode.DELETE)) {
                     activeInvoice.getItems().remove(selectedIndex);
                     setActiveInvoiceState(ActiveInvoiceState.EDITED);
-                } else if (KEY_COMBO_CTRL_D.match(event)) {
+                } else if (Shortcut.CTRL_D.getKeyCombo().match(event)) {
                     Item item = activeInvoice.getItems().get(selectedIndex);
                     activeInvoice.getItems().add(selectedIndex + 1, item.copy());
                     setActiveInvoiceState(ActiveInvoiceState.EDITED);
