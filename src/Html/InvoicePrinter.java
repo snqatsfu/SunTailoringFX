@@ -129,6 +129,13 @@ public class InvoicePrinter implements Printable {
         txt = "www.suntailoringvancouver.com";
         y += (int) SMALL_FONT_SIZE + 1;
         graphics.drawString(txt, x, y);
+        y += (int) SMALL_FONT_SIZE + 1;
+        y += (int) SMALL_FONT_SIZE + 1;
+        txt = "Not completely satisfied?";
+        graphics.drawString(txt, x, y);
+        txt = "We will fix it for FREE within 2 weeks";
+        y += (int) SMALL_FONT_SIZE + 1;
+        graphics.drawString(txt, x, y);
 
         return PAGE_EXISTS;
     }

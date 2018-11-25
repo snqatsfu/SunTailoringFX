@@ -232,6 +232,16 @@ public class SunTailoringGUIController implements Initializable {
     public void createNewInvoice() {
         String invoiceNumber = generateInvoiceNumber();
         setActiveInvoice(Invoice.createEmptyInvoice(invoiceNumber), ActiveInvoiceState.NEW);
+        clearQuickItemComboBoxSelection();
+    }
+
+    private void clearQuickItemComboBoxSelection() {
+        quickJacketComboBox.getSelectionModel().clearSelection();
+        quickPantComboBox.getSelectionModel().clearSelection();
+        quickShirtComboBox.getSelectionModel().clearSelection();
+        quickDressComboBox.getSelectionModel().clearSelection();
+        quickDryCleanComboBox.getSelectionModel().clearSelection();
+        quickOtherComboBox.getSelectionModel().clearSelection();
     }
 
     private String generateInvoiceNumber() {
