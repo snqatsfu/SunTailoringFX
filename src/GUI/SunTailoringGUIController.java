@@ -39,7 +39,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 import static Utils.PathUtils.ADDRESS_BOOK_DAT_FILE;
@@ -62,6 +61,7 @@ public class SunTailoringGUIController implements Initializable {
     public MenuItem quickDressSettingsMenuItem;
     @FXML
     public MenuItem quickOthersSettingsMenuItem;
+    public CheckMenuItem sendEmailWhenDoneCheckMenuItem;
 
     @FXML
     private TextField findInvoiceNumberTextField;
@@ -130,7 +130,7 @@ public class SunTailoringGUIController implements Initializable {
     @FXML
     public TableColumn<Item, Double> itemsTablePriceCol;
 
-    private static final Properties config = PropertiesConfiguration.getInstance();
+    private static final PropertiesConfiguration config = PropertiesConfiguration.getInstance();
     private static final InvoiceStore invoiceStore = InvoiceStore.getInstance();
     private static final ExpenseStore expenseStore = ExpenseStore.getInstance();
 
@@ -393,6 +393,8 @@ public class SunTailoringGUIController implements Initializable {
         newInvoiceButton.setTooltip(new Tooltip("Ctrl + N"));
         saveInvoiceButton.setTooltip(new Tooltip("Ctrl + S"));
         printInvoiceButton.setTooltip(new Tooltip("Ctrl + P"));
+
+        sendEmailWhenDoneCheckMenuItem.setSelected(getSendEmailWhenMarkedDone());
     }
 
     public void showAddressBookDialog(Event event) {
@@ -642,4 +644,15 @@ public class SunTailoringGUIController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    public void setSendEmailWhenMarkedDone() {
+        boolean send = sendEmailWhenDoneCheckMenuItem.isSelected();
+        config.setProperty("mail.send_when_invoice_marked_done", Boolean.toString(send));
+        config.save();
+    }
+
+    public boolean getSendEmailWhenMarkedDone() {
+        return Boolean.parseBoolean(config.getProperty("mail.send_when_invoice_marked_done", "false"));
+    }
+
 }

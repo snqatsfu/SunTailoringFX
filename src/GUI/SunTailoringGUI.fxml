@@ -198,6 +198,8 @@
                   <MenuItem fx:id="quickDryCleansSettingsMenuItem" mnemonicParsing="false" onAction="#showQuickItemsSettingsDialog" text="Quick Dry Cleans..." />
                   <MenuItem fx:id="quickDressSettingsMenuItem" mnemonicParsing="false" onAction="#showQuickItemsSettingsDialog" text="Quick Dresses..." />
                   <MenuItem fx:id="quickOthersSettingsMenuItem" mnemonicParsing="false" onAction="#showQuickItemsSettingsDialog" text="Quick Others..." />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <CheckMenuItem fx:id="sendEmailWhenDoneCheckMenuItem" mnemonicParsing="false" onAction="#setSendEmailWhenMarkedDone" text="Send Email when Invoice Marked &quot;Done&quot;" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
