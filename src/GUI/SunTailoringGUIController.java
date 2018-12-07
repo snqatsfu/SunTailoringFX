@@ -4,6 +4,7 @@ import Data.*;
 import Html.Element;
 import Html.InvoiceHtml;
 import Html.InvoicePrinter;
+import Utils.GmailSender;
 import Utils.PathUtils;
 import Utils.PropertiesConfiguration;
 import javafx.collections.ObservableList;
@@ -267,11 +268,39 @@ public class SunTailoringGUIController implements Initializable {
 
         }
         if (doSave) {
+            boolean wasDone = baselineInvoice.getDone();
+
             invoiceStore.save(activeInvoice);
             baselineInvoice = activeInvoice.copy();
             setActiveInvoiceState(ActiveInvoiceState.SAVED);
             addressBook.add(activeInvoice.getCustomerInfo().copy());
-            GuiUtils.showInfoAlertAndWait("Saved Invoice " + activeInvoice.getInvoiceNumber());
+
+            // send email when invoice is marked DONE, if the settings allows so
+            String sentMail = "";
+            if (getSendEmailWhenMarkedDone()) {
+                if (!wasDone && activeInvoice.getDone()) {
+                    String email = activeInvoice.getCustomerInfo().getEmail();
+                    if (!email.isEmpty()) {
+                        try {
+                            GmailSender.DEFAULT.sendMail(email,
+                                    Collections.emptyList(),
+                                    "invoice done test mail",
+                                    "your invoice is done",
+                                    "");
+                            sentMail = email;
+                        } catch (Exception e) {
+                            GuiUtils.showWarningAlertAndWait("Failed sending email to " + email +
+                                    ". You can turn off automatic email sending in the Settings.");
+                        }
+                    }
+                }
+            }
+
+            String info = "Saved Invoice " + activeInvoice.getInvoiceNumber();
+            if (!sentMail.isEmpty()) {
+                info += ". Email sent to " + sentMail + ".";
+            }
+            GuiUtils.showInfoAlertAndWait(info);
         } else {
             System.out.println("Cancelled saving " + activeInvoice.getInvoiceNumber());
         }
