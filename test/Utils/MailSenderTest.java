@@ -47,7 +47,8 @@ public class MailSenderTest {
                 customerInfo, items, 0, false, false, false);
         Element html = new Element("html");
         InvoiceHtml.buildHead(html);
-        InvoiceHtml.buildBody(html, invoice);
+        String message = "test message";
+        InvoiceHtml.buildBody(html, invoice, message);
         GmailSender.DEFAULT.sendMail("nathanzheng87@gmail.com",
                 new ArrayList<>(),
                 "Test Invoice",

@@ -277,21 +277,23 @@ public class SunTailoringGUIController implements Initializable {
 
             // send email when invoice is marked DONE, if the settings allows so
             String sentMail = "";
-            if (getSendEmailWhenMarkedDone()) {
-                if (!wasDone && activeInvoice.getDone()) {
-                    String email = activeInvoice.getCustomerInfo().getEmail();
-                    if (!email.isEmpty()) {
-                        try {
-                            GmailSender.DEFAULT.sendMail(email,
-                                    Collections.emptyList(),
-                                    "invoice done test mail",
-                                    "your invoice is done",
-                                    "");
-                            sentMail = email;
-                        } catch (Exception e) {
-                            GuiUtils.showWarningAlertAndWait("Failed sending email to " + email +
-                                    ". You can turn off automatic email sending in the Settings.");
-                        }
+            if (getSendEmailWhenMarkedDone() && !wasDone && activeInvoice.getDone()) {
+                String email = activeInvoice.getCustomerInfo().getEmail();
+                if (!email.isEmpty()) {
+                    try {
+                        String message = "Dear " + activeInvoice.getCustomerInfo().getName() + ",<br><br>" +
+                                "Your order has been completed and ready for pick up! Please see below for your invoice." +
+                                "<br><br>Thank you for choosing Sun Tailoring!" +
+                                "<br><br>Nathan,<br>Sun Tailoring<br><br>";
+                        GmailSender.DEFAULT.sendMail(email,
+                                Collections.emptyList(),
+                                "Your Sun Tailoring Order " + activeInvoice.getInvoiceNumber() + " is ready for pick up",
+                                composeEmailContent(message, activeInvoice),
+                                "");
+                        sentMail = email;
+                    } catch (Exception e) {
+                        GuiUtils.showWarningAlertAndWait("Failed sending email to " + email +
+                                ". You can turn off automatic email sending in the Settings.");
                     }
                 }
             }
@@ -615,10 +617,10 @@ public class SunTailoringGUIController implements Initializable {
             final String subject = String.format(config.getProperty("invoice.maker.default.mail.subject"), activeInvoice.getInvoiceNumber());
             controller.setSubject(subject);
 
-            Element html = new Element("html");
-            InvoiceHtml.buildHead(html);
-            InvoiceHtml.buildBody(html, activeInvoice);
-            controller.setBodyHtml(html.print());
+            String message = "Dear " + activeInvoice.getCustomerInfo().getName() + ",<br><br>" +
+                    "Thank you for choosing Sun Tailoring. Please see below for your invoice. You may reply directly or give us a call if you have any question.<br><br>" +
+                    "Nathan,<br>Sun Tailoring<br><br>";
+            controller.setBodyHtml(composeEmailContent(message, activeInvoice));
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -630,6 +632,13 @@ public class SunTailoringGUIController implements Initializable {
         } catch (Exception e) {
             GuiUtils.showWarningAlertAndWait("Failed loading mail dialog");
         }
+    }
+
+    private static String composeEmailContent(String message, Invoice invoice) {
+        Element html = new Element("html");
+        InvoiceHtml.buildHead(html);
+        InvoiceHtml.buildBody(html, invoice, message);
+        return html.print();
     }
 
     public void showStatsDialog() {

@@ -103,7 +103,7 @@ public class InvoiceHtml {
         parent.addChild(head);
     }
 
-    public static void buildBody(Element parent, Invoice invoice) {
+    public static void buildBody(Element parent, Invoice invoice, String message) {
         Element body = new Element("body");
         parent.addChild(body);
 
@@ -113,9 +113,7 @@ public class InvoiceHtml {
 
         Element div = new Element("div");
         div.addAttribute(new Attribute("id", "wholeBlock"));
-        div.setContent("Dear " + invoice.getCustomerInfo().getName() + ",<br><br>" +
-                "Thank you for choosing Sun Tailoring. Please see below for your invoice. You may reply directly or give us a call if you have any question.<br><br>" +
-                "Nathan,<br>Sun Tailoring<br><br>");
+        div.setContent(message);
         container.addChild(div);
 
         div = new Element("div");
