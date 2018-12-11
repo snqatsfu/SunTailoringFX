@@ -8,6 +8,7 @@ import Utils.GmailSender;
 import Utils.PathUtils;
 import Utils.PropertiesConfiguration;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -280,32 +281,51 @@ public class SunTailoringGUIController implements Initializable {
             if (getSendEmailWhenMarkedDone() && !wasDone && activeInvoice.getDone()) {
                 String email = activeInvoice.getCustomerInfo().getEmail();
                 if (!email.isEmpty()) {
-                    try {
-                        String message = "Dear " + activeInvoice.getCustomerInfo().getName() + ",<br><br>" +
-                                "Your order has been completed and ready for pick up! Please see below for your invoice." +
-                                "<br><br>Thank you for choosing Sun Tailoring!" +
-                                "<br><br>Nathan,<br>Sun Tailoring<br><br>";
-                        GmailSender.DEFAULT.sendMail(email,
-                                Collections.emptyList(),
-                                "Your Sun Tailoring Order " + activeInvoice.getInvoiceNumber() + " is ready for pick up",
-                                composeEmailContent(message, activeInvoice),
-                                "");
-                        sentMail = email;
-                    } catch (Exception e) {
-                        GuiUtils.showWarningAlertAndWait("Failed sending email to " + email +
-                                ". You can turn off automatic email sending in the Settings.");
-                    }
+                    String subject = "Your Sun Tailoring Order " + activeInvoice.getInvoiceNumber() + " is ready for pick up";
+                    String message = "Dear " + activeInvoice.getCustomerInfo().getName() + ",<br><br>" +
+                            "Your order has been completed and ready for pick up! Please see below for your invoice." +
+                            "<br><br>Thank you for choosing Sun Tailoring!" +
+                            "<br><br>Nathan,<br>Sun Tailoring<br><br>";
+                    String body = composeEmailContent(message, activeInvoice);
+
+                    new Thread(createMailSendTask(email, subject, body)).start();
+                    sentMail = email;
                 }
             }
 
             String info = "Saved Invoice " + activeInvoice.getInvoiceNumber();
             if (!sentMail.isEmpty()) {
-                info += ". Email sent to " + sentMail + ".";
+                info += ". Sending email to " + sentMail + "...";
             }
             GuiUtils.showInfoAlertAndWait(info);
         } else {
             System.out.println("Cancelled saving " + activeInvoice.getInvoiceNumber());
         }
+    }
+
+    private Task<Void> createMailSendTask(String email, String subject, String body) {
+        return new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                GmailSender.DEFAULT.sendMail(email,
+                        Collections.emptyList(),
+                        subject,
+                        body,
+                        "");
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                GuiUtils.showInfoAlertAndWait("Successfully sent email.");
+            }
+
+            @Override
+            protected void failed() {
+                GuiUtils.showWarningAlertAndWait("Failed sending email to " + email +
+                        ". You can turn off automatic email sending in the Settings.");
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")
