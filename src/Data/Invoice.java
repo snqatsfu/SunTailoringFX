@@ -1,5 +1,6 @@
 package Data;
 
+import Utils.PropertiesConfiguration;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -23,7 +24,8 @@ public class Invoice implements Serializable, Comparable<Invoice> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int DEFAULT_NUM_DAYS_DUE = 7;
+    private static final int DEFAULT_NUM_DAYS_DUE = Integer.parseInt(PropertiesConfiguration.getInstance()
+            .getProperty("invoice.maker.default.due.days", "7"));
     private static final double SERVICE_TAX_RATE = 0.05;
 
     private StringProperty invoiceNumber;
