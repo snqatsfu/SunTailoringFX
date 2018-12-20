@@ -2,6 +2,7 @@ package GUI;
 
 import Data.Invoice;
 import Data.InvoiceStore;
+import Utils.PathUtils;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
@@ -17,6 +18,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.converter.CurrencyStringConverter;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.time.DayOfWeek;
@@ -125,6 +129,7 @@ public class InvoiceStoreDialogController implements Initializable {
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
                     selectedInvoice.setValue(row.getItem());
+                    saveFilters();
                     final Stage stage = (Stage) table.getScene().getWindow();
                     stage.close();
                 }
@@ -145,6 +150,51 @@ public class InvoiceStoreDialogController implements Initializable {
                 .and(getHideDryCleanOnlyPredicate())
                 .and(getDueDatePredicate())
                 .and(getInvoiceDatePredicate());
+    }
+
+    private void saveFilters() {
+        String customerText = searchByCustomerTextField.getText().trim();
+        boolean showNotDoneOnly = notDoneOnlyCheckBox.isSelected();
+        boolean hideDryCleanOnly = hideDryCleanOnlyCheckBox.isSelected();
+
+        int dueDateSelectionIndex = -1;
+        Toggle dueDateToggle = dueDateToggleGroup.getSelectedToggle();
+        if (dueDateToggle != null) {
+            if (dueDateToggle == dueTodayRadioButton) {
+                dueDateSelectionIndex = 0;
+            } else if (dueDateToggle == dueTomorrowRadioButton) {
+                dueDateSelectionIndex = 1;
+            } else if (dueDateToggle == due3DaysRadioButton) {
+                dueDateSelectionIndex = 2;
+            } else if (dueDateToggle == due1WeekRadioButton) {
+                dueDateSelectionIndex = 3;
+            }
+        }
+
+        int inDateSelectionIndex = -1;
+        Toggle inDateToggle = dueDateToggleGroup.getSelectedToggle();
+        if (inDateToggle != null) {
+            if (inDateToggle == inTodayRadioButton) {
+                inDateSelectionIndex = 0;
+            } else if (inDateToggle == inYesterdayRadioButton) {
+                inDateSelectionIndex = 1;
+            } else if (inDateToggle == in3DaysRadioButton) {
+                inDateSelectionIndex = 2;
+            } else if (inDateToggle == in1WeekRadioButton) {
+                inDateSelectionIndex = 3;
+            } else if (inDateToggle == in1MonthRadioButton) {
+                inDateSelectionIndex = 4;
+            }
+        }
+
+        InvoiceStoreFilter invoiceStoreFilter = new InvoiceStoreFilter(
+                customerText, showNotDoneOnly, hideDryCleanOnly, dueDateSelectionIndex, inDateSelectionIndex);
+
+        try (ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream(PathUtils.INVOICE_STORE_FILTER_DAT_FILE))) {
+            invoiceStoreFilter.serialize(fos);
+        } catch (IOException e) {
+            GuiUtils.showWarningAlertAndWait("Save Invoice Store Filter Failed!");
+        }
     }
 
     private Predicate<Invoice> getCustomerTextPredicate() {

@@ -14,6 +14,7 @@ public class PathUtils {
     public static final Path SETTINGS_DIR_PATH = Paths.get("Settings");
 
     public static final File ADDRESS_BOOK_DAT_FILE = new File(SETTINGS_DIR_PATH + "/" + "addressBook.dat");
+    public static final File INVOICE_STORE_FILTER_DAT_FILE = new File(SETTINGS_DIR_PATH + "/" + "invoiceStoreFilters.dat");
 
     public static File getQuickItemsDatFile(String name) {
         return new File(SETTINGS_DIR_PATH + "/" + "quick" + name.replaceAll(" ", "") + "Settings.dat");
