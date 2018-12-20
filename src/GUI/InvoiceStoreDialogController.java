@@ -51,6 +51,7 @@ public class InvoiceStoreDialogController implements Initializable {
     public RadioButton in3DaysRadioButton;
     public RadioButton in1WeekRadioButton;
     public RadioButton in1MonthRadioButton;
+    public RadioButton in2MonthRadioButton;
 
     @FXML
     public TableView<Invoice> invoiceStoreTable;
@@ -138,6 +139,8 @@ public class InvoiceStoreDialogController implements Initializable {
             case 4:
                 inDateToggle = in1MonthRadioButton;
                 break;
+            case 5:
+                inDateToggle = in2MonthRadioButton;
             default:
                 break;
         }
@@ -237,6 +240,8 @@ public class InvoiceStoreDialogController implements Initializable {
                 inDateSelectionIndex = 3;
             } else if (inDateToggle == in1MonthRadioButton) {
                 inDateSelectionIndex = 4;
+            } else if (inDateToggle == in2MonthRadioButton) {
+                inDateSelectionIndex = 5;
             }
         }
 
@@ -301,6 +306,8 @@ public class InvoiceStoreDialogController implements Initializable {
                 return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusWeeks(1)) || invoice.getInvoiceDate().isAfter(today));
             } else if (selectedToggle == in1MonthRadioButton) {
                 return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusMonths(1)) || invoice.getInvoiceDate().isAfter(today));
+            } else if (selectedToggle == in2MonthRadioButton) {
+                return invoice -> !(invoice.getInvoiceDate().isBefore(today.minusMonths(2)) || invoice.getInvoiceDate().isAfter(today));
             }
         }
         return invoice -> true;
