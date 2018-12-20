@@ -564,7 +564,13 @@ public class SunTailoringGUIController implements Initializable {
             final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("InvoiceStoreDialog.fxml"));
             final Parent root = fxmlLoader.load();
             final InvoiceStoreDialogController controller = fxmlLoader.getController();
-            controller.setInvoiceStore(invoiceStore);
+
+            InvoiceStoreFilter invoiceStoreFilter = null;
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PathUtils.INVOICE_STORE_FILTER_DAT_FILE))) {
+                invoiceStoreFilter = InvoiceStoreFilter.deserialize(ois);
+            } catch (Exception ignore) {}
+
+            controller.setInvoiceStore(invoiceStore, invoiceStoreFilter);
             controller.selectedInvoiceProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     setActiveInvoice(newValue, ActiveInvoiceState.SAVED);
@@ -577,6 +583,7 @@ public class SunTailoringGUIController implements Initializable {
             stage.getIcons().add(Assets.STORE_ICON);
             stage.setScene(new Scene(root));
             stage.show();
+            stage.setOnCloseRequest(e -> controller.saveFilters());
 
         } catch (Exception e) {
             GuiUtils.showWarningAlertAndWait("Failed loading invoice store dialog");

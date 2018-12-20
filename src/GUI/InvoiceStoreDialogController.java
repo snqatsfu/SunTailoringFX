@@ -17,6 +17,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.converter.CurrencyStringConverter;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -85,10 +86,62 @@ public class InvoiceStoreDialogController implements Initializable {
     private FilteredList<Invoice> filteredInvoices;
     private ReadOnlyObjectWrapper<Invoice> selectedInvoice;
 
-    public void setInvoiceStore(InvoiceStore invoiceStore) {
+    public void setInvoiceStore(InvoiceStore invoiceStore, @Nullable InvoiceStoreFilter filter) {
         this.invoiceStore = invoiceStore;
+
         filteredInvoices = new FilteredList<>(invoiceStore.all(), invoice -> true);
         setupInvoiceStoreTable();
+
+        if (filter != null) {
+            configureComponentsBasedOnFilter(filter);
+            filter();
+        }
+    }
+
+    private void configureComponentsBasedOnFilter(InvoiceStoreFilter filter) {
+        searchByCustomerTextField.setText(filter.customerText);
+        notDoneOnlyCheckBox.setSelected(filter.showNotDoneOnly);
+        hideDryCleanOnlyCheckBox.setSelected(filter.hideDryCleanOnly);
+        Toggle dueDateToggle = dueAnyRadioButton;
+        switch (filter.dueDateSelectionIndex) {
+            case 0:
+                dueDateToggle = dueTodayRadioButton;
+                break;
+            case 1:
+                dueDateToggle = dueTomorrowRadioButton;
+                break;
+            case 2:
+                dueDateToggle = due3DaysRadioButton;
+                break;
+            case 3:
+                dueDateToggle = due1WeekRadioButton;
+                break;
+            default:
+                break;
+        }
+        dueDateToggleGroup.selectToggle(dueDateToggle);
+
+        Toggle inDateToggle = inAnyRadioButton;
+        switch (filter.inDateSelectionIndex) {
+            case 0:
+                inDateToggle = inTodayRadioButton;
+                break;
+            case 1:
+                inDateToggle = inYesterdayRadioButton;
+                break;
+            case 2:
+                inDateToggle = in3DaysRadioButton;
+                break;
+            case 3:
+                inDateToggle = in1WeekRadioButton;
+                break;
+            case 4:
+                inDateToggle = in1MonthRadioButton;
+                break;
+            default:
+                break;
+        }
+        inDateToggleGroup.selectToggle(inDateToggle);
     }
 
     private void setupInvoiceStoreTable() {
@@ -129,8 +182,8 @@ public class InvoiceStoreDialogController implements Initializable {
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
                     selectedInvoice.setValue(row.getItem());
-                    saveFilters();
                     final Stage stage = (Stage) table.getScene().getWindow();
+                    saveFilters();
                     stage.close();
                 }
             });
@@ -152,7 +205,7 @@ public class InvoiceStoreDialogController implements Initializable {
                 .and(getInvoiceDatePredicate());
     }
 
-    private void saveFilters() {
+    public void saveFilters() {
         String customerText = searchByCustomerTextField.getText().trim();
         boolean showNotDoneOnly = notDoneOnlyCheckBox.isSelected();
         boolean hideDryCleanOnly = hideDryCleanOnlyCheckBox.isSelected();
@@ -172,7 +225,7 @@ public class InvoiceStoreDialogController implements Initializable {
         }
 
         int inDateSelectionIndex = -1;
-        Toggle inDateToggle = dueDateToggleGroup.getSelectedToggle();
+        Toggle inDateToggle = inDateToggleGroup.getSelectedToggle();
         if (inDateToggle != null) {
             if (inDateToggle == inTodayRadioButton) {
                 inDateSelectionIndex = 0;
