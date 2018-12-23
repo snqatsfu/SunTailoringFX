@@ -84,6 +84,7 @@ public class InvoiceStoreDialogController implements Initializable {
     public Label filterLabel;
 
     private InvoiceStore invoiceStore;
+
     private FilteredList<Invoice> filteredInvoices;
     private ReadOnlyObjectWrapper<Invoice> selectedInvoice;
 
