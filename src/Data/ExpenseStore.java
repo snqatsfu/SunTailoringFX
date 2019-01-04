@@ -65,6 +65,13 @@ public class ExpenseStore {
         save(expense);
     }
 
+    public void duplicateExpenseAndSave(Expense expense) {
+        int id = maxId + 1;
+        maxId = id;
+        Expense duplicatedExpense = new Expense(id, expense.getDate(), expense.getDescription() + " (Duplicated)", expense.getTotal());
+        save(duplicatedExpense);
+    }
+
     public void save(Expense expense) {
         expenses.put(expense.getId(), expense);
         File outputFile = new File(EXPENSES_DIR_PATH + "/" + expense.getId() + ".dat");

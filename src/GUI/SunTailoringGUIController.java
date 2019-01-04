@@ -358,6 +358,8 @@ public class SunTailoringGUIController implements Initializable {
                 printActiveInvoice();
             } else if (Shortcut.F1.getKeyCombo().match(keyEvent)) {
                 showHelpDialog();
+            } else if (Shortcut.CTRL_X.getKeyCombo().match(keyEvent)) {
+                showExpenseStoreDialog();
             }
         });
 

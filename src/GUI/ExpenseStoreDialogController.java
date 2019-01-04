@@ -81,11 +81,15 @@ public class ExpenseStoreDialogController implements Initializable {
         expensesTable.setOnKeyPressed(event -> {
             int selectedIndex = expensesTable.getSelectionModel().getSelectedIndex();
             if (selectedIndex >= 0) {
+                Expense selectedExpense = expensesTable.getSelectionModel().getSelectedItem();
                 if (event.getCode().equals(KeyCode.DELETE)) {
                     if (GuiUtils.showConfirmationAlertAndWait("Are you sure you want to delete the selected expense?")) {
-                        expenseStore.delete(expensesTable.getSelectionModel().getSelectedItem());
+                        expenseStore.delete(selectedExpense);
                         rebuildTable(expenseStore);
                     }
+                } else if (Shortcut.CTRL_D.getKeyCombo().match(event)) {
+                    expenseStore.duplicateExpenseAndSave(selectedExpense);
+                    rebuildTable(expenseStore);
                 }
             }
         });

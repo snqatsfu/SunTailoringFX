@@ -18,6 +18,8 @@ public class Shortcut {
             new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
     public static final Shortcut CTRL_F = new Shortcut("Ctrl + F", "Show invoice store (find invoice)",
             new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN));
+    public static final Shortcut CTRL_X = new Shortcut("Ctrl + X", "Show expense store",
+            new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN));
     public static final Shortcut CTRL_P = new Shortcut("Ctrl + P", "Print current invoice",
             new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN));
     public static final Shortcut CTRL_D = new Shortcut("Ctrl + D", "Duplicate the current item in the table",
@@ -26,7 +28,7 @@ public class Shortcut {
             new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN));
 
     public static ObservableList<Shortcut> all() {
-        return FXCollections.observableArrayList(F1, CTRL_N, CTRL_S, CTRL_F, CTRL_P, CTRL_D, CTRL_ENTER);
+        return FXCollections.observableArrayList(F1, CTRL_N, CTRL_S, CTRL_F, CTRL_X, CTRL_P, CTRL_D, CTRL_ENTER);
     }
 
     private final StringProperty key;
