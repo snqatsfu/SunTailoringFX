@@ -188,6 +188,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#showInvoiceStoreDialog" text="Invoices (Ctrl + F) ..." />
                   <MenuItem mnemonicParsing="false" onAction="#showExpenseStoreDialog" text="Expenses (Ctrl + X) ..." />
                   <MenuItem mnemonicParsing="false" onAction="#showStatsDialog" text="Statistics..." />
+                  <MenuItem mnemonicParsing="false" onAction="#showCalendarDialog" text="Calendar (Ctrl + Shift + F) ..." />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Settings">
