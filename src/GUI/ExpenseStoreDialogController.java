@@ -15,6 +15,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.LocalDateStringConverter;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -63,6 +64,13 @@ public class ExpenseStoreDialogController implements Initializable {
         dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
         descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
         totalCol.setCellValueFactory(new PropertyValueFactory<>("total"));
+
+        dateCol.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateStringConverter()));
+        dateCol.setOnEditCommit(event -> {
+            Expense selectedExpense = expensesTable.getSelectionModel().getSelectedItem();
+            selectedExpense.setDate(event.getNewValue());
+            expenseStore.save(selectedExpense);
+        });
 
         descriptionCol.setCellFactory(TextFieldTableCell.forTableColumn());
         descriptionCol.setOnEditCommit(event -> {
