@@ -618,6 +618,13 @@ public class SunTailoringGUIController implements Initializable {
             final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("CalendarDialog.fxml"));
             final Parent root = fxmlLoader.load();
             final CalendarDialogController controller = fxmlLoader.getController();
+            controller.setInvoiceStore(invoiceStore);
+
+            controller.selectedInvoiceNumberProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    setActiveInvoice(invoiceStore.get(newValue), ActiveInvoiceState.SAVED);
+                }
+            });
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);

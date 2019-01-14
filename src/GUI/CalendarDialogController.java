@@ -1,16 +1,19 @@
 package GUI;
 
+import Data.Invoice;
+import Data.InvoiceStore;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.ResourceBundle;
+import java.time.LocalDate;
+import java.util.*;
 
 public class CalendarDialogController implements Initializable {
 
@@ -18,10 +21,18 @@ public class CalendarDialogController implements Initializable {
     public HBox weekdayHeader;
     public ScrollPane scrollPane;
 
+    private InvoiceStore invoiceStore;
+    private ReadOnlyObjectWrapper<String> selectedInvoiceNumber;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeCalendarGrid();
         initializeWeekdayHeader();
+        selectedInvoiceNumber = new ReadOnlyObjectWrapper<>();
+    }
+
+    public void setInvoiceStore(InvoiceStore invoiceStore) {
+        this.invoiceStore = invoiceStore;
         generateCalendar();
     }
 
@@ -72,7 +83,7 @@ public class CalendarDialogController implements Initializable {
 
     private void generateCalendar() {
         loadCalendarLabels();
-        populateMonthWithEvents();
+        populateMonthWithInvoices();
     }
 
     private void loadCalendarLabels() {
@@ -87,19 +98,20 @@ public class CalendarDialogController implements Initializable {
         int dayLabelCount = 1;
 
         for (Node node : calendarGrid.getChildren()) {
-            VBox day = (VBox) node;
-            day.getChildren().clear();
-            day.setStyle("-fx-background-color: white");
-            day.setStyle("-fx-font: 14px");
+            VBox dayBox = (VBox) node;
+            dayBox.getChildren().clear();
+            dayBox.setStyle("-fx-background-color: white");
+            dayBox.setStyle("-fx-font: 14px");
+            dayBox.setSpacing(5.0);
 
             if (gridCount < offset) {
                 gridCount++;
                 // darken days before the first day of the month
-                day.setStyle("-fx-background-color: lightgray");
+                dayBox.setStyle("-fx-background-color: lightgray");
             } else {
                 if (dayLabelCount > daysInMonth) {
                     // darken days after the last day of the month
-                    day.setStyle("-fx-background-color: lightgray");
+                    dayBox.setStyle("-fx-background-color: lightgray");
 
                 } else {
                     // make a new day label
@@ -107,7 +119,7 @@ public class CalendarDialogController implements Initializable {
                     dayLabel.setPadding(new Insets(5));
                     dayLabel.setStyle("-fx-text-fill: darkslategray");
 
-                    day.getChildren().add(dayLabel);
+                    dayBox.getChildren().add(dayLabel);
                 }
 
                 dayLabelCount++;
@@ -115,8 +127,57 @@ public class CalendarDialogController implements Initializable {
         }
     }
 
-    private void populateMonthWithEvents() {
+    private void populateMonthWithInvoices() {
+        LocalDate now = LocalDate.now();
+        LocalDate start = now.withDayOfMonth(1);
+        LocalDate end = now.withDayOfMonth(now.lengthOfMonth());
+
+        Map<Integer, List<Invoice>> map = new HashMap<>();
+
+        invoiceStore.all().stream()
+                .filter(invoice -> !(invoice.getInvoiceDate().isBefore(start) || invoice.getInvoiceDate().isAfter(end)))
+                .forEach(invoice -> {
+                    int dayOfMonth = invoice.getInvoiceDate().getDayOfMonth();
+                    if (map.get(dayOfMonth) == null) {
+                        map.put(dayOfMonth, new ArrayList<>());
+                    }
+                    map.get(dayOfMonth).add(invoice);
+                });
+
+        calendarGrid.getChildren().stream().map(node -> ((VBox) node))
+                .filter(dayBox -> !dayBox.getChildren().isEmpty())
+                .forEach(dayBox -> {
+                    Label dayLabel = (Label) dayBox.getChildren().get(0);
+                    int dayNumber = Integer.parseInt(dayLabel.getText());
+                    List<Invoice> invoicesOfThisDay = map.get(dayNumber);
+                    if (invoicesOfThisDay != null) {
+                        invoicesOfThisDay.stream().forEach(invoice -> {
+                            Label invoiceLabel = new Label(invoice.getInvoiceNumber());
+                            invoiceLabel.setStyle("-fx-background-color: cyan");
+                            invoiceLabel.setMaxWidth(Double.MAX_VALUE);
+
+                            // double click on the label will close this window and load the selected invoice in main window
+                            invoiceLabel.setOnMouseClicked(event -> {
+                                if (event.getClickCount() == 2) {
+                                    selectedInvoiceNumber.setValue(invoiceLabel.getText());
+                                    final Stage stage = (Stage) invoiceLabel.getScene().getWindow();
+                                    stage.close();
+                                }
+                            });
+
+                            // todo: mouse enter to display invoice summary. mouse exit to dismiss.
+                            invoiceLabel.setOnMouseEntered(event -> System.out.println("mouse entered"));
+                            invoiceLabel.setOnMouseExited(event -> System.out.println("mouse exited"));
+
+
+                            dayBox.getChildren().add(invoiceLabel);
+                        });
+                    }
+                });
 
     }
 
+    public ReadOnlyObjectWrapper<String> selectedInvoiceNumberProperty() {
+        return selectedInvoiceNumber;
+    }
 }
