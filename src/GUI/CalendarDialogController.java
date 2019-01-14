@@ -1,11 +1,15 @@
 package GUI;
 
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 
 import java.net.URL;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
 public class CalendarDialogController implements Initializable {
@@ -18,6 +22,7 @@ public class CalendarDialogController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         initializeCalendarGrid();
         initializeWeekdayHeader();
+        generateCalendar();
     }
 
     private void initializeCalendarGrid() {
@@ -65,5 +70,53 @@ public class CalendarDialogController implements Initializable {
         }
     }
 
+    private void generateCalendar() {
+        loadCalendarLabels();
+        populateMonthWithEvents();
+    }
+
+    private void loadCalendarLabels() {
+        Calendar now = Calendar.getInstance();
+        // initialize a Gregorian calendar with current year / month and the first day of the month
+        GregorianCalendar gc = new GregorianCalendar(now.get(Calendar.YEAR), now.get(Calendar.MONTH), 1);
+
+        int firstDay = gc.get(Calendar.DAY_OF_WEEK);
+        int daysInMonth = gc.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int offset = firstDay;
+        int gridCount = 1;
+        int dayLabelCount = 1;
+
+        for (Node node : calendarGrid.getChildren()) {
+            VBox day = (VBox) node;
+            day.getChildren().clear();
+            day.setStyle("-fx-background-color: white");
+            day.setStyle("-fx-font: 14px");
+
+            if (gridCount < offset) {
+                gridCount++;
+                // darken days before the first day of the month
+                day.setStyle("-fx-background-color: lightgray");
+            } else {
+                if (dayLabelCount > daysInMonth) {
+                    // darken days after the last day of the month
+                    day.setStyle("-fx-background-color: lightgray");
+
+                } else {
+                    // make a new day label
+                    Label dayLabel = new Label(Integer.toString(dayLabelCount));
+                    dayLabel.setPadding(new Insets(5));
+                    dayLabel.setStyle("-fx-text-fill: darkslategray");
+
+                    day.getChildren().add(dayLabel);
+                }
+
+                dayLabelCount++;
+            }
+        }
+    }
+
+    private void populateMonthWithEvents() {
+
+    }
 
 }
