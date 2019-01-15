@@ -14,3 +14,15 @@
     -fx-border-width: .2;
     -fx-border-color: white;
 }
+
+.inactive_day_box {
+    -fx-background-color: lightgray;
+}
+
+.today_box {
+    -fx-background-color: dodgerblue;
+}
+
+.invoice_label {
+    -fx-background-color: beige;
+}

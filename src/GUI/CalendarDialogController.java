@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -102,18 +103,22 @@ public class CalendarDialogController implements Initializable {
             dayBox.getChildren().clear();
             dayBox.setStyle("-fx-background-color: white");
             dayBox.setStyle("-fx-font: 14px");
-            dayBox.setSpacing(5.0);
+            dayBox.setSpacing(2.0);
 
             if (gridCount < offset) {
                 gridCount++;
                 // darken days before the first day of the month
-                dayBox.setStyle("-fx-background-color: lightgray");
+                dayBox.getStyleClass().add("inactive_day_box");
             } else {
                 if (dayLabelCount > daysInMonth) {
                     // darken days after the last day of the month
-                    dayBox.setStyle("-fx-background-color: lightgray");
+                    dayBox.getStyleClass().add("inactive_day_box");
 
                 } else {
+                    if (dayLabelCount == LocalDate.now().getDayOfMonth()) {
+                        dayBox.getStyleClass().add("today_box");
+                    }
+
                     // make a new day label
                     Label dayLabel = new Label(Integer.toString(dayLabelCount));
                     dayLabel.setPadding(new Insets(5));
@@ -153,7 +158,7 @@ public class CalendarDialogController implements Initializable {
                     if (invoicesOfThisDay != null) {
                         invoicesOfThisDay.stream().forEach(invoice -> {
                             Label invoiceLabel = new Label(invoice.getInvoiceNumber());
-                            invoiceLabel.setStyle("-fx-background-color: cyan");
+                            invoiceLabel.getStyleClass().add("invoice_label");
                             invoiceLabel.setMaxWidth(Double.MAX_VALUE);
 
                             // double click on the label will close this window and load the selected invoice in main window
@@ -165,10 +170,11 @@ public class CalendarDialogController implements Initializable {
                                 }
                             });
 
-                            // todo: mouse enter to display invoice summary. mouse exit to dismiss.
-                            invoiceLabel.setOnMouseEntered(event -> System.out.println("mouse entered"));
-                            invoiceLabel.setOnMouseExited(event -> System.out.println("mouse exited"));
+                            invoiceLabel.setTooltip(new Tooltip(getInvoiceTooltip(invoice)));
 
+                            // todo: mouse enter to display invoice summary. mouse exit to dismiss.
+//                            invoiceLabel.setOnMouseEntered(event -> System.out.println("mouse entered"));
+//                            invoiceLabel.setOnMouseExited(event -> System.out.println("mouse exited"));
 
                             dayBox.getChildren().add(invoiceLabel);
                         });
@@ -179,5 +185,11 @@ public class CalendarDialogController implements Initializable {
 
     public ReadOnlyObjectWrapper<String> selectedInvoiceNumberProperty() {
         return selectedInvoiceNumber;
+    }
+
+    private static String getInvoiceTooltip(Invoice invoice) {
+        String retVal = invoice.getCustomerInfo().getName();
+        // todo: summarize content
+        return retVal;
     }
 }
