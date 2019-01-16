@@ -2,6 +2,7 @@ package GUI;
 
 import Data.Invoice;
 import Data.InvoiceStore;
+import Data.Item;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -11,6 +12,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.converter.CurrencyStringConverter;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -158,7 +160,7 @@ public class CalendarDialogController implements Initializable {
                     if (invoicesOfThisDay != null) {
                         invoicesOfThisDay.stream().forEach(invoice -> {
                             Label invoiceLabel = new Label(invoice.getInvoiceNumber());
-                            invoiceLabel.getStyleClass().add("invoice_label");
+                            invoiceLabel.getStyleClass().add(invoice.getDone() ? "invoice_label" : "invoice_label_not_done");
                             invoiceLabel.setMaxWidth(Double.MAX_VALUE);
 
                             // double click on the label will close this window and load the selected invoice in main window
@@ -189,7 +191,13 @@ public class CalendarDialogController implements Initializable {
 
     private static String getInvoiceTooltip(Invoice invoice) {
         String retVal = invoice.getCustomerInfo().getName();
-        // todo: summarize content
+        retVal += "\nTotal: " + new CurrencyStringConverter().toString(invoice.getTotal());
+        retVal += "\n" + (invoice.getPaid() ? "Paid" : "Not Paid")
+                + ", " + (invoice.getDone() ? "Done" : "Not Done")
+                + ", " + (invoice.getPickedUp() ? "Picked Up" : "Not Picked Up");
+        for (Item item : invoice.getItems()) {
+            retVal += "\n" + item.shortSummary();
+        }
         return retVal;
     }
 }
