@@ -360,6 +360,8 @@ public class SunTailoringGUIController implements Initializable {
                 showHelpDialog();
             } else if (Shortcut.CTRL_X.getKeyCombo().match(keyEvent)) {
                 showExpenseStoreDialog();
+            } else if (Shortcut.CTRL_SHIFT_F.getKeyCombo().match(keyEvent)) {
+                showCalendarDialog();
             }
         });
 
@@ -608,6 +610,31 @@ public class SunTailoringGUIController implements Initializable {
 
         } catch (Exception e) {
             GuiUtils.showWarningAlertAndWait("Failed loading expense store dialog");
+        }
+    }
+
+    public void showCalendarDialog() {
+        try {
+            final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("CalendarDialog.fxml"));
+            final Parent root = fxmlLoader.load();
+            final CalendarDialogController controller = fxmlLoader.getController();
+            controller.setInvoiceStore(invoiceStore);
+
+            controller.selectedInvoiceNumberProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    setActiveInvoice(invoiceStore.get(newValue), ActiveInvoiceState.SAVED);
+                }
+            });
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Calendar");
+            stage.getIcons().add(Assets.CALENDAR_ICON);
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            GuiUtils.showWarningAlertAndWait("Failed loading calendar dialog");
         }
     }
 

@@ -1,0 +1,40 @@
+.calendar_pane {
+    -fx-background-color:  white;
+    -fx-border-style: dashed;
+    -fx-border-width: .5;
+    -fx-border-color: gray;
+}
+
+.weekday-header {
+    -fx-font: bold 17px "System";
+    -fx-font-style: normal;
+    -fx-background-color:  #26A69A;
+    -fx-border-style: solid;
+    -fx-border-insets: 1;
+    -fx-border-width: .2;
+    -fx-border-color: white;
+}
+
+.inactive_day_box {
+    -fx-background-color: lightgray;
+}
+
+.today_box {
+    -fx-background-color: dodgerblue;
+}
+
+.invoice_label {
+    -fx-background-color: beige;
+}
+
+.invoice_label:hover {
+    -fx-background-color: darkkhaki;
+}
+
+.invoice_label_not_done {
+    -fx-background-color: lightpink;
+}
+
+.invoice_label_not_done:hover {
+    -fx-background-color: deeppink;
+}
