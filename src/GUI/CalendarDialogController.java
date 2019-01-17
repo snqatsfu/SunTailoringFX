@@ -4,9 +4,11 @@ import Data.Invoice;
 import Data.InvoiceStore;
 import Data.Item;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
@@ -23,6 +25,11 @@ public class CalendarDialogController implements Initializable {
     public GridPane calendarGrid;
     public HBox weekdayHeader;
     public ScrollPane scrollPane;
+    public Button lastMonthButton;
+    public Button nextMonthButton;
+    public Label currentMonthLabel;
+
+    private LocalDate selectedDate;
 
     private InvoiceStore invoiceStore;
     private ReadOnlyObjectWrapper<String> selectedInvoiceNumber;
@@ -36,6 +43,7 @@ public class CalendarDialogController implements Initializable {
 
     public void setInvoiceStore(InvoiceStore invoiceStore) {
         this.invoiceStore = invoiceStore;
+        selectedDate = LocalDate.now().withDayOfMonth(15);  // set to 15th - every month has 15th
         generateCalendar();
     }
 
@@ -85,14 +93,14 @@ public class CalendarDialogController implements Initializable {
     }
 
     private void generateCalendar() {
+        currentMonthLabel.setText(selectedDate.getMonth().toString() + " " + selectedDate.getYear());
         loadCalendarLabels();
         populateMonthWithInvoices();
     }
 
     private void loadCalendarLabels() {
-        Calendar now = Calendar.getInstance();
         // initialize a Gregorian calendar with current year / month and the first day of the month
-        GregorianCalendar gc = new GregorianCalendar(now.get(Calendar.YEAR), now.get(Calendar.MONTH), 1);
+        GregorianCalendar gc = new GregorianCalendar(selectedDate.getYear(), selectedDate.getMonth().getValue(), 1);
 
         int firstDay = gc.get(Calendar.DAY_OF_WEEK);
         int daysInMonth = gc.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -103,6 +111,7 @@ public class CalendarDialogController implements Initializable {
         for (Node node : calendarGrid.getChildren()) {
             VBox dayBox = (VBox) node;
             dayBox.getChildren().clear();
+            dayBox.getStyleClass().removeAll("today_box");
             dayBox.setStyle("-fx-background-color: white");
             dayBox.setStyle("-fx-font: 14px");
             dayBox.setSpacing(2.0);
@@ -117,7 +126,10 @@ public class CalendarDialogController implements Initializable {
                     dayBox.getStyleClass().add("inactive_day_box");
 
                 } else {
-                    if (dayLabelCount == LocalDate.now().getDayOfMonth()) {
+                    LocalDate now = LocalDate.now();
+                    if (dayLabelCount == now.getDayOfMonth()
+                            && selectedDate.getMonth().getValue() == now.getMonth().getValue()
+                            && selectedDate.getYear() == now.getYear()) {
                         dayBox.getStyleClass().add("today_box");
                     }
 
@@ -135,9 +147,8 @@ public class CalendarDialogController implements Initializable {
     }
 
     private void populateMonthWithInvoices() {
-        LocalDate now = LocalDate.now();
-        LocalDate start = now.withDayOfMonth(1);
-        LocalDate end = now.withDayOfMonth(now.lengthOfMonth());
+        LocalDate start = selectedDate.withDayOfMonth(1);
+        LocalDate end = selectedDate.withDayOfMonth(selectedDate.lengthOfMonth());
 
         Map<Integer, List<Invoice>> map = new HashMap<>();
 
@@ -172,7 +183,9 @@ public class CalendarDialogController implements Initializable {
                                 }
                             });
 
-                            invoiceLabel.setTooltip(new Tooltip(getInvoiceTooltip(invoice)));
+                            Tooltip tooltip = new Tooltip(buildInvoiceTooltip(invoice));
+                            tooltip.setStyle("-fx-font-size: 20");
+                            invoiceLabel.setTooltip(tooltip);
 
                             // todo: mouse enter to display invoice summary. mouse exit to dismiss.
 //                            invoiceLabel.setOnMouseEntered(event -> System.out.println("mouse entered"));
@@ -189,8 +202,9 @@ public class CalendarDialogController implements Initializable {
         return selectedInvoiceNumber;
     }
 
-    private static String getInvoiceTooltip(Invoice invoice) {
+    private static String buildInvoiceTooltip(Invoice invoice) {
         String retVal = invoice.getCustomerInfo().getName();
+        retVal += "\nIn: " + invoice.getInvoiceDate() + ", Due: " + invoice.getDueDate();
         retVal += "\nTotal: " + new CurrencyStringConverter().toString(invoice.getTotal());
         retVal += "\n" + (invoice.getPaid() ? "Paid" : "Not Paid")
                 + ", " + (invoice.getDone() ? "Done" : "Not Done")
@@ -199,5 +213,17 @@ public class CalendarDialogController implements Initializable {
             retVal += "\n" + item.shortSummary();
         }
         return retVal;
+    }
+
+    public void lastMonth(ActionEvent event) {
+        event.consume();
+        selectedDate = selectedDate.minusMonths(1);
+        generateCalendar();
+    }
+
+    public void nextMonth(ActionEvent event) {
+        event.consume();
+        selectedDate = selectedDate.plusMonths(1);
+        generateCalendar();
     }
 }

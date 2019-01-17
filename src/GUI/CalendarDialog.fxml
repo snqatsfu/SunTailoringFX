@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 <VBox styleClass="DefaultSpacing" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.CalendarDialogController">
    <children>
-      <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="810.0" prefWidth="1050.0">
+      <BorderPane styleClass="DefaultSpacing">
+         <left>
+            <Button fx:id="lastMonthButton" mnemonicParsing="false" onAction="#lastMonth" text="Last Month" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <Button fx:id="nextMonthButton" mnemonicParsing="false" onAction="#nextMonth" text="Next Month" BorderPane.alignment="CENTER" />
+         </right>
+         <center>
+            <Label fx:id="currentMonthLabel" text="Label" BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+      <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="810.0" prefWidth="1070.0">
          <content>
             <VBox>
                <children>
