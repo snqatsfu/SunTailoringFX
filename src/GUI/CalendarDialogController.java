@@ -114,6 +114,7 @@ public class CalendarDialogController implements Initializable {
             dayBox.getStyleClass().removeAll("today_box");
             dayBox.setStyle("-fx-background-color: white");
             dayBox.setStyle("-fx-font: 14px");
+            dayBox.setStyle("-fx-padding: 3px");
             dayBox.setSpacing(2.0);
 
             if (gridCount < offset) {
