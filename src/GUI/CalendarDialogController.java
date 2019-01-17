@@ -99,11 +99,10 @@ public class CalendarDialogController implements Initializable {
     }
 
     private void loadCalendarLabels() {
-        // initialize a Gregorian calendar with current year / month and the first day of the month
-        GregorianCalendar gc = new GregorianCalendar(selectedDate.getYear(), selectedDate.getMonth().getValue(), 1);
+        LocalDate firstDayOfMonthDate = selectedDate.withDayOfMonth(1);
 
-        int firstDay = gc.get(Calendar.DAY_OF_WEEK);
-        int daysInMonth = gc.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int firstDay = firstDayOfMonthDate.getDayOfWeek().getValue() + 1;
+        int daysInMonth = selectedDate.getMonth().length(selectedDate.isLeapYear());
         int offset = firstDay;
         int gridCount = 1;
         int dayLabelCount = 1;
@@ -154,9 +153,9 @@ public class CalendarDialogController implements Initializable {
         Map<Integer, List<Invoice>> map = new HashMap<>();
 
         invoiceStore.all().stream()
-                .filter(invoice -> !(invoice.getInvoiceDate().isBefore(start) || invoice.getInvoiceDate().isAfter(end)))
+                .filter(invoice -> !(invoice.getDueDate().isBefore(start) || invoice.getDueDate().isAfter(end)))
                 .forEach(invoice -> {
-                    int dayOfMonth = invoice.getInvoiceDate().getDayOfMonth();
+                    int dayOfMonth = invoice.getDueDate().getDayOfMonth();
                     if (map.get(dayOfMonth) == null) {
                         map.put(dayOfMonth, new ArrayList<>());
                     }
