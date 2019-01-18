@@ -10,7 +10,9 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
+import javafx.util.converter.CurrencyStringConverter;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -112,14 +114,30 @@ public class StatsDialogController implements Initializable {
 
         if (showInvoicesCheckBox.isSelected()) {
             chart.getData().add(invoiceTotalSeries);
+            invoiceTotalSeries.getData().stream().forEach(data -> {
+                Tooltip tooltip = new Tooltip(data.getXValue() + " - " + new CurrencyStringConverter().toString(data.getYValue()));
+                tooltip.setStyle("-fx-font-size: 20");
+                Tooltip.install(data.getNode(), tooltip);
+            });
         }
 
         if (showExpensesCheckBox.isSelected()) {
             chart.getData().add(expenseTotalSeries);
+            expenseTotalSeries.getData().stream().forEach(data -> {
+                Tooltip tooltip = new Tooltip(data.getXValue() + " - " + new CurrencyStringConverter().toString(data.getYValue()));
+                tooltip.setStyle("-fx-font-size: 20");
+                Tooltip.install(data.getNode(), tooltip);
+            });
+
         }
 
         if (showProfitsCheckBox.isSelected()) {
             chart.getData().add(profitSeries);
+            profitSeries.getData().stream().forEach(data -> {
+                Tooltip tooltip = new Tooltip(data.getXValue() + " - " + new CurrencyStringConverter().toString(data.getYValue()));
+                tooltip.setStyle("-fx-font-size: 20");
+                Tooltip.install(data.getNode(), tooltip);
+            });
         }
     }
 
