@@ -171,7 +171,8 @@ public class CalendarDialogController implements Initializable {
                     if (invoicesOfThisDay != null) {
                         invoicesOfThisDay.stream().forEach(invoice -> {
                             Label invoiceLabel = new Label(invoice.getInvoiceNumber());
-                            invoiceLabel.getStyleClass().add(invoice.getDone() ? "invoice_label" : "invoice_label_not_done");
+                            invoiceLabel.getStyleClass().add(invoice.getDone() ? "invoice_label" :
+                                    invoice.isDryCleanOnly() ? "invoice_label_dry_clean_only" : "invoice_label_not_done");
                             invoiceLabel.setMaxWidth(Double.MAX_VALUE);
 
                             // double click on the label will close this window and load the selected invoice in main window

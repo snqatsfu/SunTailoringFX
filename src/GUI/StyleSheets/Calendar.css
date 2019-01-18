@@ -31,6 +31,14 @@
     -fx-background-color: darkkhaki;
 }
 
+.invoice_label_dry_clean_only {
+    -fx-background-color: cyan;
+}
+
+.invoice_label_dry_clean_only:hover {
+    -fx-background-color: darkcyan;
+}
+
 .invoice_label_not_done {
     -fx-background-color: lightpink;
 }
