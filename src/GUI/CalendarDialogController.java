@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.converter.CurrencyStringConverter;
@@ -28,6 +29,7 @@ public class CalendarDialogController implements Initializable {
     public Button lastMonthButton;
     public Button nextMonthButton;
     public Label currentMonthLabel;
+    public VBox root;
 
     private LocalDate selectedDate;
 
@@ -36,6 +38,13 @@ public class CalendarDialogController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        root.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ESCAPE)) {
+                final Stage stage = (Stage) root.getScene().getWindow();
+                stage.close();
+            }
+        });
+
         initializeCalendarGrid();
         initializeWeekdayHeader();
         selectedInvoiceNumber = new ReadOnlyObjectWrapper<>();

@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 
-<VBox styleClass="DefaultSpacing" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.CalendarDialogController">
+<VBox fx:id="root" styleClass="DefaultSpacing" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.CalendarDialogController">
    <children>
       <BorderPane styleClass="DefaultSpacing">
          <left>
@@ -23,7 +23,7 @@
          </center>
       </BorderPane>
       <HBox fx:id="weekdayHeader" prefHeight="50.0" prefWidth="1050.0" />
-      <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="810.0" prefWidth="1050.0">
+      <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="600.0" prefWidth="1050.0">
          <content>
             <VBox>
                <children>
