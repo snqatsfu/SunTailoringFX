@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
@@ -45,6 +46,9 @@ public class MailDialogController implements Initializable {
         root.setOnKeyPressed(keyEvent -> {
             if (Shortcut.CTRL_ENTER.getKeyCombo().match(keyEvent)) {
                 send();
+            } else if (keyEvent.getCode().equals(KeyCode.ESCAPE)) {
+                final Stage stage = (Stage) root.getScene().getWindow();
+                stage.close();
             }
         });
     }

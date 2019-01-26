@@ -11,7 +11,9 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.converter.CurrencyStringConverter;
 
 import java.net.URL;
@@ -143,12 +145,18 @@ public class StatsDialogController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        root.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ESCAPE)) {
+                final Stage stage = (Stage) root.getScene().getWindow();
+                stage.close();
+            }
+        });
+
         timeRangeComboBox.getItems().addAll(TIME_RANGE_12_MONTHS, TIME_RANGE_8_WEEKS);
         timeRangeComboBox.getSelectionModel().select(0);
         invoiceTotalSeries.setName("Invoice Totals");
         expenseTotalSeries.setName("Expense Totals");
         profitSeries.setName("Profit");
-
     }
 
     public void timeRangeChanged() {

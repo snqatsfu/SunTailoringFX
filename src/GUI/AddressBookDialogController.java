@@ -56,6 +56,13 @@ public class AddressBookDialogController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        root.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ESCAPE)) {
+                final Stage stage = (Stage) root.getScene().getWindow();
+                stage.close();
+            }
+        });
+
         selectedCustomerInfo = new ReadOnlyObjectWrapper<>();
 
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));

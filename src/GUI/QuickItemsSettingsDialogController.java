@@ -14,6 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
 
 import java.io.FileOutputStream;
@@ -41,6 +42,9 @@ public class QuickItemsSettingsDialogController implements Initializable {
         root.setOnKeyPressed(keyEvent -> {
             if (Shortcut.CTRL_S.getKeyCombo().match(keyEvent)) {
                 saveQuickItems();
+            } else if (keyEvent.getCode().equals(KeyCode.ESCAPE)) {
+                final Stage stage = (Stage) root.getScene().getWindow();
+                stage.close();
             }
         });
         saveButton.disableProperty().bind(modified.not());
