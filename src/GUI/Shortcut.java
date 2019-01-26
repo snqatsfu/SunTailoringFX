@@ -26,11 +26,14 @@ public class Shortcut {
             new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN));
     public static final Shortcut CTRL_D = new Shortcut("Ctrl + D", "Duplicate the current item in the table",
             new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN));
+    public static final Shortcut CTRL_O = new Shortcut("Ctrl + O", "Quickly mark active invoice Paid, Done and Picked Up",
+            new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
     public static final Shortcut CTRL_ENTER = new Shortcut("Ctrl + Enter", "In the mail dialog, send the email and close the dialog",
             new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN));
 
     public static ObservableList<Shortcut> all() {
-        return FXCollections.observableArrayList(F1, CTRL_N, CTRL_S, CTRL_F, CTRL_SHIFT_F, CTRL_X, CTRL_P, CTRL_D, CTRL_ENTER);
+        return FXCollections.observableArrayList(F1, CTRL_N, CTRL_S, CTRL_F, CTRL_SHIFT_F, CTRL_X, CTRL_P, CTRL_D,
+                CTRL_O, CTRL_ENTER);
     }
 
     private final StringProperty key;

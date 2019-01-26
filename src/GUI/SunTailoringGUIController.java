@@ -362,6 +362,8 @@ public class SunTailoringGUIController implements Initializable {
                 showExpenseStoreDialog();
             } else if (Shortcut.CTRL_SHIFT_F.getKeyCombo().match(keyEvent)) {
                 showCalendarDialog();
+            } else if (Shortcut.CTRL_O.getKeyCombo().match(keyEvent)) {
+                markActiveInvoiceCompleted();
             }
         });
 
@@ -450,6 +452,13 @@ public class SunTailoringGUIController implements Initializable {
         printInvoiceButton.setTooltip(new Tooltip("Ctrl + P"));
 
         sendEmailWhenDoneCheckMenuItem.setSelected(getSendEmailWhenMarkedDone());
+    }
+
+    private void markActiveInvoiceCompleted() {
+        paidCheckBox.setSelected(true);
+        doneCheckBox.setSelected(true);
+        pickedUpCheckBox.setSelected(true);
+        setActiveInvoiceState(ActiveInvoiceState.EDITED);
     }
 
     public void showAddressBookDialog(Event event) {
