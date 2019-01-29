@@ -82,6 +82,7 @@ public class InvoiceStoreDialogController implements Initializable {
     @FXML
     public Label invoicesTotalLabel;
     public Label filterLabel;
+    public Button clearCustomerTextFieldButton;
 
     private InvoiceStore invoiceStore;
 
@@ -378,6 +379,10 @@ public class InvoiceStoreDialogController implements Initializable {
             }
         }
         filterLabel.setText(label);
+    }
+
+    public void clearCustomerTextField() {
+        searchByCustomerTextField.clear();
     }
 
     private class FormattedLocalDateTableCell extends TableCell<Invoice, LocalDate> {
