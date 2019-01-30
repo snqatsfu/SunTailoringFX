@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.lang.*?>
 <?import java.net.URL?>
+
 <VBox fx:id="root" styleClass="DefaultSpacing" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.InvoiceStoreDialogController">
    <children>
       <HBox styleClass="DefaultSpacing">
@@ -14,6 +16,7 @@
                      <children>
                         <Label text="Customer" />
                         <TextField fx:id="searchByCustomerTextField" />
+                        <Button fx:id="clearCustomerTextFieldButton" mnemonicParsing="false" onAction="#clearCustomerTextField" text="X" />
                         <CheckBox fx:id="notDoneOnlyCheckBox" mnemonicParsing="false" onAction="#filter" text="Display Only Not Done" />
                         <CheckBox fx:id="hideDryCleanOnlyCheckBox" layoutX="294.0" layoutY="15.0" mnemonicParsing="false" onAction="#filter" text="Hide Dry Clean Only" />
                      </children>
