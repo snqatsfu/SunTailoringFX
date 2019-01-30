@@ -101,6 +101,10 @@ public class SunTailoringGUIController implements Initializable {
     @FXML
     public TextField creditTextField;
 
+    public TextField cashTextField;
+    public Label changeLabel;
+    public Label changeSuggestionLabel;
+
     @FXML
     public Button saveInvoiceButton;
     @FXML
@@ -235,6 +239,11 @@ public class SunTailoringGUIController implements Initializable {
         String invoiceNumber = generateInvoiceNumber();
         setActiveInvoice(Invoice.createEmptyInvoice(invoiceNumber), ActiveInvoiceState.NEW);
         clearQuickItemComboBoxSelection();
+        clearCashChangeFields();
+    }
+
+    private void clearCashChangeFields() {
+        cashTextField.setText("");  // change field listens to this
     }
 
     private void clearQuickItemComboBoxSelection() {
@@ -395,6 +404,27 @@ public class SunTailoringGUIController implements Initializable {
         creditTextField.setTextFormatter(formatter);
         formatter.valueProperty().bindBidirectional(activeInvoice.creditProperty());
         activeInvoice.creditProperty().addListener(event -> setActiveInvoiceState(ActiveInvoiceState.EDITED));
+
+        TextFormatter<Number> currencyFormatter = new TextFormatter<>(new CurrencyStringConverter());
+        cashTextField.setTextFormatter(currencyFormatter);
+        cashTextField.textProperty().addListener(event -> {
+            try {
+                double cash = Double.parseDouble(cashTextField.getText());  // customer's cash must be already rounded
+                double total = CashCalculator.round(activeInvoice.getTotal());
+                double change = Math.max(0, (cash - total));
+                if (change > 0) {
+                    changeLabel.setText(new CurrencyStringConverter().toString(change));
+                    changeSuggestionLabel.setText(CashCalculator.asString(CashCalculator.distribute(change)));
+                } else {
+                    changeLabel.setText("");
+                    changeSuggestionLabel.setText("");
+                }
+
+            } catch (NumberFormatException e) {
+                changeLabel.setText("");
+                changeSuggestionLabel.setText("");
+            }
+        });
 
         subtotalLabel.textProperty().bindBidirectional(activeInvoice.subtotalProperty(), new CurrencyStringConverter());
         taxLabel.textProperty().bindBidirectional(activeInvoice.taxProperty(), new CurrencyStringConverter());
