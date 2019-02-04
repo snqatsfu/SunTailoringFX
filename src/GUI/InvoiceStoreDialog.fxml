@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.lang.*?>
 <?import java.net.URL?>
-
 <VBox fx:id="root" styleClass="DefaultSpacing" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.InvoiceStoreDialogController">
    <children>
       <HBox styleClass="DefaultSpacing">
@@ -76,7 +74,21 @@
                   <String fx:value="medium-text-field" />
                </styleClass>
             </VBox>
-            <Region HBox.hgrow="ALWAYS" />
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="Quick Filters" />
+                  <Button fx:id="quickFilterDueTomorrowButton" mnemonicParsing="false" onAction="#quickFilterDueTomorrow" text="Remaining Tasks Tomorrow" />
+                  <Button fx:id="quickFilterDue3DaysButton" layoutX="15.0" layoutY="45.0" mnemonicParsing="false" onAction="#quickFilterDue3Days" text="Remaining 3 days" />
+                  <Button fx:id="quickFilterInTodayButton" layoutX="15.0" layoutY="87.0" mnemonicParsing="false" onAction="#quickFilterInToday" text="In Today" />
+                  <Button fx:id="quickFilterIn7DaysButton" layoutX="15.0" layoutY="129.0" mnemonicParsing="false" onAction="#quickFilterIn3Days" text="In This Week" />
+               </children>
+               <styleClass>
+                  <String fx:value="DefaultSpacing" />
+                  <String fx:value="medium-text-field" />
+               </styleClass>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
             <GridPane>
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

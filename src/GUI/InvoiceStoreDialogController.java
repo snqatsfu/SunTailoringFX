@@ -84,6 +84,11 @@ public class InvoiceStoreDialogController implements Initializable {
     public Label filterLabel;
     public Button clearCustomerTextFieldButton;
 
+    public Button quickFilterDueTomorrowButton;
+    public Button quickFilterDue3DaysButton;
+    public Button quickFilterInTodayButton;
+    public Button quickFilterIn7DaysButton;
+
     private InvoiceStore invoiceStore;
 
     private FilteredList<Invoice> filteredInvoices;
@@ -383,6 +388,42 @@ public class InvoiceStoreDialogController implements Initializable {
 
     public void clearCustomerTextField() {
         searchByCustomerTextField.clear();
+    }
+
+    public void quickFilterDueTomorrow() {
+        searchByCustomerTextField.clear();
+        notDoneOnlyCheckBox.setSelected(true);
+        hideDryCleanOnlyCheckBox.setSelected(true);
+        dueDateToggleGroup.selectToggle(dueTomorrowRadioButton);
+        inDateToggleGroup.selectToggle(inAnyRadioButton);
+        filter();
+    }
+
+    public void quickFilterDue3Days() {
+        searchByCustomerTextField.clear();
+        notDoneOnlyCheckBox.setSelected(true);
+        hideDryCleanOnlyCheckBox.setSelected(true);
+        dueDateToggleGroup.selectToggle(due3DaysRadioButton);
+        inDateToggleGroup.selectToggle(inAnyRadioButton);
+        filter();
+    }
+
+    public void quickFilterInToday() {
+        searchByCustomerTextField.clear();
+        notDoneOnlyCheckBox.setSelected(false);
+        hideDryCleanOnlyCheckBox.setSelected(false);
+        dueDateToggleGroup.selectToggle(dueAnyRadioButton);
+        inDateToggleGroup.selectToggle(inTodayRadioButton);
+        filter();
+    }
+
+    public void quickFilterIn3Days() {
+        searchByCustomerTextField.clear();
+        notDoneOnlyCheckBox.setSelected(false);
+        hideDryCleanOnlyCheckBox.setSelected(false);
+        dueDateToggleGroup.selectToggle(dueAnyRadioButton);
+        inDateToggleGroup.selectToggle(in1WeekRadioButton);
+        filter();
     }
 
     private class FormattedLocalDateTableCell extends TableCell<Invoice, LocalDate> {
