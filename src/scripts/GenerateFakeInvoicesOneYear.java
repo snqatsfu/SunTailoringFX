@@ -15,12 +15,17 @@ import java.util.Random;
  */
 public class GenerateFakeInvoicesOneYear {
     public static void main(String[] args) {
+        int numDays = 365;
+        if (args.length > 0) {
+            numDays = Integer.parseInt(args[0]);
+        }
+
         final InvoiceStore store = InvoiceStore.getInstance();
 
         int count = 0;
         final LocalDate today = LocalDate.now();
         final Random random = new Random();
-        for (int i = 0; i < 365; i++) {
+        for (int i = 0; i < numDays; i++) {
             final LocalDate invoiceDate = today.minusDays(i);
             final int numInvoicesThisDay = random.nextInt(10);
             for (int j = 0; j < numInvoicesThisDay; j++) {

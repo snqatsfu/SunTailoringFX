@@ -64,6 +64,7 @@ public class SunTailoringGUIController implements Initializable {
     @FXML
     public MenuItem quickOthersSettingsMenuItem;
     public CheckMenuItem sendEmailWhenDoneCheckMenuItem;
+    public Label toDoTomorrowCount;
 
     @FXML
     private TextField findInvoiceNumberTextField;
@@ -285,6 +286,9 @@ public class SunTailoringGUIController implements Initializable {
             setActiveInvoiceState(ActiveInvoiceState.SAVED);
             addressBook.add(activeInvoice.getCustomerInfo().copy());
 
+            // update the to do tomorrow label - todo: it doesn't need to be done every time you save an invoice, but it's OK because it will be in a background thread
+            new Thread(createUpdateToDoTmrTask()).start();
+
             // send email when invoice is marked DONE, if the settings allows so
             String sentMail = "";
             if (getSendEmailWhenMarkedDone() && !wasDone && activeInvoice.getDone()) {
@@ -310,6 +314,27 @@ public class SunTailoringGUIController implements Initializable {
         } else {
             System.out.println("Cancelled saving " + activeInvoice.getInvoiceNumber());
         }
+    }
+
+    private Task<Integer> createUpdateToDoTmrTask() {
+        return new Task<Integer>() {
+            @Override
+            protected Integer call() throws Exception {
+                return (int) invoiceStore.all().stream()
+                        .filter(invoice -> !invoice.isDryCleanOnly() && !invoice.getDone())
+                        .filter(invoice -> {
+                            LocalDate today = LocalDate.now();
+                            LocalDate tomorrow = today.plusDays(1);
+                            LocalDate dueDate = invoice.getDueDate();
+                            return (!dueDate.isBefore(today)) && (!dueDate.isAfter(tomorrow));
+                        }).count();
+            }
+
+            @Override
+            protected void succeeded() {
+                toDoTomorrowCount.setText(Integer.toString(getValue()));
+            }
+        };
     }
 
     private Task<Void> createMailSendTask(String email, String subject, String body) {
@@ -482,6 +507,8 @@ public class SunTailoringGUIController implements Initializable {
         printInvoiceButton.setTooltip(new Tooltip("Ctrl + P"));
 
         sendEmailWhenDoneCheckMenuItem.setSelected(getSendEmailWhenMarkedDone());
+
+        new Thread(createUpdateToDoTmrTask()).start();
     }
 
     private void markActiveInvoiceCompleted() {
