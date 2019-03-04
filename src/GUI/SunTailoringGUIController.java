@@ -7,6 +7,7 @@ import Html.InvoicePrinter;
 import Utils.GmailSender;
 import Utils.PathUtils;
 import Utils.PropertiesConfiguration;
+import Utils.Utils;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -322,12 +323,9 @@ public class SunTailoringGUIController implements Initializable {
             protected Integer call() throws Exception {
                 return (int) invoiceStore.all().stream()
                         .filter(invoice -> !invoice.isDryCleanOnly() && !invoice.getDone())
-                        .filter(invoice -> {
-                            LocalDate today = LocalDate.now();
-                            LocalDate tomorrow = today.plusDays(1);
-                            LocalDate dueDate = invoice.getDueDate();
-                            return (!dueDate.isBefore(today)) && (!dueDate.isAfter(tomorrow));
-                        }).count();
+                        .filter(invoice -> Utils.getNextBusinessDayDateRange(LocalDate.now())
+                                .contains(invoice.getDueDate()))
+                        .count();
             }
 
             @Override

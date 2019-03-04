@@ -1,6 +1,7 @@
 package Utils;
 
 import java.text.DecimalFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
@@ -33,6 +34,18 @@ public class Utils {
         public String toString() {
             return "Start " + start + ", End " + end;
         }
+    }
+
+    /**
+     * @param from the starting point of the data range.
+     * @return the data range starting from the specified date to the next business day (skips Sundays).
+     */
+    public static LocalDateRange getNextBusinessDayDateRange(LocalDate from) {
+        LocalDate to = from.plusDays(1);
+        if (to.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+            to = to.plusDays(1);
+        }
+        return new LocalDateRange(from, to);
     }
 
     public static List<LocalDateRange> getLast12MonthsDateRanges(LocalDate from) {

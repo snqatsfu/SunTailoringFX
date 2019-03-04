@@ -285,7 +285,7 @@ public class InvoiceStoreDialogController implements Initializable {
                 return invoice -> invoice.getDueDate().equals(today);
             } else if (selectedToggle == dueTomorrowRadioButton) {
                 LocalDate endDate = today.plusDays(1);
-                if (endDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                if (endDate.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
                     endDate = endDate.plusDays(1);
                 }
                 final LocalDate finalEndDate = endDate;
