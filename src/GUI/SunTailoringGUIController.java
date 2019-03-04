@@ -272,7 +272,7 @@ public class SunTailoringGUIController implements Initializable {
         return invoiceNumber;
     }
 
-    public void saveActiveInvoice() {
+    public boolean saveActiveInvoice() {
         boolean doSave = true;
         if (activeInvoiceState == ActiveInvoiceState.EDITED) {
             doSave = GuiUtils.showConfirmationAlertAndWait("Are you sure that you want to modify existing invoice "
@@ -315,6 +315,7 @@ public class SunTailoringGUIController implements Initializable {
         } else {
             System.out.println("Cancelled saving " + activeInvoice.getInvoiceNumber());
         }
+        return doSave;
     }
 
     private Task<Integer> createUpdateToDoTmrTask() {
@@ -789,17 +790,22 @@ public class SunTailoringGUIController implements Initializable {
     }
 
     public void printActiveInvoice() {
-        final InvoicePrinter invoicePrinter = new InvoicePrinter(activeInvoice, config);
-        PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(invoicePrinter);
+        // save active invoice first
+        boolean activeInvoiceSaved = activeInvoiceState == ActiveInvoiceState.SAVED || saveActiveInvoice();
 
-        PrintRequestAttributeSet set = new HashPrintRequestAttributeSet();
-        set.add(OrientationRequested.PORTRAIT);
-        set.add(MediaSizeName.INVOICE);
-        try {
-            job.print(set);
-        } catch (PrinterException e) {
-            e.printStackTrace();
+        if (activeInvoiceSaved) {
+            final InvoicePrinter invoicePrinter = new InvoicePrinter(activeInvoice, config);
+            PrinterJob job = PrinterJob.getPrinterJob();
+            job.setPrintable(invoicePrinter);
+
+            PrintRequestAttributeSet set = new HashPrintRequestAttributeSet();
+            set.add(OrientationRequested.PORTRAIT);
+            set.add(MediaSizeName.INVOICE);
+            try {
+                job.print(set);
+            } catch (PrinterException e) {
+                e.printStackTrace();
+            }
         }
     }
 
