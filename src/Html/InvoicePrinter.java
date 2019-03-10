@@ -20,6 +20,8 @@ public class InvoicePrinter implements Printable {
     private static float MEDIUM_FONT_SIZE = 10;
     private static float SMALL_FONT_SIZE = 8;
     private static int MAX_NUM_CHARS_PER_LINE = 35;
+    private static double BAR_CODE_WIDTH = 0.5;
+    private static double BAR_CODE_HEIGHT = 5;
 
     private final Invoice invoice;
 
@@ -48,6 +50,17 @@ public class InvoicePrinter implements Printable {
         if (property != null) {
             MAX_NUM_CHARS_PER_LINE = Integer.parseInt(property);
         }
+
+        property = config.getProperty("invoice.printer.bar.code.width");
+        if (property != null) {
+            BAR_CODE_WIDTH = Double.parseDouble(property);
+        }
+
+        property = config.getProperty("invoice.printer.bar.code.height");
+        if (property != null) {
+            BAR_CODE_HEIGHT = Double.parseDouble(property);
+        }
+
     }
 
     @Override
@@ -145,8 +158,8 @@ public class InvoicePrinter implements Printable {
         try {
             Barcode barcode = BarcodeFactory.createCode128A(invoice.getInvoiceNumber());
             barcode.setDrawingText(false);
-            barcode.setBarWidth(0.5);
-            barcode.setBarHeight(6);
+            barcode.setBarWidth(BAR_CODE_WIDTH);
+            barcode.setBarHeight(BAR_CODE_HEIGHT);
             barcode.draw((Graphics2D) graphics, x, y);
         } catch (BarcodeException ignore) {}
 
