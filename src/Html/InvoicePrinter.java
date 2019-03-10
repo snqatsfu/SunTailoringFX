@@ -4,6 +4,9 @@ import Data.CustomerInfo;
 import Data.Invoice;
 import Data.Item;
 import Utils.Utils;
+import net.sourceforge.barbecue.Barcode;
+import net.sourceforge.barbecue.BarcodeException;
+import net.sourceforge.barbecue.BarcodeFactory;
 
 import java.awt.*;
 import java.awt.print.PageFormat;
@@ -136,6 +139,16 @@ public class InvoicePrinter implements Printable {
         txt = "We will fix it for FREE within 2 weeks";
         y += (int) SMALL_FONT_SIZE + 1;
         graphics.drawString(txt, x, y);
+
+        // print invoice number barcode
+        y += 10;
+        try {
+            Barcode barcode = BarcodeFactory.createCode128A(invoice.getInvoiceNumber());
+            barcode.setDrawingText(false);
+            barcode.setBarWidth(0.5);
+            barcode.setBarHeight(6);
+            barcode.draw((Graphics2D) graphics, x, y);
+        } catch (BarcodeException ignore) {}
 
         return PAGE_EXISTS;
     }

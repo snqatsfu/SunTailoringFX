@@ -29,5 +29,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="com.sun.mail:javax.mail:1.6.2" level="project" />
+    <orderEntry type="library" name="net.sourceforge:barbecue:1.0.6d" level="project" />
   </component>
 </module>
