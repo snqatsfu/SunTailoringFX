@@ -12,6 +12,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class MailSender {
@@ -26,7 +27,7 @@ public abstract class MailSender {
 
     protected abstract void send(Session session, Message message) throws MessagingException;
 
-    public void sendMail(String destEmail,
+    public synchronized void sendMail(String destEmail,
                          List<String> ccEmails,
                          String subject,
                          String body,
@@ -73,5 +74,11 @@ public abstract class MailSender {
 
         send(session, message);
 
+    }
+
+    public synchronized void sendMail(String destEmail,
+                         String subject,
+                         String body) throws FileNotFoundException, MessagingException {
+        sendMail(destEmail, Collections.emptyList(), subject, body, "");
     }
 }

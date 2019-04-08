@@ -41,7 +41,12 @@ public class Utils {
      * @return the data range starting from the specified date to the next business day (skips Sundays).
      */
     public static LocalDateRange getNextBusinessDayDateRange(LocalDate from) {
-        LocalDate to = from.plusDays(1);
+        return getNextNBusinessDayDateRange(from, 1);
+    }
+
+    public static LocalDateRange getNextNBusinessDayDateRange(LocalDate from, int n) {
+        // todo: fix the issue when Sunday is in the middle
+        LocalDate to = from.plusDays(n);
         if (to.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
             to = to.plusDays(1);
         }

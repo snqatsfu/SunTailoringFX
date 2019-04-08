@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -329,5 +330,18 @@ public class Invoice implements Serializable, Comparable<Invoice> {
     @Override
     public int compareTo(Invoice o) {
         return this.getInvoiceNumber().compareTo(o.getInvoiceNumber());
+    }
+
+    public String shortHtmlSummary() {
+        String retVal = "<b><u>" + getInvoiceNumber() + "</u></b>";
+        retVal += " " + NumberFormat.getCurrencyInstance().format(getTotal());
+        retVal += ", In " + getInvoiceDate() + ", Due " + getDueDate();
+        retVal += ", " + getCustomerInfo() + "<ul>\n";
+        for (Item item : getItems()) {
+            retVal += "<li>" + item.shortSummary() + "</li>\n";
+        }
+        retVal += "</ul>\n";
+
+        return retVal;
     }
 }

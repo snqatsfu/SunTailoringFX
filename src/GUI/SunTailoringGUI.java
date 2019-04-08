@@ -19,7 +19,10 @@ public class SunTailoringGUI extends Application {
         primaryStage.getIcons().add(Assets.ST_LOGO);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
-        primaryStage.setOnCloseRequest(event -> controller.saveAddressBook());
+        primaryStage.setOnCloseRequest(event -> {
+            controller.stopSummaryTimer();
+            controller.saveAddressBook();
+        });
     }
 
 

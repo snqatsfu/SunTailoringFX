@@ -40,9 +40,7 @@ import java.io.*;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static Utils.PathUtils.ADDRESS_BOOK_DAT_FILE;
 import static Utils.PathUtils.SETTINGS_DIR_PATH;
@@ -149,6 +147,8 @@ public class SunTailoringGUIController implements Initializable {
     private boolean suspendQuickItemComboBoxAction;
     private final AddressBook addressBook;
 
+    private final Timer summaryTimer;
+
     private enum ActiveInvoiceState {
         NEW,
         EDITED,
@@ -221,6 +221,30 @@ public class SunTailoringGUIController implements Initializable {
             addressBook = new AddressBook(Collections.emptyList());
         }
         this.addressBook = addressBook;
+
+        summaryTimer = new Timer();
+        summaryTimer.schedule(new TimerTask() {
+            private Summary oldSummary = null;
+            @Override
+            public void run() {
+                final Summary summary = new Summary(invoiceStore);
+                if (summary.changedFrom(oldSummary)) {
+                    System.out.println("sending summary!");
+                    try {
+                        GmailSender.DEFAULT.sendMail("nathanzheng87@gmail.com",
+                                "Test Summary", new Summary(invoiceStore).toHtml());
+                    } catch (Exception ignore) {}
+                }
+                oldSummary = summary;
+            }
+        }, 0, 60*60*1000);
+    }
+
+    public void stopSummaryTimer() {
+        if (summaryTimer != null) {
+            summaryTimer.cancel();
+            summaryTimer.purge();
+        }
     }
 
     public void openInvoice() {
