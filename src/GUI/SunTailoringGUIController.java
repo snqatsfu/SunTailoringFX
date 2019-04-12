@@ -229,15 +229,24 @@ public class SunTailoringGUIController implements Initializable {
             public void run() {
                 final Summary summary = new Summary(invoiceStore);
                 if (summary.changedFrom(oldSummary)) {
-                    System.out.println("sending summary!");
                     try {
-                        GmailSender.DEFAULT.sendMail("nathanzheng87@gmail.com",
-                                "Test Summary", new Summary(invoiceStore).toHtml());
+                        GmailSender.DEFAULT.sendMail(getSummaryRecipient(), "Sun Tailoring Summary", summary.toHtml());
                     } catch (Exception ignore) {}
                 }
                 oldSummary = summary;
             }
-        }, 0, 60*60*1000);
+        }, 60*60*1000, 60*60*1000);
+    }
+
+    public void sendSummary() {
+        final Summary summary = new Summary(invoiceStore);
+        try {
+            GmailSender.DEFAULT.sendMail(getSummaryRecipient(), "Sun Tailoring Summary", summary.toHtml());
+        } catch (Exception ignore) {}
+    }
+
+    private String getSummaryRecipient() {
+        return config.getProperty("default.summary.recipient", "nathanzheng87@gmail.com");
     }
 
     public void stopSummaryTimer() {

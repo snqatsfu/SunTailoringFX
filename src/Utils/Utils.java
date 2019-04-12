@@ -53,6 +53,11 @@ public class Utils {
         return new LocalDateRange(from, to);
     }
 
+    public static LocalDateRange getTodayMinusDaysDateRange(int n) {
+        final LocalDate now = LocalDate.now();
+        return new LocalDateRange(now.minusDays(n), now);
+    }
+
     public static List<LocalDateRange> getLast12MonthsDateRanges(LocalDate from) {
         List<LocalDateRange> retVal = new ArrayList<>();
         for (int i = 11; i >= 0; i--) {
