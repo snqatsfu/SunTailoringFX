@@ -7,6 +7,7 @@ import Utils.Utils;
 import net.sourceforge.barbecue.Barcode;
 import net.sourceforge.barbecue.BarcodeException;
 import net.sourceforge.barbecue.BarcodeFactory;
+import net.sourceforge.barbecue.output.OutputException;
 
 import java.awt.*;
 import java.awt.print.PageFormat;
@@ -158,10 +159,10 @@ public class InvoicePrinter implements Printable {
         try {
             Barcode barcode = BarcodeFactory.createCode128A(invoice.getInvoiceNumber());
             barcode.setDrawingText(false);
-            barcode.setBarWidth(BAR_CODE_WIDTH);
-            barcode.setBarHeight(BAR_CODE_HEIGHT);
+            barcode.setBarWidth((int) BAR_CODE_WIDTH);
+            barcode.setBarHeight((int) BAR_CODE_HEIGHT);
             barcode.draw((Graphics2D) graphics, x, y);
-        } catch (BarcodeException ignore) {}
+        } catch (BarcodeException | OutputException ignore) {}
 
         return PAGE_EXISTS;
     }
