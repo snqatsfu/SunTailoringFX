@@ -6,6 +6,7 @@ import Data.ExpenseStore;
 import java.time.LocalDate;
 import java.util.Random;
 
+
 public class GenerateFakeExpensesOneYear {
     public static void main(String[] args) {
         ExpenseStore store = ExpenseStore.getInstance();
